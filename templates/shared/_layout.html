@@ -1,0 +1,30 @@
+{% load render_partial %}
+<!DOCTYPE html>
+<html lang="fa">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="جان دئو">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>{% block title %}ادوکا{% endblock %}</title>
+   {% include 'shared/header_references.html' %}
+</head>
+
+<body>
+
+<div class="preloader">
+    <div class="loader">
+        <svg class="spinner" viewBox="0 0 50 50">
+            <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+        </svg>
+    </div>
+</div>
+{% render_partial 'main_app.views.site_header_component' %}
+{% block content %}{% endblock %}
+{% render_partial 'main_app.views.site_footer_component' %}
+{% include 'shared/footer_references.html' %}
+
+</body>
+</html>
