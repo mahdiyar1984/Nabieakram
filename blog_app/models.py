@@ -2,6 +2,7 @@ from django.db import models
 
 
 class ArticleCategory(models.Model):
+    objects = models.Manager()
     parent = models.ForeignKey(to='ArticleCategory',
                                null=True,
                                blank=True,
@@ -21,6 +22,7 @@ class ArticleCategory(models.Model):
 
 
 class ArticleTag(models.Model):
+    objects = models.Manager()
     title = models.CharField(max_length=300, db_index=True, verbose_name="عنوان تگ")
     is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
     is_delete = models.BooleanField(default=False, verbose_name='حذف شده / نشده')
@@ -34,6 +36,7 @@ class ArticleTag(models.Model):
 
 
 class Article(models.Model):
+    objects = models.Manager()
     selected_categories = models.ManyToManyField(ArticleCategory,
                                                  verbose_name='دسته بندی ها')
     selected_tags = models.ManyToManyField(ArticleTag,

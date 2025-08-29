@@ -1,0 +1,499 @@
+{% extends 'shared/_layout.html' %}
+{% load static %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+    <section class="breadcrumb-area pt-80px pb-80px pattern-bg">
+        <div class="container">
+            <div class="breadcrumb-content">
+                <div class="section-heading pb-3">
+                    <h2 class="section__title">{{ article.title }}</h2>
+                </div>
+                <ul class="generic-list-item generic-list-item-arrow d-flex flex-wrap align-items-center">
+                    <li><a href="{% url 'main_app:index' %}">صفحه اصلی</a></li>
+                    <li><a href="{% url 'blog_app:blog_list' %}">وبلاگ</a></li>
+                    <li>{{ article.title }}</li>
+                </ul>
+                <ul class="generic-list-item generic-list-item-bullet generic-list-item--bullet d-flex align-items-center flex-wrap fs-14 pt-2">
+                    <li class="d-flex align-items-center">توسط <a href="#">جان دئو</a></li>
+                    <li class="d-flex align-items-center">{{ article.create_date }}</li>
+                    <li class="d-flex align-items-center"><a href="#comments" class="page-scroll">4 نظر</a></li>
+                    <li class="d-flex align-items-center">130 سهم</li>
+                </ul>
+            </div>
+            <!-- end breadcrumb-content -->
+        </div>
+        <!-- end container -->
+    </section>
+
+    <section class="blog-area pt-100px pb-100px">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mb-5">
+                    <div class="card card-item">
+                        <div class="card-body">
+                            <div class="generic-img-box-content text-center mb-5">
+                                <img src="{{ article.image.url }}" width="100%" alt="">
+                            </div>
+                            <h4>{{ article.title }}</h4><br>
+                            <p class="card-text pb-3 text-justify">{{ article.text }}</p>
+                            <div class="section-block"></div>
+                            <h3 class="fs-18 font-weight-semi-bold pt-3">برچسب ها</h3>
+                            <div class="d-flex flex-wrap justify-content-between align-items-center pt-3">
+                                <ul class="generic-list-item generic-list-item-boxed d-flex flex-wrap fs-15">
+                                    {% for tag in article.selected_tags.all %}
+                                        <li class="mr-2"><a href="#">{{ tag.title }}</a></li>
+                                    {% endfor %}
+
+
+                                </ul>
+                                <div class="share-wrap">
+                                    <ul class="social-icons social-icons-styled">
+                                        <li class="mr-0">
+                                            <a href="#" class="facebook-bg"><i class="la la-facebook"></i></a>
+                                        </li>
+                                        <li class="mr-0">
+                                            <a href="#" class="twitter-bg"><i class="la la-twitter"></i></a>
+                                        </li>
+                                        <li class="mr-0">
+                                            <a href="#" class="instagram-bg"><i class="la la-instagram"></i></a>
+                                        </li>
+                                    </ul>
+                                    <div class="icon-element icon-element-sm shadow-sm cursor-pointer share-toggle"
+                                         title="تغییر وضعیت برای گسترش نمادهای اجتماعی"><i class="la la-share-alt"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end card-body -->
+                    </div>
+                    <!-- end card -->
+                    <div class="instructor-wrap py-5">
+                        <h3 class="fs-22 font-weight-semi-bold pb-4">درباره نویسنده</h3>
+                        <div class="media media-card">
+                            <div class="media-img rounded-full avatar-lg mr-4">
+                                <img src="{% static 'images/small-avatar-1.jpg' %}" alt="تصویر آواتار"
+                                     class="rounded-full lazy" style="">
+                            </div>
+                            <div class="media-body">
+                                <h5>الکس اسمیت</h5>
+                                <span class="d-block lh-18 pt-2 pb-2">www.example.com</span>
+                                <p class="pb-3">
+                                    من یک بازاریاب دیجیتال رشد گرا هستم که علاقه زیادی به بازاریابی محتوا، شگفتی های
+                                    بازاریابی رسانه های اجتماعی، بهینه سازی نرخ تبدیل و تحقیق در مورد کلمات کلیدی دارم.
+                                    من قویاً از بازاریابی مجوز و رسانه
+                                    های کسب شده حمایت می کنم. بیشتر از هرچیزی
+                                </p>
+                                <ul class="social-icons social-icons-styled social--icons-styled">
+                                    <li>
+                                        <a href="#"><i class="la la-facebook"></i></a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="la la-twitter"></i></a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="la la-instagram"></i></a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="la la-linkedin"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end instructor-wrap -->
+                    <div class="section-block"></div>
+                    <div class="comments-wrap pt-5" id="comments">
+                        <div class="d-flex align-items-center justify-content-between pb-4">
+                            <h3 class="fs-22 font-weight-semi-bold">نظرات</h3>
+                            <span class="ribbon ribbon-lg">4</span>
+                        </div>
+                        <div class="comment-list">
+                            <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
+                                <div class="media-img mr-4 rounded-full">
+                                    <img class="rounded-full lazy" src="{% static 'images/small-avatar-1.jpg' %}"
+                                         alt="تصویر کاربر" style="">
+                                </div>
+                                <div class="media-body">
+                                    <h5 class="pb-2">کاوی آرسان</h5>
+                                    <span class="d-block lh-18 pb-2">یک ماه قبل</span>
+                                    <p class="pb-3">این یکی از بهترین دوره هایی است که من در Udemy گذرانده ام. این بسیار
+                                        کامل است و باعث شده است که در مورد پایگاه های داده جاوا و SQL نیز به یادگیری
+                                        ادامه دهید.</p>
+                                    <div class="helpful-action d-flex align-items-center justify-content-between">
+                                        <a class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30" href="#"
+                                           data-toggle="modal" data-target="#replyModal"><i
+                                                class="la la-reply mr-1"></i> پاسخ</a>
+                                        <div class="pl-2">
+                                            <span class="fs-13">آیا این بررسی مفید بود؟</span>
+                                            <button class="btn">آره</button>
+                                            <button class="btn">خیر</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end media -->
+                            <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 review-reply">
+                                <div class="media-img mr-4 rounded-full">
+                                    <img class="rounded-full lazy" src="{% static 'images/small-avatar-2.jpg' %}"
+                                         alt="تصویر کاربر" style="">
+                                </div>
+                                <div class="media-body">
+                                    <h5 class="pb-2">جیتش شاو</h5>
+                                    <span class="d-block lh-18 pb-2">1 ماه پیش</span>
+                                    <p class="pb-3">این یکی از بهترین دوره هایی است که من در Udemy گذرانده ام. این بسیار
+                                        کامل است و باعث شده است که در مورد پایگاه های داده جاوا و SQL نیز به یادگیری
+                                        ادامه دهید.</p>
+                                    <div class="helpful-action d-flex align-items-center justify-content-between">
+                                        <a class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30" href="#"
+                                           data-toggle="modal" data-target="#replyModal"><i
+                                                class="la la-reply mr-1"></i> پاسخ</a>
+                                        <div class="pl-2">
+                                            <span class="fs-13">آیا این بررسی مفید بود؟</span>
+                                            <button class="btn">آره</button>
+                                            <button class="btn">خیر</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end media -->
+                            <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
+                                <div class="media-img mr-4 rounded-full">
+                                    <img class="rounded-full lazy" src="{% static 'images/small-avatar-3.jpg' %}"
+                                         alt="تصویر کاربر" style="">
+                                </div>
+                                <div class="media-body">
+                                    <h5 class="pb-2">میگل سانچس</h5>
+                                    <span class="d-block lh-18 pb-2">2 ماه پیش</span>
+                                    <p class="pb-3">این یکی از بهترین دوره هایی است که من در Udemy گذرانده ام. این بسیار
+                                        کامل است و باعث شده است که در مورد پایگاه های داده جاوا و SQL نیز به یادگیری
+                                        ادامه دهید.</p>
+                                    <div class="helpful-action d-flex align-items-center justify-content-between">
+                                        <a class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30" href="#"
+                                           data-toggle="modal" data-target="#replyModal"><i
+                                                class="la la-reply mr-1"></i> پاسخ</a>
+                                        <div class="pl-2">
+                                            <span class="fs-13">آیا این بررسی مفید بود؟</span>
+                                            <button class="btn">آره</button>
+                                            <button class="btn">خیر</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end media -->
+                        </div>
+                        <div class="load-more-btn-box text-center pt-3 pb-5">
+                            <button class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30"><i
+                                    class="la la-refresh mr-1"></i> بارگذاری نظر بیشتر
+                            </button>
+                        </div>
+                    </div>
+                    <div class="section-block"></div>
+                    <div class="add-comment-wrap pt-5">
+                        <h3 class="fs-22 font-weight-semi-bold pb-4">یک نظر اضافه کنید</h3>
+                        <form method="post" class="row">
+                            <div class="input-box col-lg-6">
+                                <label class="label-text">نام</label>
+                                <div class="form-group">
+                                    <input class="form-control form--control" type="text" name="name"
+                                           placeholder="اسم شما">
+                                    <span class="la la-user input-icon"></span>
+                                </div>
+                            </div>
+                            <!-- end input-box -->
+                            <div class="input-box col-lg-6">
+                                <label class="label-text">پست الکترونیک</label>
+                                <div class="form-group">
+                                    <input class="form-control form--control" type="email" name="email"
+                                           placeholder="آدرس ایمیل">
+                                    <span class="la la-envelope input-icon"></span>
+                                </div>
+                            </div>
+                            <!-- end input-box -->
+                            <div class="input-box col-lg-12">
+                                <label class="label-text">پیام</label>
+                                <div class="form-group">
+                                    <textarea class="form-control form--control pl-3" name="message"
+                                              placeholder="پیام بنویس" rows="5"></textarea>
+                                </div>
+                            </div>
+                            <!-- end input-box -->
+                            <div class="btn-box col-lg-12">
+                                <div class="custom-control custom-checkbox mb-3 fs-15">
+                                    <input type="checkbox" class="custom-control-input" id="saveCheckbox" required="">
+                                    <label class="custom-control-label custom--control-label" for="saveCheckbox">
+                                        برای دفعه بعد که نظر دادم نام و ایمیل من را در این مرورگر ذخیره کنید.
+                                    </label>
+                                </div>
+                                <!-- end custom-control -->
+                                <button class="btn theme-btn" type="submit">ثبت کردن نظر</button>
+                            </div>
+                            <!-- end btn-box -->
+                        </form>
+                    </div>
+                    <!-- end add-comment-wrap -->
+                </div>
+                <!-- end col-lg-8 -->
+                <div class="col-lg-4">
+                    <div class="sidebar">
+                        <div class="card card-item">
+                            <div class="card-body">
+                                <h3 class="card-title fs-18 pb-2">فیلد جستجو</h3>
+                                <div class="divider"><span></span></div>
+                                <form method="post">
+                                    <div class="form-group mb-0">
+                                        <input class="form-control form--control pl-3" type="text" name="search"
+                                               placeholder="جستجوی دوره">
+                                        <span class="la la-search search-icon"></span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- end card -->
+                        <div class="card card-item">
+                            <div class="card-body">
+                                <h3 class="card-title fs-18 pb-2">دسته بندی ها</h3>
+                                <div class="divider"><span></span></div>
+                                <div class="custom-control custom-checkbox mb-1 fs-15">
+                                    <input type="checkbox" class="custom-control-input" id="catCheckbox" required="">
+                                    <label class="custom-control-label custom--control-label text-black"
+                                           for="catCheckbox"> تجارت <span class="ml-1 text-gray">(12,300)</span>
+                                    </label>
+                                </div>
+                                <!-- end custom-control -->
+                                <div class="custom-control custom-checkbox mb-1 fs-15">
+                                    <input type="checkbox" class="custom-control-input" id="catCheckbox2" required="">
+                                    <label class="custom-control-label custom--control-label text-black"
+                                           for="catCheckbox2"> رایط کاربری <span class="ml-1 text-gray">(12,300)</span>
+                                    </label>
+                                </div>
+                                <!-- end custom-control -->
+                                <div class="custom-control custom-checkbox mb-1 fs-15">
+                                    <input type="checkbox" class="custom-control-input" id="catCheckbox3" required="">
+                                    <label class="custom-control-label custom--control-label text-black"
+                                           for="catCheckbox3"> انیمیشن <span class="ml-1 text-gray">(12,300)</span>
+                                    </label>
+                                </div>
+                                <!-- end custom-control -->
+                                <div class="custom-control custom-checkbox mb-1 fs-15">
+                                    <input type="checkbox" class="custom-control-input" id="catCheckbox4" required="">
+                                    <label class="custom-control-label custom--control-label text-black"
+                                           for="catCheckbox4"> طراحی بازی <span class="ml-1 text-gray">(12300)</span>
+                                    </label>
+                                </div>
+                                <!-- end custom-control -->
+                                <div class="collapse" id="collapseMore">
+                                    <div class="custom-control custom-checkbox mb-1 fs-15">
+                                        <input type="checkbox" class="custom-control-input" id="catCheckbox5"
+                                               required="">
+                                        <label class="custom-control-label custom--control-label text-black"
+                                               for="catCheckbox5"> طراحی گرافیک <span
+                                                class="ml-1 text-gray">(12,300)</span> </label>
+                                    </div>
+                                    <!-- end custom-control -->
+                                    <div class="custom-control custom-checkbox mb-1 fs-15">
+                                        <input type="checkbox" class="custom-control-input" id="catCheckbox6"
+                                               required="">
+                                        <label class="custom-control-label custom--control-label text-black"
+                                               for="catCheckbox6"> تایپوگرافی <span
+                                                class="ml-1 text-gray">(12,300)</span> </label>
+                                    </div>
+                                    <!-- end custom-control -->
+                                    <div class="custom-control custom-checkbox mb-1 fs-15">
+                                        <input type="checkbox" class="custom-control-input" id="catCheckbox7"
+                                               required="">
+                                        <label class="custom-control-label custom--control-label text-black"
+                                               for="catCheckbox7"> توسعه وب <span class="ml-1 text-gray">(12,300)</span>
+                                        </label>
+                                    </div>
+                                    <!-- end custom-control -->
+                                    <div class="custom-control custom-checkbox mb-1 fs-15">
+                                        <input type="checkbox" class="custom-control-input" id="catCheckbox8"
+                                               required="">
+                                        <label class="custom-control-label custom--control-label text-black"
+                                               for="catCheckbox8"> عکاسی <span class="ml-1 text-gray">(12,300)</span>
+                                        </label>
+                                    </div>
+                                    <!-- end custom-control -->
+                                    <div class="custom-control custom-checkbox mb-1 fs-15">
+                                        <input type="checkbox" class="custom-control-input" id="catCheckbox9"
+                                               required="">
+                                        <label class="custom-control-label custom--control-label text-black"
+                                               for="catCheckbox9"> امور مالی <span
+                                                class="ml-1 text-gray">(12,300)</span> </label>
+                                    </div>
+                                    <!-- end custom-control -->
+                                </div>
+                                <!-- end collapse -->
+                                <a class="collapse-btn collapse--btn fs-15" data-toggle="collapse" href="#collapseMore"
+                                   role="button" aria-expanded="false" aria-controls="collapseMore">
+                                    <span class="collapse-btn-hide">بیشتر نشان بده، اطلاعات بیشتر<i
+                                            class="la la-angle-down ml-1 fs-14"></i></span>
+                                    <span class="collapse-btn-show">کمتر نشان دادن<i
+                                            class="la la-angle-up ml-1 fs-14"></i></span>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- end card -->
+                        <div class="card card-item">
+                            <div class="card-body">
+                                <h3 class="card-title fs-18 pb-2">آرشیوها</h3>
+                                <div class="divider"><span></span></div>
+                                <ul class="generic-list-item">
+                                    <li><a href="#">خرداد 1400</a></li>
+                                    <li><a href="#">دی 1399</a></li>
+                                    <li><a href="#">آذر 1398</a></li>
+                                    <li><a href="#">اردیبهشت 1397</a></li>
+                                    <li><a href="#">مهر 1396</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- end card -->
+                        <div class="card card-item">
+                            <div class="card-body">
+                                <h3 class="card-title fs-18 pb-2">پستهای اخیر</h3>
+                                <div class="divider"><span></span></div>
+                                <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
+                                    <a href="course-details.html" class="media-img">
+                                        <img class="mr-3" src="{% static 'images/small-img-2.jpg' %}"
+                                             alt="تصویر دوره مرتبط">
+                                    </a>
+                                    <div class="media-body">
+                                        <h5 class="fs-15"><a href="course-details.html">دوره کامل جاوا اسکریپت 1400</a>
+                                        </h5>
+                                        <span class="d-block lh-18 py-1 fs-14">کامران احمد</span>
+                                        <p class="text-black font-weight-semi-bold lh-18 fs-15">12.99 تومان <span
+                                                class="before-price fs-14">129.99 تومان</span></p>
+                                    </div>
+                                </div>
+                                <!-- end media -->
+                                <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
+                                    <a href="course-details.html" class="media-img">
+                                        <img class="mr-3" src="{% static 'images/small-img-3.jpg' %}"
+                                             alt="تصویر دوره مرتبط">
+                                    </a>
+                                    <div class="media-body">
+                                        <h5 class="fs-15"><a href="course-details.html">آموزش جاوا اسکریپت برای
+                                            مبتدیان</a></h5>
+                                        <span class="d-block lh-18 py-1 fs-14">کامران احمد</span>
+                                        <p class="text-black font-weight-semi-bold lh-18 fs-15">129.99 تومان</p>
+                                    </div>
+                                </div>
+                                <!-- end media -->
+                                <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
+                                    <a href="course-details.html" class="media-img">
+                                        <img class="mr-3" src="{% static 'images/small-img-4.jpg' %}"
+                                             alt="تصویر دوره مرتبط">
+                                    </a>
+                                    <div class="media-body">
+                                        <h5 class="fs-15"><a href="course-details.html">مقدمه LearnPress – افزونه
+                                            LMS</a></h5>
+                                        <span class="d-block lh-18 py-1 fs-14">کامران احمد</span>
+                                        <p class="text-black font-weight-semi-bold lh-18 fs-15">رایگان</p>
+                                    </div>
+                                </div>
+                                <!-- end media -->
+                                <div class="view-all-course-btn-box">
+                                    <a href="blog-no-sidebar.html" class="btn theme-btn w-100">مشاهده همه پست ها <i
+                                            class="la la-arrow-left icon ml-1"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end card -->
+                        <div class="card card-item">
+                            <div class="card-body">
+                                <h3 class="card-title fs-18 pb-2">فرم نوار کناری</h3>
+                                <div class="divider"><span></span></div>
+                                <form method="post">
+                                    <div class="form-group">
+                                        <input class="form-control form--control" type="text" name="text"
+                                               placeholder="نام">
+                                        <span class="la la-user input-icon"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control form--control" type="email" name="email"
+                                               placeholder="پست الکترونیک">
+                                        <span class="la la-envelope input-icon"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea class="form-control form--control pl-3" name="message" rows="4"
+                                                  placeholder="پیام بنویس"></textarea>
+                                    </div>
+                                    <div class="btn-box">
+                                        <button class="btn theme-btn w-100">تماس با نویسنده <i
+                                                class="la la-arrow-left icon ml-1"></i></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- end card -->
+                        <div class="card card-item">
+                            <div class="card-body">
+                                <h3 class="card-title fs-18 pb-2">برچسب های پست</h3>
+                                <div class="divider"><span></span></div>
+                                <ul class="generic-list-item generic-list-item-boxed d-flex flex-wrap fs-15">
+                                    <li class="mr-2"><a href="#">کسب و کار</a></li>
+                                    <li class="mr-2"><a href="#">رویداد</a></li>
+                                    <li class="mr-2"><a href="#">ویدئو</a></li>
+                                    <li class="mr-2"><a href="#">سمعی</a></li>
+                                    <li class="mr-2"><a href="#">نرم افزار</a></li>
+                                    <li class="mr-2"><a href="#">کنفرانس</a></li>
+                                    <li class="mr-2"><a href="#">بازار یابی</a></li>
+                                    <li class="mr-2"><a href="#">آزاد</a></li>
+                                    <li class="mr-2"><a href="#">نکات</a></li>
+                                    <li class="mr-2"><a href="#">فن آوری</a></li>
+                                    <li class="mr-2"><a href="#">کارآفرین</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- end card -->
+                        <div class="card card-item">
+                            <div class="card-body">
+                                <h3 class="card-title fs-18 pb-2">اشتراک در</h3>
+                                <div class="divider"><span></span></div>
+                                <form method="post">
+                                    <div class="input-group">
+                                        <input class="form-control form--control pl-3" type="email" name="email"
+                                               placeholder="آدرس ایمیل را وارد کن">
+                                        <div class="input-group-append">
+                                            <button class="btn theme-btn"><i class="la la-arrow-left"></i></button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- end card -->
+                        <div class="card card-item">
+                            <div class="card-body">
+                                <h3 class="card-title fs-18 pb-2">اتصال و دنبال کردن</h3>
+                                <div class="divider"><span></span></div>
+                                <ul class="social-icons social-icons-styled social--icons-styled">
+                                    <li>
+                                        <a href="#"><i class="la la-facebook"></i></a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="la la-twitter"></i></a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="la la-instagram"></i></a>
+                                    </li>
+                                    <li>
+                                        <a href="#"><i class="la la-youtube"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end sidebar -->
+                </div>
+                <!-- end col-lg-4 -->
+            </div>
+            <!-- end row -->
+        </div>
+        <!-- end container -->
+    </section>
+{% endblock %}
