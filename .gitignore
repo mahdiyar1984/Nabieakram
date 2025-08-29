@@ -1,0 +1,29 @@
+# محیط مجازی
+venv/
+env/
+*.venv/
+
+# فایل‌های pycache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# دیتابیس sqlite
+*.sqlite3
+
+# فایل‌های لاگ
+*.log
+
+# پوشه static جمع‌آوری شده (در صورت استفاده)
+staticfiles/
+
+# فایل‌های تنظیمات PyCharm
+.idea/
+
+# فایل‌های حساس یا محلی
+.env
+
+# پوشه migrations اختیاری
+*/migrations/*.py
+*/migrations/*.pyc
+!*/migrations/__init__.py
