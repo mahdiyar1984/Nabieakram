@@ -1,0 +1,14 @@
+<div class="card card-item">
+    <div class="card-body">
+        <h3 class="card-title fs-18 pb-2">فیلد جستجو</h3>
+        <div class="divider"><span></span></div>
+        <form method="get" action="{% url 'blog_app:blog_list' %}">
+            <div class="input-group">
+                <input class="form-control form--control pl-3" type="text" name="search" placeholder="جستجو" value="{{ request.GET.search }}">
+                <div class="input-group-append">
+                    <button type="submit" class="btn theme-btn"><i class="la la-search"></i></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
