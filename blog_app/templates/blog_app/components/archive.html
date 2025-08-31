@@ -3,11 +3,11 @@
         <h3 class="card-title fs-18 pb-2">آرشیوها</h3>
         <div class="divider"><span></span></div>
         <ul class="generic-list-item">
-            <li><a href="#">خرداد 1400</a></li>
-            <li><a href="#">دی 1399</a></li>
-            <li><a href="#">آذر 1398</a></li>
-            <li><a href="#">اردیبهشت 1397</a></li>
-            <li><a href="#">مهر 1396</a></li>
+
+            {% for article in articles %}
+                <li><a href="{% url 'blog_app:blog_list' %}?archive={{ article.create_date.month }}">{{ article.create_date.date }}</a></li>
+            {% endfor %}
+
         </ul>
     </div>
 </div>

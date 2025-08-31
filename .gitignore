@@ -14,16 +14,13 @@ __pycache__/
 # فایل‌های لاگ
 *.log
 
-# پوشه static جمع‌آوری شده (در صورت استفاده)
-#staticfiles/
+# Django stuff
+db.sqlite3
+/staticfiles/
+/media/
 
 # فایل‌های تنظیمات PyCharm
 .idea/
 
 # فایل‌های حساس یا محلی
 .env
-
-# پوشه migrations اختیاری
-#*/migrations/*.py
-#*/migrations/*.pyc
-#!*/migrations/__init__.py
