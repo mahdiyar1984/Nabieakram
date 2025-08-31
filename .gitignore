@@ -15,7 +15,7 @@ __pycache__/
 *.log
 
 # پوشه static جمع‌آوری شده (در صورت استفاده)
-staticfiles/
+#staticfiles/
 
 # فایل‌های تنظیمات PyCharm
 .idea/
@@ -24,6 +24,6 @@ staticfiles/
 .env
 
 # پوشه migrations اختیاری
-*/migrations/*.py
-*/migrations/*.pyc
-!*/migrations/__init__.py
+#*/migrations/*.py
+#*/migrations/*.pyc
+#!*/migrations/__init__.py
