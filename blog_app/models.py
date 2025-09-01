@@ -1,4 +1,5 @@
 from django.db import models
+from account_app.models import User
 
 
 class ArticleCategory(models.Model):
@@ -41,6 +42,11 @@ class Article(models.Model):
                                                  verbose_name='دسته بندی ها')
     selected_tags = models.ManyToManyField(ArticleTag,
                                            verbose_name='تگ ها')
+    author = models.ForeignKey(User,
+                               on_delete=models.CASCADE,
+                               null=True,
+                               editable=True,
+                               verbose_name='نویسنده')
     title = models.CharField(max_length=300, verbose_name='عنوان مقاله')
     slug = models.SlugField(max_length=400, db_index=True, allow_unicode=True, verbose_name='عنوان در url')
     image = models.ImageField(upload_to='images/articles', verbose_name='تصویر مقاله')
@@ -56,3 +62,29 @@ class Article(models.Model):
     class Meta:
         verbose_name = 'مقاله'
         verbose_name_plural = 'مقالات'
+
+class ArticleComment(models.Model):
+    article = models.ForeignKey(Article,
+                                on_delete=models.CASCADE,
+                                verbose_name='مقاله')
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE,
+                             verbose_name='کاربر')
+
+    parent = models.ForeignKey(to='ArticleComment',
+                               null=True,
+                               blank=True,
+                               on_delete=models.CASCADE,
+                               verbose_name='والد')
+
+    text = models.TextField(verbose_name='متن نظر')
+    create_date = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ثبت')
+    is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
+    is_delete = models.BooleanField(default=False, verbose_name='حذف شده / نشده')
+
+    def __str__(self):
+        return f"{self.article.title} - {self.text[:30]}"
+
+    class Meta:
+        verbose_name = 'نظر مقاله'
+        verbose_name_plural = 'نظرات مقاله'

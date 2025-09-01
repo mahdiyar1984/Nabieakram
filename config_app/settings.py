@@ -41,10 +41,13 @@ INSTALLED_APPS = [
     # internal app
     'main_app',
     'blog_app',
+    'account_app',
 
     # external app
     'django_render_partial',
 ]
+
+AUTH_USER_MODEL = 'account_app.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

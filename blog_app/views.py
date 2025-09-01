@@ -65,7 +65,6 @@ class RecentArticlesView(View):
         }
         return render(request, template_name='blog_app/components/recent_articles.html', context=context)
 
-
 class BlogDetailView(View):
     def get(self, request: HttpRequest, pk):
         article: Article = Article.objects.get(pk=pk, is_active=True)
