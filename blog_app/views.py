@@ -21,7 +21,7 @@ class BlogListView(View):
         if request.GET.get('archive'):
             articles: QuerySet[Article] = articles.filter(create_date__month=request.GET.get('archive'))
 
-        paginator = Paginator(articles, 3)
+        paginator = Paginator(articles, 6)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         show_pagination = page_obj.paginator.num_pages > 1
@@ -59,7 +59,7 @@ class ArchiveArticlesView(View):
 
 class RecentArticlesView(View):
     def get(self, request: HttpRequest):
-        articles: QuerySet[Article] = Article.objects.filter(is_active=True).order_by('-create_date')[:2]
+        articles: QuerySet[Article] = Article.objects.filter(is_active=True).order_by('-create_date')[:3]
         context = {
             'articles': articles,
         }

@@ -5,67 +5,76 @@
 {% block title %}لیست مقالات{% endblock %}
 
 {% block content %}
-	<section class="breadcrumb-area section-padding img-bg-2">
-            <div class="overlay"></div>
-            <div class="container">
-                <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between">
-                    <div class="section-heading">
-                        <h2 class="section__title text-white">وبلاگ سایدبار راست</h2>
-                    </div>
-                    <ul class="generic-list-item generic-list-item-white generic-list-item-arrow d-flex flex-wrap align-items-center">
-                        <li><a href="index.html">صفحه اصلی</a></li>
-                        <li>وبلاگ</li>
-                        <li>وبلاگ سایدبار راست</li>
-                    </ul>
+    <section class="breadcrumb-area section-padding img-bg-2">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between">
+                <div class="section-heading">
+                    <h2 class="section__title text-white">وبلاگ سایدبار راست</h2>
                 </div>
+                <ul class="generic-list-item generic-list-item-white generic-list-item-arrow d-flex flex-wrap align-items-center">
+                    <li><a href="index.html">صفحه اصلی</a></li>
+                    <li>وبلاگ</li>
+                    <li>وبلاگ سایدبار راست</li>
+                </ul>
             </div>
-        </section>
+        </div>
+    </section>
     <section class="blog-area section--padding">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-4">
-                        <div class="sidebar mb-5">
-                            {% render_partial 'blog_app.views.SearchArticlesView' %}
-                            {% render_partial 'blog_app.views.CategoryArticlesView' %}
-                            {% render_partial 'blog_app.views.ArchiveArticlesView' %}
-                            {% render_partial 'blog_app.views.RecentArticlesView' %}
-                        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="sidebar mb-5">
+                        {% render_partial 'blog_app.views.SearchArticlesView' %}
+                        {% render_partial 'blog_app.views.CategoryArticlesView' %}
+                        {% render_partial 'blog_app.views.ArchiveArticlesView' %}
+                        {% render_partial 'blog_app.views.RecentArticlesView' %}
                     </div>
-                    <div class="col-lg-8">
-                        <div class="row">
-                            {% for article in page_obj %}
-                            	{% include 'blog_app/includes/article.html' with article=article %}
-                            {% endfor %}
-                        </div>
-                        <!-- end row -->
+                </div>
+                <div class="col-lg-8">
+                    <div class="row">
+                        {% for article in page_obj %}
+                            {% include 'blog_app/includes/article.html' with article=article %}
+                        {% endfor %}
+                    </div>
 
+                    {% if show_pagination %}
                         <div class="text-center pt-3">
                             <nav aria-label="مثال ناوبری صفحه" class="pagination-box">
                                 <ul class="pagination justify-content-center">
-                                    <li class="page-item">
-                                        <a class="page-link" href="#" aria-label="قبلی">
-                                            <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
-                                            <span class="sr-only">قبلی</span>
-                                        </a>
-                                    </li>
-
-                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-
-                                    <li class="page-item">
-                                        <a class="page-link" href="#" aria-label="بعد">
-                                            <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
-                                            <span class="sr-only">بعد</span>
-                                        </a>
-                                    </li>
+                                    {% if page_obj.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}"
+                                               aria-label="قبلی">
+                                                <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
+                                                <span class="sr-only">قبلی</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    {% for i in page_obj.paginator.page_range %}
+                                        {% if page_obj.number == i %}
+                                            <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                        {% else %}
+                                            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if page_obj.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="بعد">
+                                                <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
+                                                <span class="sr-only">بعد</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
                                 </ul>
                             </nav>
                             <p class="fs-14 pt-2">نمایش 1-10 از 56 نتیجه</p>
                         </div>
-                    </div>
+                    {% endif %}
 
                 </div>
+
             </div>
-        </section>
+        </div>
+    </section>
 {% endblock %}
