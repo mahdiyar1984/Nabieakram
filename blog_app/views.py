@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import HttpRequest
 from django.shortcuts import render
 from django.views import View
-from blog_app.models import Article, ArticleCategory
+from blog_app.models import Article, ArticleCategory, ArticleComment
 from django.core.paginator import Paginator
 
 
@@ -68,7 +68,11 @@ class RecentArticlesView(View):
 class BlogDetailView(View):
     def get(self, request: HttpRequest, pk):
         article: Article = Article.objects.get(pk=pk, is_active=True)
+
+        comments = ArticleComment.objects.filter(article=article, parent=None, is_active=True)
         context = {
             'article': article,
+            'comments': comments
         }
+
         return render(request, template_name='blog_app/blog_detail_page.html', context=context)

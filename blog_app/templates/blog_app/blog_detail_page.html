@@ -18,10 +18,12 @@
                     <li>{{ article.title }}</li>
                 </ul>
                 <ul class="generic-list-item generic-list-item-bullet generic-list-item--bullet d-flex align-items-center flex-wrap fs-14 pt-2">
-                    <li class="d-flex align-items-center">توسط <a href="#">جان دئو</a></li>
+                    <li class="d-flex align-items-center">توسط: <a href="#">&nbsp;{{ article.author.get_full_name }}</a>
+                    </li>
                     <li class="d-flex align-items-center">{{ article.create_date }}</li>
-                    <li class="d-flex align-items-center"><a href="#comments" class="page-scroll">4 نظر</a></li>
-                    <li class="d-flex align-items-center">130 سهم</li>
+                    <li class="d-flex align-items-center"><a href="#comments"
+                                                             class="page-scroll">{{ article.articlecomment_set.all.count }}
+                        نظر</a></li>
                 </ul>
             </div>
             <!-- end breadcrumb-content -->
@@ -70,20 +72,20 @@
                         </div>
                         <!-- end card-body -->
                     </div>
-                
+
                     <div class="instructor-wrap py-5">
-                        <h3 class="fs-22 font-weight-semi-bold pb-4">{{ article.author.username }}</h3>
+                        <h3 class="fs-22 font-weight-semi-bold pb-4 ml-4">نوسینده</h3>
                         <div class="media media-card">
                             <div class="media-img rounded-full avatar-lg mr-4">
                                 {% if article.author.avatar %}
-                                	<img src="{{ article.author.avatar.url }}" alt="تصویر آواتار"
-                                     class="rounded-full lazy" style="">
-                                    {% else %}
+                                    <img src="{{ article.author.avatar.url }}" alt="تصویر آواتار"
+                                         class="rounded-full lazy" style="">
+                                {% else %}
                                     <img src="{% static 'images/small-avatar-1.jpg' %}" alt="تصویر آواتار"
                                          class="rounded-full lazy" style="">
-                                    </div>
-                                {% endif %}
 
+                                {% endif %}
+                            </div>
                             <div class="media-body">
                                 <h5>{{ article.author.get_full_name }}</h5>
                                 <span class="d-block lh-18 pt-2 pb-2">{{ article.author.email }}</span>
@@ -110,81 +112,59 @@
                     <div class="comments-wrap pt-5" id="comments">
                         <div class="d-flex align-items-center justify-content-between pb-4">
                             <h3 class="fs-22 font-weight-semi-bold">نظرات</h3>
-                            <span class="ribbon ribbon-lg">4</span>
+                            <span class="ribbon ribbon-lg">{{ article.articlecomment_set.all.count }}</span>
                         </div>
                         <div class="comment-list">
-                            <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
-                                <div class="media-img mr-4 rounded-full">
-                                    <img class="rounded-full lazy" src="{% static 'images/small-avatar-1.jpg' %}"
-                                         alt="تصویر کاربر" style="">
-                                </div>
-                                <div class="media-body">
-                                    <h5 class="pb-2">کاوی آرسان</h5>
-                                    <span class="d-block lh-18 pb-2">یک ماه قبل</span>
-                                    <p class="pb-3">این یکی از بهترین دوره هایی است که من در Udemy گذرانده ام. این بسیار
-                                        کامل است و باعث شده است که در مورد پایگاه های داده جاوا و SQL نیز به یادگیری
-                                        ادامه دهید.</p>
-                                    <div class="helpful-action d-flex align-items-center justify-content-between">
-                                        <a class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30" href="#"
-                                           data-toggle="modal" data-target="#replyModal"><i
-                                                class="la la-reply mr-1"></i> پاسخ</a>
-                                        <div class="pl-2">
-                                            <span class="fs-13">آیا این بررسی مفید بود؟</span>
-                                            <button class="btn">آره</button>
-                                            <button class="btn">خیر</button>
+                            {% for comment in comments %}
+                                <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
+                                    <div class="media-img mr-4 rounded-full">
+                                        <img class="rounded-full lazy" src="{{ comment.user.avatar.url }}"
+                                             alt="تصویر کاربر" style="">
+                                    </div>
+                                    <div class="media-body">
+                                        <h5 class="pb-2">{{ comment.user.get_full_name}}</h5>
+                                        <span class="d-block lh-18 pb-2">یک ماه قبل</span>
+                                        <p class="pb-3">{{ comment.text }}</p>
+                                        <div class="helpful-action d-flex align-items-center justify-content-between">
+                                            <a class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30" href="#"
+                                               data-toggle="modal" data-target="#replyModal"><i
+                                                    class="la la-reply mr-1"></i> پاسخ</a>
+                                            <div class="pl-2">
+                                                <span class="fs-13">آیا این بررسی مفید بود؟</span>
+                                                <button class="btn">آره</button>
+                                                <button class="btn">خیر</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <!-- end media -->
-                            <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 review-reply">
-                                <div class="media-img mr-4 rounded-full">
-                                    <img class="rounded-full lazy" src="{% static 'images/small-avatar-2.jpg' %}"
-                                         alt="تصویر کاربر" style="">
-                                </div>
-                                <div class="media-body">
-                                    <h5 class="pb-2">جیتش شاو</h5>
-                                    <span class="d-block lh-18 pb-2">1 ماه پیش</span>
-                                    <p class="pb-3">این یکی از بهترین دوره هایی است که من در Udemy گذرانده ام. این بسیار
-                                        کامل است و باعث شده است که در مورد پایگاه های داده جاوا و SQL نیز به یادگیری
-                                        ادامه دهید.</p>
-                                    <div class="helpful-action d-flex align-items-center justify-content-between">
-                                        <a class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30" href="#"
-                                           data-toggle="modal" data-target="#replyModal"><i
-                                                class="la la-reply mr-1"></i> پاسخ</a>
-                                        <div class="pl-2">
-                                            <span class="fs-13">آیا این بررسی مفید بود؟</span>
-                                            <button class="btn">آره</button>
-                                            <button class="btn">خیر</button>
+                                {% for reply in comment.articlecomment_set.all %}
+                                    {% if reply.is_active and not reply.is_delete %}
+                                        <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 review-reply">
+                                            <div class="media-img mr-4 rounded-full">
+                                                <img class="rounded-full lazy"
+                                                     src="{{ reply.user.avatar.url }}"
+                                                     alt="تصویر کاربر" style="">
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="pb-2">{{ reply.user.get_full_name}}</h5>
+                                                <span class="d-block lh-18 pb-2">1 ماه پیش</span>
+                                                <p class="pb-3">{{ reply.text }}</p>
+                                                <div class="helpful-action d-flex align-items-center justify-content-between">
+                                                    <a class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30"
+                                                       href="#"
+                                                       data-toggle="modal" data-target="#replyModal"><i
+                                                            class="la la-reply mr-1"></i> پاسخ</a>
+                                                    <div class="pl-2">
+                                                        <span class="fs-13">آیا این بررسی مفید بود؟</span>
+                                                        <button class="btn">آره</button>
+                                                        <button class="btn">خیر</button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- end media -->
-                            <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
-                                <div class="media-img mr-4 rounded-full">
-                                    <img class="rounded-full lazy" src="{% static 'images/small-avatar-3.jpg' %}"
-                                         alt="تصویر کاربر" style="">
-                                </div>
-                                <div class="media-body">
-                                    <h5 class="pb-2">میگل سانچس</h5>
-                                    <span class="d-block lh-18 pb-2">2 ماه پیش</span>
-                                    <p class="pb-3">این یکی از بهترین دوره هایی است که من در Udemy گذرانده ام. این بسیار
-                                        کامل است و باعث شده است که در مورد پایگاه های داده جاوا و SQL نیز به یادگیری
-                                        ادامه دهید.</p>
-                                    <div class="helpful-action d-flex align-items-center justify-content-between">
-                                        <a class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30" href="#"
-                                           data-toggle="modal" data-target="#replyModal"><i
-                                                class="la la-reply mr-1"></i> پاسخ</a>
-                                        <div class="pl-2">
-                                            <span class="fs-13">آیا این بررسی مفید بود؟</span>
-                                            <button class="btn">آره</button>
-                                            <button class="btn">خیر</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- end media -->
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
                         </div>
                         <div class="load-more-btn-box text-center pt-3 pb-5">
                             <button class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30"><i
@@ -267,12 +247,8 @@
                         </div>{% endcomment %}
 
                     </div>
-                    <!-- end sidebar -->
                 </div>
-
             </div>
-
         </div>
-
     </section>
 {% endblock %}

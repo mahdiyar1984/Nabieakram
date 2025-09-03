@@ -39,10 +39,27 @@
                             </button>
                         </div>
                         <ul class="generic-list-item d-flex flex-wrap align-items-center fs-14 border-right border-right-gray pl-3 ml-3">
-                            <li class="d-flex align-items-center pr-3 mr-3 border-left border-left-gray"><i
-                                    class="la la-sign-in mr-1"></i><a href="login.html"> وارد شدن</a></li>
-                            <li class="d-flex align-items-center"><i class="la la-user mr-1"></i><a href="sign-up.html">
-                                ثبت نام</a></li>
+                            {% if request.user.is_authenticated %}
+                                {% if request.user.is_superuser %}
+                                    <li class="d-flex align-items-center pr-3 mr-3 border-left border-left-gray"><i
+                                            class="la la-user mr-1"></i><a
+                                            href="/admin">
+                                        ادمین</a></li>
+                                    <li class="d-flex align-items-center"><i class="la la-user mr-1"></i><a
+                                            href="/admin">
+                                        حساب کاربری</a></li>
+                                {% else %}
+                                    <li class="d-flex align-items-center"><i class="la la-user mr-1"></i><a
+                                            href="/admin">
+                                        حساب کاربری</a></li>
+                                {% endif %}
+                            {% else %}
+                                <li class="d-flex align-items-center pr-3 mr-3 border-left border-left-gray"><i
+                                        class="la la-sign-in mr-1"></i><a href="login.html"> وارد شدن</a></li>
+                                <li class="d-flex align-items-center"><i class="la la-user mr-1"></i><a
+                                        href="sign-up.html">
+                                    ثبت نام</a></li>
+                            {% endif %}
                         </ul>
                     </div><!-- end header-widget -->
                 </div><!-- end col-lg-6 -->
@@ -236,8 +253,7 @@
     </div>
     <div class="off-canvas-menu custom-scrollbar-styled category-off-canvas-menu">
         <div class="off-canvas-menu-close cat-menu-close icon-element icon-element-sm shadow-sm" data-toggle="tooltip"
-             data-placement="right" title="بستن منو">
-            <i class="la la-times"></i>
+             data-placement="right" title="بستن منو"><i class="la la-times"></i>
         </div><!-- end off-canvas-menu-close -->
         <ul class="generic-list-item off-canvas-menu-list pt-90px">
             <li>
