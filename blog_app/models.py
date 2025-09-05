@@ -64,6 +64,7 @@ class Article(models.Model):
         verbose_name_plural = 'مقالات'
 
 class ArticleComment(models.Model):
+    objects = models.Manager()
     article = models.ForeignKey(Article,
                                 on_delete=models.CASCADE,
                                 verbose_name='مقاله')

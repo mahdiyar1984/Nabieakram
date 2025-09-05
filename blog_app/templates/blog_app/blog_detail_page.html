@@ -176,7 +176,9 @@
                     <div class="section-block"></div>
                     <div class="add-comment-wrap pt-5">
                         <h3 class="fs-22 font-weight-semi-bold pb-4">یک نظر اضافه کنید</h3>
-                        <form method="post" class="row">
+                        <form method="post" class="row" action="{% url 'blog_app:blog_detail' pk=article.pk %}">
+                            {% csrf_token %}
+
                             <div class="input-box col-lg-6">
                                 <label class="label-text">نام</label>
                                 <div class="form-group">
