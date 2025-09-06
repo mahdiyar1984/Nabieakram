@@ -1,10 +1,10 @@
 from django.db.models import QuerySet
 from django.db.models import Q
 from django.http import HttpRequest
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
-from blog_app.forms import ArticleCommentForm
+from blog_app.forms import CommentForm
 from blog_app.models import Article, ArticleCategory, ArticleComment
 from django.core.paginator import Paginator
 
@@ -23,6 +23,10 @@ class BlogListView(View):
         if request.GET.get('archive'):
             articles: QuerySet[Article] = articles.filter(create_date__month=request.GET.get('archive'))
 
+        if request.GET.get('tag'):
+            articles: QuerySet[Article] = articles.filter(selected_tags__title=request.GET.get('tag'))
+
+
         paginator = Paginator(articles, 6)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
@@ -38,8 +42,6 @@ class BlogListView(View):
 class SearchArticlesView(View):
     def get(self, request: HttpRequest):
         return render(request, template_name='blog_app/components/search.html')
-
-
 class CategoryArticlesView(View):
     def get(self, request: HttpRequest):
         categories: QuerySet[ArticleCategory] = ArticleCategory.objects.filter(parent__isnull=True).prefetch_related(
@@ -48,8 +50,6 @@ class CategoryArticlesView(View):
             'categories': categories,
         }
         return render(request, template_name='blog_app/components/category.html', context=context)
-
-
 class ArchiveArticlesView(View):
     def get(self, request: HttpRequest):
         articles: QuerySet[Article] = Article.objects.filter(is_active=True)
@@ -57,8 +57,6 @@ class ArchiveArticlesView(View):
             'articles': articles,
         }
         return render(request, template_name='blog_app/components/archive.html', context=context)
-
-
 class RecentArticlesView(View):
     def get(self, request: HttpRequest):
         articles: QuerySet[Article] = Article.objects.filter(is_active=True).order_by('-create_date')[:3]
@@ -78,22 +76,22 @@ class BlogDetailView(View):
         }
 
         return render(request, template_name='blog_app/blog_detail_page.html', context=context)
-    # def post(self, request: HttpRequest, pk):
-    #     article = Article.objects.filter(pk=pk, is_active=True, is_delete=False)
-    #     comments = ArticleComment.objects.filter(article=article, parent__isnull=True, is_active=True, is_delete=False)
-    #     if request.user.is_authenticated:
-    #         form = ArticleCommentForm(request.POST)
-    #         if form.is_valid():
-    #             comment = form.save(commit=False)
-    #             comment.article = article
-    #             comment.user = request.user
-    #             # اگر پاسخ به کامنت قبلی هست
-    #             parent_id = request.POST.get('parent_id')
-    #             if parent_id:
-    #                 comment.parent = ArticleComment.objects.get(id=parent_id)
-    #             comment.save()
-    #             return redirect('article_detail', slug=article.slug)
-    #     else:
-    #         return redirect('login')  # هدایت به صفحه لاگین در صورت عدم ورود
+
+    def post(self, request:HttpRequest, pk):
+        article = get_object_or_404(Article, pk=pk)
+        if not request.user.is_authenticated:
+            return redirect('/')
+
+        message = request.POST.get('message')
+        parent_id = request.POST.get('parent_id')
+
+        comment = ArticleComment.objects.create(
+            article=article,
+            user=request.user,
+            text=message,
+            parent_id=parent_id if parent_id else None
+        )
+        return redirect("blog_app:blog_detail", pk=article.pk)
+
 
 

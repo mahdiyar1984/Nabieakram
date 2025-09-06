@@ -1,4 +1,10 @@
 from django import forms
+from .models import ArticleComment
 
-class ArticleCommentForm(forms.Form):
-    message = forms.CharField(label="پیام", widget=forms.Textarea)
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = ArticleComment
+        fields = ["text"]
+        widgets = {
+            "text": forms.Textarea(attrs={"rows": 3, "placeholder": "نظر خود را بنویسید..."}),
+        }
