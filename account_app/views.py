@@ -121,7 +121,7 @@ class ForgotPasswordView(View):
         if user is None:
             messages.error(request, 'اگر ایمیل شما در سایت ثبت شده باشد، لینک بازیابی ارسال خواهد شد')
         else:
-            activation_url = reverse('reset_password_page', args=[user.email_activation_code])
+            activation_url = reverse('account_app:reset_password_page', args=[user.email_activation_code])
             activation_link = request.build_absolute_uri(activation_url)
 
             send_activation_email('بازیابی  کلمه عبور',
