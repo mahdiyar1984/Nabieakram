@@ -12,14 +12,11 @@
                     <h2 class="section__title text-white">وارد شدن</h2>
                 </div>
                 <ul class="generic-list-item generic-list-item-white generic-list-item-arrow d-flex flex-wrap align-items-center">
-                    <li><a href="index.html">صفحه اصلی</a></li>
-                    <li>صفحات</li>
+                    <li><a href="{% url 'main_app:index' %}">صفحه اصلی</a></li>
                     <li>وارد شدن</li>
                 </ul>
             </div>
-            <!-- end breadcrumb-content -->
         </div>
-        <!-- end container -->
     </section>
     <section class="contact-area section--padding position-relative">
         <div class="container">
@@ -30,12 +27,13 @@
                             <h3 class="card-title text-center fs-24 lh-35 pb-4">وارد حساب کاربری خود شوید!</h3>
                             <div class="section-block"></div>
                             <form method="post" class="pt-4">
+                                {% csrf_token %}
 
                                 <!-- email -->
                                 <div class="input-box">
-                                    <label class="label-text">ایمیل یا نام کاربری</label>
+                                    <label class="label-text">ایمیل</label>
                                     <div class="form-group">
-                                        <input class="form-control form--control" type="text" name="name"
+                                        <input class="form-control form--control" type="text" name="email"
                                                placeholder="ایمیل یا نام کاربری">
                                         <span class="la la-user input-icon"></span>
                                     </div>
@@ -69,19 +67,21 @@
 
                                 <div class="btn-box">
                                     <div class="d-flex align-items-center justify-content-between pb-4">
-                                        <div class="custom-control custom-checkbox fs-15">
-                                            <input type="checkbox" class="custom-control-input" id="rememberMeCheckbox"
-                                                   required="">
-                                            <label class="custom-control-label custom--control-label"
-                                                   for="rememberMeCheckbox">مرا به خاطر بسپار</label>
-                                        </div>
+{#                                        <div class="custom-control custom-checkbox fs-15">#}
+{#                                            <input type="checkbox" class="custom-control-input" id="rememberMeCheckbox"#}
+{#                                                   required="">#}
+{#                                            <label class="custom-control-label custom--control-label"#}
+{#                                                                                               for="rememberMeCheckbox">مرا به خاطر بسپار</label>#}
+{#                                        </div>#}
                                         <!-- end custom-control -->
-                                        <a href="recover.html" class="btn-text">رمز عبور من را فراموش کرده اید؟</a>
+                                        <a href="{% url 'account_app:forgot_password_page' %}" class="btn-text">رمز عبور
+                                            من را فراموش کرده اید؟</a>
                                     </div>
                                     <button class="btn theme-btn" type="submit">ورود به حساب کاربری <i
                                             class="la la-arrow-left icon ml-1"></i></button>
-                                    <p class="fs-14 pt-2">حساب کاربری ندارید؟ <a href="sign-up.html"
-                                                                                 class="text-color hover-underline">ثبت
+                                    <p class="fs-14 pt-2">حساب کاربری ندارید؟ <a
+                                            href="{% url 'account_app:register_page' %}"
+                                            class="text-color hover-underline">ثبت
                                         نام</a></p>
                                 </div>
 

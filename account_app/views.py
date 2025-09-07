@@ -5,8 +5,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.views import View
-
 from account_app.models import User
+from utils.email_service import send_activation_email
 
 
 class RegisterView(View):
@@ -48,15 +48,15 @@ class RegisterView(View):
         new_user.set_password(password)
         new_user.save()
 
-    #     activation_url = reverse('activate_account_page', args=[new_user.email_activation_code])
-    #     activation_link = request.build_absolute_uri(activation_url)
-    #
-    #     send_activation_email('فعالسازی حساب کاربری',
-    #                           new_user,
-    #                           activation_link,
-    #                           'emails/email_service.html',
-    #                           'کاربر گرامی، جهت فعالسازی حساب کاربری روی لینک زیر کلیک کنید')
-    #
+        activation_url = reverse('account_app:activate_account_page', args=[new_user.email_activation_code])
+        activation_link = request.build_absolute_uri(activation_url)
+
+        send_activation_email('فعالسازی حساب کاربری',
+                              new_user,
+                              activation_link,
+                              'emails/email_service.html',
+                              'کاربر گرامی، جهت فعالسازی حساب کاربری روی لینک زیر کلیک کنید')
+        #
         messages.success(request, "ثبت‌ نام با موفقیت انجام شد. حالا می‌تونید وارد بشید.")
         return redirect('account_app:login_page')
 
@@ -108,7 +108,6 @@ class LoginView(View):
             return redirect('account_app:login_page')
 
 
-
 class ForgotPasswordView(View):
     def get(self, request):
         return render(request, template_name='account_app/forgot_password.html')
@@ -122,15 +121,14 @@ class ForgotPasswordView(View):
         if user is None:
             messages.error(request, 'اگر ایمیل شما در سایت ثبت شده باشد، لینک بازیابی ارسال خواهد شد')
         else:
-            pass
-            # activation_url = reverse('reset_password_page', args=[user.email_activation_code])
-            # activation_link = request.build_absolute_uri(activation_url)
-            #
-            # send_activation_email('بازیابی  کلمه عبور',
-            #                       user,
-            #                       activation_link,
-            #                       'emails/email_service.html',
-            #                       'کاربر گرامی، جهت بازیابی کلمه عبور روی لینک زیر کلیک کنید')
+            activation_url = reverse('reset_password_page', args=[user.email_activation_code])
+            activation_link = request.build_absolute_uri(activation_url)
+
+            send_activation_email('بازیابی  کلمه عبور',
+                                  user,
+                                  activation_link,
+                                  'emails/email_service.html',
+                                  'کاربر گرامی، جهت بازیابی کلمه عبور روی لینک زیر کلیک کنید')
 
             messages.success(request, 'لطفاً ایمیل خود را برای بازیابی کلمه عبور بررسی کنید.')
             return redirect('account_app:login_page')

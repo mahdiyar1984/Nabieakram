@@ -55,9 +55,9 @@
                                 {% endif %}
                             {% else %}
                                 <li class="d-flex align-items-center pr-3 mr-3 border-left border-left-gray"><i
-                                        class="la la-sign-in mr-1"></i><a href="login.html"> وارد شدن</a></li>
+                                        class="la la-sign-in mr-1"></i><a href="{% url 'account_app:login_page' %}"> وارد شدن</a></li>
                                 <li class="d-flex align-items-center"><i class="la la-user mr-1"></i><a
-                                        href="sign-up.html">
+                                        href="{% url 'account_app:register_page' %}">
                                     ثبت نام</a></li>
                             {% endif %}
                         </ul>
