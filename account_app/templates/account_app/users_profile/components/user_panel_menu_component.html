@@ -1,0 +1,52 @@
+<div class="col-lg-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex flex-column align-items-center text-center">
+                <form style="text-align: center" id="avatar-form" method="post" enctype="multipart/form-data"
+                      action="{% url 'account_app:update_avatar' %}">
+                    {% csrf_token %}
+                    <input type="file" name="avatar" id="avatar-input" accept="image/*"
+                           style="display: none;">
+                    {% if user.avatar %}
+                        <img
+                                id="avatar-img"
+                                class="rounded-circle p-1 bg-primary"
+                                width="150"
+                                src="{{ user.avatar.url }}"
+                                alt="تصویر آواتار"
+                                style="cursor: pointer; width: 200px; height: 200px; object-fit: cover;">
+                    {% else %}
+                        <img
+                                id="avatar-img"
+                                class="rounded-circle p-1 bg-primary"
+                                width="150"
+                                src="https://bootdey.com/img/Content/avatar/avatar6.png"
+                                alt="تصویر آواتار"
+                                style="cursor: pointer; width: 200px; height: 200px; object-fit: cover;">
+
+                    {% endif %}
+                </form>
+                <div class="mt-4">
+                    <h4>{{ user }}</h4>
+                </div>
+            </div>
+            <ul class="list-group list-group-flush mt-5">
+                <li class="list-group-item {% if request.resolver_match.url_name == 'user_panel_dashboard_page' %}active bg-info text-white{% endif %}">
+                    <a href="{% url 'account_app:user_panel_dashboard_page' %}" class="text-decoration-none text-reset">
+                        داشبورد
+                    </a>
+                </li>
+                <li class="list-group-item {% if request.resolver_match.url_name == 'edit_user_profile_page' %}active bg-info text-white{% endif %}">
+                    <a href="{% url 'account_app:edit_user_profile_page' %}" class="text-decoration-none text-reset">
+                        ویرایش حساب کاربری
+                    </a>
+                </li>
+                <li class="list-group-item {% if request.resolver_match.url_name == 'change_password_page' %}active bg-info text-white{% endif %}">
+                    <a href="{% url 'account_app:change_password_page' %}" class="text-decoration-none text-reset">
+                        تغییر کلمه عبور
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,9 +1,11 @@
 {% load static %}
 
 <header class="header-menu-area bg-white">
+    <!-- هدر سایت -->
     <div class="header-top pr-150px pl-150px border-bottom border-bottom-gray py-1">
         <div class="container-fluid">
             <div class="row align-items-center">
+                <!-- شماره تماس و ایمیل -->
                 <div class="col-lg-6">
                     <div class="header-widget">
                         <ul class="generic-list-item d-flex flex-wrap align-items-center fs-14">
@@ -12,10 +14,12 @@
                             <li class="d-flex align-items-center"><i class="la la-envelope-o mr-1"></i><a
                                     href="#"> info@nabieakram.ir</a></li>
                         </ul>
-                    </div><!-- end header-widget -->
-                </div><!-- end col-lg-6 -->
+                    </div>
+                </div>
+                <!-- حالت تاریک و نور و حساب کاربری -->
                 <div class="col-lg-6">
                     <div class="header-widget d-flex flex-wrap align-items-center justify-content-end">
+                        <!-- حالت تاریک و نور -->
                         <div class="theme-picker d-flex align-items-center">
                             <button class="theme-picker-btn dark-mode-btn" title="حالت تاریک">
                                 <svg id="moon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round"
@@ -38,6 +42,7 @@
                                 </svg>
                             </button>
                         </div>
+                        <!-- ثبت نام، لاگین، حساب کاربری -->
                         <ul class="generic-list-item d-flex flex-wrap align-items-center fs-14 border-right border-right-gray pl-3 ml-3">
                             {% if request.user.is_authenticated %}
                                 {% if request.user.is_superuser %}
@@ -47,7 +52,7 @@
                                         ادمین</a></li>
                                     <li class="d-flex align-items-center pr-3 mr-3 border-left border-left-gray"><i
                                             class="la la-user mr-1"></i><a
-                                            href="/admin">
+                                            href="{% url 'account_app:user_panel_dashboard_page' %}">
                                         حساب کاربری</a></li>
                                     <li class="d-flex align-items-center pr-3 mr-3 border-left border-left-gray"><i
                                             class="la la-sign-out mr-1"></i><a
@@ -74,20 +79,24 @@
                                     ثبت نام</a></li>
                             {% endif %}
                         </ul>
-                    </div><!-- end header-widget -->
-                </div><!-- end col-lg-6 -->
-            </div><!-- end row -->
-        </div><!-- end container-fluid -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <!-- لوگو، منو و سرچ -->
     <div class="header-menu-content pr-150px pl-150px bg-white">
         <div class="container-fluid">
             <div class="main-menu-content">
                 <a href="#" class="down-button"><i class="la la-angle-down"></i></a>
                 <div class="row align-items-center">
+                    <!-- لوگو -->
                     <div class="col-lg-2">
+
                         <div class="logo-box">
-                            <a href="{% url 'main_app:index' %}" class="logo"><img src="{% static 'images/Heiat-Red.png' %}" width="80" alt="لوگو"></a>
-                            <div class="user-btn-action">
+                            <a href="{% url 'main_app:index' %}" class="logo"><img
+                                    src="{% static 'images/Heiat-Red.png' %}" width="80" alt="لوگو"></a>
+                            {% comment %}<div class="user-btn-action">
                                 <div class="search-menu-toggle icon-element icon-element-sm shadow-sm mr-2"
                                      data-toggle="tooltip" data-placement="top" title="جستجو کردن">
                                     <i class="la la-search"></i>
@@ -96,11 +105,13 @@
                                      data-toggle="tooltip" data-placement="top" title="منوی اصلی">
                                     <i class="la la-bars"></i>
                                 </div>
-                            </div>
+                            </div>{% endcomment %}
                         </div>
                     </div>
+                    <!-- منو و سرچ -->
                     <div class="col-lg-10">
                         <div class="menu-wrapper">
+                            <!-- منو -->
                             <nav class="main-menu">
                                 <ul>
                                     <li>
@@ -112,6 +123,7 @@
                                 </ul>
                                 <!-- end ul -->
                             </nav>
+                            <!-- سرچ -->
                             <form method="post">
                                 <div class="form-group mb-0">
                                     <input class="form-control form--control pl-3" type="text" name="search"
@@ -120,11 +132,11 @@
                                 </div>
                             </form>
                         </div>
-                        <!-- end menu-wrapper -->
-                    </div><!-- end col-lg-10 -->
-                </div><!-- end row -->
+                        >
+                    </div>
+                </div>
             </div>
-        </div><!-- end container-fluid -->
+        </div>
     </div>
     {% comment %}<div class="off-canvas-menu custom-scrollbar-styled main-off-canvas-menu">
         <div class="off-canvas-menu-close main-menu-close icon-element icon-element-sm shadow-sm" data-toggle="tooltip"
@@ -332,7 +344,7 @@
             </li>
         </ul>
     </div>{% endcomment %}
-    <div class="mobile-search-form">
+    {% comment %}<div class="mobile-search-form">
         <div class="d-flex align-items-center">
             <form method="post" class="flex-grow-1 mr-3">
                 <div class="form-group mb-0">
@@ -345,6 +357,6 @@
                 <i class="la la-times"></i>
             </div><!-- end off-canvas-menu-close -->
         </div>
-    </div>
-    <div class="body-overlay"></div>
+    </div>{% endcomment %}
+    {% comment %}<div class="body-overlay"></div>{% endcomment %}
 </header>
