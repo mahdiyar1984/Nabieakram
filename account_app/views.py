@@ -193,6 +193,7 @@ class EditUserProfilePage(LoginRequiredMixin, View):
         user.phone_number = request.POST.get('phone_number','')
         user.about_user = request.POST.get('about_user')
         user.save()
+        messages.success(request, 'تغییرات با موفقیت ثبت گردید')
         return redirect('account_app:edit_user_profile_page')
 
 
@@ -207,22 +208,22 @@ class ChangePasswordPage(LoginRequiredMixin, View):
 
         if not old_password or not new_password or not confirm_password:
             messages.error(request, 'لطفاً همه فیلدها را پر کنید')
-            return redirect('change_password_page')
+            return redirect('account_app:change_password_page')
 
         user = request.user
         if not user.check_password(old_password):
             messages.error(request, 'کلمه عبور وارد شده اشتباه می باشد')
-            return redirect('change_password_page')
+            return redirect('account_app:change_password_page')
 
         if new_password != confirm_password:
             messages.error(request, 'کلمه عبور و تکرار کلمه عبور یکسان نیستند')
-            return redirect('change_password_page')
+            return redirect('account_app:change_password_page')
 
         user.set_password(new_password)
         user.save()
         update_session_auth_hash(request, user)
         messages.success(request, 'کلمه عبور با موفقیت تغییر یافت')
-        return redirect('user_panel_dashboard_page')
+        return redirect('account_app:user_panel_dashboard_page')
 
 
 @login_required

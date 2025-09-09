@@ -95,6 +95,16 @@
                                         </div>
                                     </div>
                                 </form>
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        {% if message.tags == 'success' or message.tags == 'error' %}
+                                            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} mt-3"
+                                                 role="alert">
+                                                {{ message }}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                         </div>
                     </div>

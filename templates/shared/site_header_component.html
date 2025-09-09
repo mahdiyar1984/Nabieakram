@@ -91,40 +91,29 @@
                 <a href="#" class="down-button"><i class="la la-angle-down"></i></a>
                 <div class="row align-items-center">
                     <!-- لوگو -->
-                    <div class="col-lg-2">
+                    <div class="col-lg-1">
 
                         <div class="logo-box">
                             <a href="{% url 'main_app:index' %}" class="logo"><img
-                                    src="{% static 'images/Heiat-Red.png' %}" width="80" alt="لوگو"></a>
-                            {% comment %}<div class="user-btn-action">
-                                <div class="search-menu-toggle icon-element icon-element-sm shadow-sm mr-2"
-                                     data-toggle="tooltip" data-placement="top" title="جستجو کردن">
-                                    <i class="la la-search"></i>
-                                </div>
-                                <div class="off-canvas-menu-toggle main-menu-toggle icon-element icon-element-sm shadow-sm"
-                                     data-toggle="tooltip" data-placement="top" title="منوی اصلی">
-                                    <i class="la la-bars"></i>
-                                </div>
-                            </div>{% endcomment %}
+                                    src="{% static 'images/Heiat-Red.png' %}" width="70" alt="لوگو"></a>
                         </div>
                     </div>
                     <!-- منو و سرچ -->
-                    <div class="col-lg-10">
-                        <div class="menu-wrapper">
+                    <div class="col-lg-11">
+                        <div class="menu-wrapper d-flex justify-content-between align-items-center">
                             <!-- منو -->
-                            <nav class="main-menu">
-                                <ul>
-                                    <li>
-                                        <a href="{% url 'main_app:index' %}">صفحه اصلی</a>
+                            <nav class="main-menu mr-auto">
+                                <ul class="d-flex mb-0">
+                                    <li class="ml-3">
+                                        <a href="{% url 'main_app:index' %}" class="{% if request.resolver_match.url_name == 'main_app:index' %}active{% endif %}">صفحه اصلی</a>
                                     </li>
-                                    <li>
-                                        <a href="{% url 'blog_app:blog_list' %}">وبلاگ</a>
+                                    <li class="ml-3">
+                                        <a href="{% url 'blog_app:blog_list' %}" class="{% if request.resolver_match.url_name == 'blog_app:blog_list' %}active{% endif %}">وبلاگ</a>
                                     </li>
                                 </ul>
-                                <!-- end ul -->
                             </nav>
                             <!-- سرچ -->
-                            <form method="post">
+                            <form method="post" class="ml-auto">
                                 <div class="form-group mb-0">
                                     <input class="form-control form--control pl-3" type="text" name="search"
                                            placeholder="هر چیزی را جستجو کنید">
@@ -132,231 +121,9 @@
                                 </div>
                             </form>
                         </div>
-                        >
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    {% comment %}<div class="off-canvas-menu custom-scrollbar-styled main-off-canvas-menu">
-        <div class="off-canvas-menu-close main-menu-close icon-element icon-element-sm shadow-sm" data-toggle="tooltip"
-             data-placement="right" title="بستن منو">
-            <i class="la la-times"></i>
-        </div><!-- end off-canvas-menu-close -->
-        <ul class="generic-list-item off-canvas-menu-list pt-90px">
-            <li>
-                <a href="#">صفحه اصلی</a>
-                <ul class="sub-menu">
-                    <li><a href="index.html">صفحه اصلی یک</a></li>
-                    <li><a href="home-2.html">صفحه اصلی دو</a></li>
-                    <li><a href="home-3.html">صفحه اصلی سه</a></li>
-                    <li><a href="home-4.html">صفحه اصلی چهار</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#">دوره های آموزشی</a>
-                <ul class="sub-menu">
-                    <li><a href="course-grid.html">دوره طرح گرید</a></li>
-                    <li><a href="course-list.html">دوره طرح لیست</a></li>
-                    <li><a href="course-grid-right-sidebar.html">دوره سایدبار راست گرید</a></li>
-                    <li><a href="course-grid-left-sidebar.html">دوره سایدبار چپ گرید</a></li>
-                    <li><a href="course-list-right-sidebar.html">دوره سایدبار راست لیست <span
-                            class="ribbon ribbon-blue-bg">جدید</span></a></li>
-                    <li><a href="course-list-left-sidebar.html">دوره سایدبار چپ لیست <span
-                            class="ribbon ribbon-blue-bg">جدید</span></a></li>
-                    <li><a href="course-details.html">جزئیات دوره</a></li>
-                    <li><a href="lesson-details.html">جزئیات درس</a></li>
-                    <li><a href="my-courses.html">دوره های من</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#">دانشجو</a>
-                <ul class="sub-menu">
-                    <li><a href="student-detail.html">جزئیات دانشجو</a></li>
-                    <li><a href="student-quiz.html">صفحه آزمون</a></li>
-                    <li><a href="student-quiz-results.html">نتایج آزمون</a></li>
-                    <li><a href="student-quiz-result-details.html">جزئیات آزمون</a></li>
-                    <li><a href="student-quiz-result-details-2.html">جزئیات آزمون 2</a></li>
-                    <li><a href="student-path.html">جزئیات مسیر</a></li>
-                    <li><a href="student-path-assessment.html">ارزیابی مهارت</a></li>
-                    <li><a href="student-path-assessment-result.html">نتیجه مهارت</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#">صفحات</a>
-                <ul class="sub-menu">
-                    <li><a href="dashboard.html">داشبورد <span class="ribbon">داغ</span></a></li>
-                    <li><a href="about.html">در باره</a></li>
-                    <li><a href="teachers.html">معلمان</a></li>
-                    <li><a href="teacher-detail.html">جزئیات معلم</a></li>
-                    <li><a href="careers.html">مشاغل</a></li>
-                    <li><a href="career-details.html">جزئیات شغلی</a></li>
-                    <li><a href="categories.html">دسته بندی ها</a></li>
-                    <li><a href="terms-and-conditions.html">شرایط و ضوابط</a></li>
-                    <li><a href="privacy-policy.html">سیاست حفظ حریم خصوصی</a></li>
-                    <li><a href="for-business.html">برای کسب و کار</a></li>
-                    <li><a href="become-a-teacher.html">مربی شود</a></li>
-                    <li><a href="faq.html">سوالات متداول</a></li>
-                    <li><a href="admission.html">پذیرش</a></li>
-                    <li><a href="gallery.html">گالری</a></li>
-                    <li><a href="pricing-table.html">جداول قیمت گذاری</a></li>
-                    <li><a href="contact.html">مخاطب</a></li>
-                    <li><a href="sign-up.html">ثبت نام</a></li>
-                    <li><a href="login.html">وارد شدن</a></li>
-                    <li><a href="recover.html">بازیابی</a></li>
-                    <li><a href="shopping-cart.html">سبد خرید</a></li>
-                    <li><a href="checkout.html">وارسی</a></li>
-                    <li><a href="error.html">صفحه 404</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#">وبلاگ</a>
-                <ul class="sub-menu">
-                    <li><a href="blog-full-width.html">وبلاگ با عرض کامل </a></li>
-                    <li><a href="blog-no-sidebar.html">وبلاگ بدون سایدبار</a></li>
-                    <li><a href="blog-right-sidebar.html">وبلاگ سایدبار راست</a></li>
-                    <li><a href="blog-left-sidebar.html">وبلاگ سایدبار چپ</a></li>
-                    <li><a href="blog-single.html">جزئیات وبلاگ</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-    <div class="off-canvas-menu custom-scrollbar-styled category-off-canvas-menu">
-        <div class="off-canvas-menu-close cat-menu-close icon-element icon-element-sm shadow-sm" data-toggle="tooltip"
-             data-placement="right" title="بستن منو"><i class="la la-times"></i>
-        </div><!-- end off-canvas-menu-close -->
-        <ul class="generic-list-item off-canvas-menu-list pt-90px">
-            <li>
-                <a href="course-grid.html">توسعه</a>
-                <ul class="sub-menu">
-                    <li><a href="#">همه توسعه</a></li>
-                    <li><a href="#">توسعه وب</a></li>
-                    <li><a href="#">برنامه های موبایل</a></li>
-                    <li><a href="#">توسعه بازی</a></li>
-                    <li><a href="#">پایگاه های داده</a></li>
-                    <li><a href="#">زبانهای برنامه نویسی</a></li>
-                    <li><a href="#">تست نرم افزار</a></li>
-                    <li><a href="#">مهندسی نرم افزار</a></li>
-                    <li><a href="#">تجارت الکترونیک</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">کسب و کار</a>
-                <ul class="sub-menu">
-                    <li><a href="#">همه کسب و کار</a></li>
-                    <li><a href="#">دارایی، مالیه، سرمایه گذاری</a></li>
-                    <li><a href="#">کارآفرینی</a></li>
-                    <li><a href="#">استراتژی</a></li>
-                    <li><a href="#">مشاور املاک</a></li>
-                    <li><a href="#">مشاغل خانگی</a></li>
-                    <li><a href="#">ارتباطات</a></li>
-                    <li><a href="#">صنعت</a></li>
-                    <li><a href="#">دیگر</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">فناوری اطلاعات و نرم افزار</a>
-                <ul class="sub-menu">
-                    <li><a href="#">تمام IT و نرم افزار</a></li>
-                    <li><a href="#">گواهی IT</a></li>
-                    <li><a href="#">سخت افزار</a></li>
-                    <li><a href="#">امنیت شبکه</a></li>
-                    <li><a href="#">سیستم های عامل</a></li>
-                    <li><a href="#">دیگر</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">حسابداری مالی</a>
-                <ul class="sub-menu">
-                    <li><a href="#"> کلیه امور مالی و حسابداری</a></li>
-                    <li><a href="#">حسابداری و حسابداری</a></li>
-                    <li><a href="#">ارزهای دیجیتال و بلاک چین</a></li>
-                    <li><a href="#">اقتصاد</a></li>
-                    <li><a href="#">سرمایه گذاری و تجارت</a></li>
-                    <li><a href="#">سایر امور مالی و اقتصادی</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">طرح</a>
-                <ul class="sub-menu">
-                    <li><a href="#">تمام طراحی</a></li>
-                    <li><a href="#">طراحی گرافیک</a></li>
-                    <li><a href="#">طراحی وب سایت</a></li>
-                    <li><a href="#">ابزار طراحی</a></li>
-                    <li><a href="#">سه بعدی و انیمیشن</a></li>
-                    <li><a href="#">تجربه ی کاربر</a></li>
-                    <li><a href="#">دیگر</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">توسعه شخصی</a>
-                <ul class="sub-menu">
-                    <li><a href="#">تمام توسعه شخصی</a></li>
-                    <li><a href="#">تحول شخصی</a></li>
-                    <li><a href="#">بهره وری</a></li>
-                    <li><a href="#">رهبری</a></li>
-                    <li><a href="#">امور مالی شخصی</a></li>
-                    <li><a href="#">توسعه شغلی</a></li>
-                    <li><a href="#">والدین و روابط</a></li>
-                    <li><a href="#">خوشبختی</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">بازار یابی</a>
-                <ul class="sub-menu">
-                    <li><a href="#">تمام بازاریابی</a></li>
-                    <li><a href="#">بازاریابی دیجیتال</a></li>
-                    <li><a href="#">بهینه سازی موتور جستجو</a></li>
-                    <li><a href="#">بازاریابی از طریق رسانه های اجتماعی</a></li>
-                    <li><a href="#">نام تجاری</a></li>
-                    <li><a href="#">بازاریابی ویدئویی و موبایلی</a></li>
-                    <li><a href="#">بازاریابی وابسته</a></li>
-                    <li><a href="#">هک رشد</a></li>
-                    <li><a href="#">دیگر</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">سلامتی و تناسب اندام</a>
-                <ul class="sub-menu">
-                    <li><a href="#">همه سلامتی و تناسب اندام</a></li>
-                    <li><a href="#">تناسب اندام</a></li>
-                    <li><a href="#">ورزش ها</a></li>
-                    <li><a href="#">رژیم گرفتن</a></li>
-                    <li><a href="#">دفاع شخصی</a></li>
-                    <li><a href="#">مراقبه</a></li>
-                    <li><a href="#">سلامت روان</a></li>
-                    <li><a href="#">یوگا</a></li>
-                    <li><a href="#">رقص</a></li>
-                    <li><a href="#">دیگر</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">عکاسی</a>
-                <ul class="sub-menu">
-                    <li><a href="#">تمام عکاسی</a></li>
-                    <li><a href="#">عکاسی دیجیتال</a></li>
-                    <li><a href="#">اصول عکاسی</a></li>
-                    <li><a href="#">عکاسی تجاری</a></li>
-                    <li><a href="#">طراحی ویدئو</a></li>
-                    <li><a href="#">ابزار عکاسی</a></li>
-                    <li><a href="#">دیگر</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>{% endcomment %}
-    {% comment %}<div class="mobile-search-form">
-        <div class="d-flex align-items-center">
-            <form method="post" class="flex-grow-1 mr-3">
-                <div class="form-group mb-0">
-                    <input class="form-control form--control pl-3" type="text" name="search"
-                           placeholder="هر چیزی را جستجو کنید">
-                    <span class="la la-search search-icon"></span>
-                </div>
-            </form>
-            <div class="search-bar-close icon-element icon-element-sm shadow-sm">
-                <i class="la la-times"></i>
-            </div><!-- end off-canvas-menu-close -->
-        </div>
-    </div>{% endcomment %}
-    {% comment %}<div class="body-overlay"></div>{% endcomment %}
 </header>
