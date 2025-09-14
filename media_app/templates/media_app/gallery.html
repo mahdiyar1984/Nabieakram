@@ -1,0 +1,141 @@
+{% extends 'shared/_layout.html' %}
+{% load static %}
+
+
+{% block title %}تصاویر{% endblock %}
+
+{% block content %}
+	<section class="breadcrumb-area section-padding img-bg-2">
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between">
+                    <ul class="generic-list-item generic-list-item-white generic-list-item-arrow d-flex flex-wrap align-items-center">
+                        <li><a href="{% url 'main_app:index' %}">صفحه اصلی</a></li>
+                        <li>گالری</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    <section class="gallery-area section--padding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="section-heading text-center">
+                            <h2 class="section__title">تصاویر هیئت نبی اکرم(ص)</h2>
+                        </div>
+                        <ul class="portfolio-filter pt-40px pb-40px">
+                            <li data-filter="*" class="active">همه</li>
+                            <li data-filter=".web-design">طراحی وب سایت</li>
+                            <li data-filter=".photography">عکاسی</li>
+                            <li data-filter=".management">مدیریت</li>
+                            <li data-filter=".advertising">تبلیغات</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="generic-portfolio-list row" style="position: relative; height: 1199.94px;">
+                            <div class="generic-portfolio-item col-lg-4 all" style="position: absolute; right: 0%; top: 0px;">
+                                <div class="generic-portfolio-content">
+                                    <a class="portfolio-link" href="{% static 'images/img22.jpg' %}" data-fancybox="gallery" data-caption="Image 1">
+                                        <img src="{% static 'images/img22.jpg' %}" alt="نمونه کارها-تصویر">
+                                        <div class="icon-element icon-element-md">
+                                            <i class="la la-plus"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="generic-portfolio-item col-lg-4 web-design photography" style="position: absolute; right: 33.3317%; top: 0px;">
+                                <div class="generic-portfolio-content">
+                                    <a class="portfolio-link" href="{% static 'images/img22.jpg' %}" data-fancybox="gallery" data-caption="Image 2">
+                                        <img src="{% static 'images/img22.jpg' %}" alt="نمونه کارها-تصویر">
+                                        <div class="icon-element icon-element-md">
+                                            <i class="la la-plus"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                                <!-- end generic-portfolio-content -->
+                            </div>
+                            <div class="generic-portfolio-item col-lg-4 photography advertising" style="position: absolute; right: 66.6633%; top: 0px;">
+                                <div class="generic-portfolio-content">
+                                    <a class="portfolio-link" href="{% static 'images/img22.jpg' %}" data-fancybox="gallery" data-caption="Image 3">
+                                        <img src="{% static 'images/img22.jpg' %}" alt="نمونه کارها-تصویر">
+                                        <div class="icon-element icon-element-md">
+                                            <i class="la la-plus"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                                <!-- end generic-portfolio-content -->
+                            </div>
+                            <div class="generic-portfolio-item col-lg-4 development web-design" style="position: absolute; right: 0%; top: 399.98px;">
+                                <div class="generic-portfolio-content">
+                                    <a class="portfolio-link" href="{% static 'images/img22.jpg' %}" data-fancybox="gallery" data-caption="Image 4">
+                                        <img src="{% static 'images/img22.jpg' %}" alt="نمونه کارها-تصویر">
+                                        <div class="icon-element icon-element-md">
+                                            <i class="la la-plus"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                                <!-- end generic-portfolio-content -->
+                            </div>
+                            <div class="generic-portfolio-item col-lg-4 advertising web-design" style="position: absolute; right: 33.3317%; top: 399.98px;">
+                                <div class="generic-portfolio-content">
+                                    <a class="portfolio-link" href="{% static 'images/img22.jpg' %}" data-fancybox="gallery" data-caption="Image 5">
+                                        <img src="{% static 'images/img22.jpg' %}" alt="نمونه کارها-تصویر">
+                                        <div class="icon-element icon-element-md">
+                                            <i class="la la-plus"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                                <!-- end generic-portfolio-content -->
+                            </div>
+                            <div class="generic-portfolio-item col-lg-4 photography management" style="position: absolute; right: 66.6633%; top: 399.98px;">
+                                <div class="generic-portfolio-content">
+                                    <a class="portfolio-link" href="{% static 'images/img22.jpg' %}" data-fancybox="gallery" data-caption="Image 6">
+                                        <img src="{% static 'images/img22.jpg' %}" alt="نمونه کارها-تصویر">
+                                        <div class="icon-element icon-element-md">
+                                            <i class="la la-plus"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                                <!-- end generic-portfolio-content -->
+                            </div>
+                            <div class="generic-portfolio-item col-lg-4 development web-design" style="position: absolute; right: 0%; top: 799.96px;">
+                                <div class="generic-portfolio-content">
+                                    <a class="portfolio-link" href="{% static 'images/img22.jpg' %}" data-fancybox="gallery" data-caption="Image 7">
+                                        <img src="{% static 'images/img22.jpg' %}" alt="نمونه کارها-تصویر">
+                                        <div class="icon-element icon-element-md">
+                                            <i class="la la-plus"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                                <!-- end generic-portfolio-content -->
+                            </div>
+                            <div class="generic-portfolio-item col-lg-4 management photography advertising" style="position: absolute; right: 33.3317%; top: 799.96px;">
+                                <div class="generic-portfolio-content">
+                                    <a class="portfolio-link" href="{% static 'images/img22.jpg' %}" data-fancybox="gallery" data-caption="Image 8">
+                                        <img src="{% static 'images/img22.jpg' %}" alt="نمونه کارها-تصویر">
+                                        <div class="icon-element icon-element-md">
+                                            <i class="la la-plus"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                                <!-- end generic-portfolio-content -->
+                            </div>
+                            <div class="generic-portfolio-item col-lg-4 photography web-design" style="position: absolute; right: 66.6633%; top: 799.96px;">
+                                <div class="generic-portfolio-content">
+                                    <a class="portfolio-link" href="{% static 'images/img22.jpg' %}" data-fancybox="gallery" data-caption="Image 9">
+                                        <img src="{% static 'images/img22.jpg' %}" alt="نمونه کارها-تصویر">
+                                        <div class="icon-element icon-element-md">
+                                            <i class="la la-plus"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                                <!-- end generic-portfolio-content -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+{% endblock %}

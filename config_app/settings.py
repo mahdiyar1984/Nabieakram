@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'main_app',
     'blog_app',
     'account_app',
+    'media_app',
 
     # external app
     'django_render_partial',

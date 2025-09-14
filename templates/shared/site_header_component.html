@@ -105,11 +105,28 @@
                             <nav class="main-menu mr-auto">
                                 <ul class="d-flex mb-0">
                                     <li class="ml-3">
-                                        <a href="{% url 'main_app:index' %}" class="{% if request.resolver_match.url_name == 'main_app:index' %}active{% endif %}">صفحه اصلی</a>
+                                        <a href="{% url 'main_app:index' %}"
+                                           class="{% if request.resolver_match.url_name == 'main_app:index' %}active{% endif %}">صفحه
+                                            اصلی</a>
                                     </li>
                                     <li class="ml-3">
-                                        <a href="{% url 'blog_app:blog_list' %}" class="{% if request.resolver_match.url_name == 'blog_app:blog_list' %}active{% endif %}">وبلاگ</a>
+                                        <a href="{% url 'blog_app:blog_list' %}"
+                                           class="{% if request.resolver_match.url_name == 'blog_app:blog_list' %}active{% endif %}">وبلاگ</a>
                                     </li>
+                                    <li class="ml-3">
+                                        <a href="{% url 'main_app:about_us_page' %}">درباره ما</a>
+                                    </li>
+                                    <li class="ml-3">
+                                        <a href="{% url 'main_app:contact_us_page' %}">تماس با ما</a>
+                                    </li>
+
+                                    <li class="ml-3">
+                                        <a href="{% url 'media_app:gallery_page' %}">تصاویر</a>
+                                    </li>
+                                    <li class="ml-3">
+                                        <a href="{% url 'media_app:lecture_list_page' %}">سخنرانی ها</a>
+                                    </li>
+
                                 </ul>
                             </nav>
                             <!-- سرچ -->

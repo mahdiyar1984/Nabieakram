@@ -29,7 +29,7 @@ class SiteSetting(models.Model):
     email = models.CharField(max_length=200, null=True, blank=True, verbose_name="ایمیل")
     copy_rights = models.TextField(verbose_name="متن کپی رایت")
     about_us_text = models.TextField(verbose_name="متن درباره ما")
-    site_logo = models.ImageField(upload_to="site_logo", verbose_name="لوگو")
+    site_logo = models.ImageField(upload_to="site_logo/images/", verbose_name="لوگو")
     is_main_sitting = models.BooleanField(default=False, verbose_name="تنظیمات اصلی")
 
     class Meta:
@@ -73,7 +73,7 @@ class Slider(models.Model):
     url = models.URLField(max_length=500, verbose_name='لینک')
     url_title = models.CharField(max_length=200, verbose_name='عنوان لینک')
     description = models.TextField(verbose_name='توضیحات اسلایدر')
-    image = models.ImageField(upload_to='images/sliders', verbose_name='تصویر اسلایدر')
+    image = models.ImageField(upload_to='sliders/images', verbose_name='تصویر اسلایدر')
     is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
 
     class Meta:
