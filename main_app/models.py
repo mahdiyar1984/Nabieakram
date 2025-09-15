@@ -72,15 +72,15 @@ class ContactUs(models.Model):
 class SiteSetting(models.Model):
     objects = models.Manager()
 
-    address = models.CharField(max_length=200, verbose_name="آدرس")
+    address = models.TextField(verbose_name="آدرس")
     fax = models.CharField(max_length=200, null=True, blank=True, verbose_name="فکس")
     phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="تلفن ثابت")
     mobile = models.CharField(max_length=20, blank=True, null=True, verbose_name="موبایل")
     email = models.EmailField(max_length=200, null=True, blank=True, verbose_name="ایمیل")
 
     # موقعیت مکانی
-    latitude = models.DecimalField(max_digits=18, decimal_places=15, blank=True, null=True, verbose_name="عرض جغرافیایی")
-    longitude = models.DecimalField(max_digits=18, decimal_places=15, blank=True, null=True, verbose_name="طول جغرافیایی")
+    latitude = models.CharField(blank=True, null=True, verbose_name="عرض جغرافیایی")
+    longitude = models.CharField(blank=True, null=True, verbose_name="طول جغرافیایی")
     map_embed = models.TextField(blank=True, null=True, verbose_name="کد نقشه (iframe)")
 
     # لینک‌های مسیریاب
