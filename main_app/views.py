@@ -1,19 +1,19 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView
 from main_app.models import SiteSetting, ContactUs
-from main_app.forms import ContactUsModelForm
 
-
-def index(request):
-    return render(request, "main_app/index.html")
 
 
 def site_header_component(request):
     return render(request, 'shared/site_header_component.html')
 
-
 def site_footer_component(request):
     return render(request, 'shared/site_footer_component.html')
+
+def index(request):
+    return render(request, "main_app/index.html")
+
 
 class AboutView(TemplateView):
     template_name = 'main_app/about_page.html'
@@ -25,9 +25,10 @@ class AboutView(TemplateView):
     #     return context
 
 class ContactUsView(CreateView):
-    form_class = ContactUsModelForm
+    model = ContactUs
+    fields = []
     template_name = 'main_app/contact_us_page.html'
-    success_url = '/contact-us'
+    success_url = reverse_lazy('main_app:contact_us_page')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -35,3 +36,52 @@ class ContactUsView(CreateView):
         context['site_setting'] = setting
         return context
 
+    def get(self, request, *arg, **kwargs):
+        self.object = None
+        return self.render_to_response(self.get_context_data())
+
+    def post(self, request, *args, **kwargs):
+        full_name = request.POST.get('full_name', '').strip()
+        subject = request.POST.get('subject', '').strip()
+        email = request.POST.get('email', '').strip()
+        message = request.POST.get('message', '').strip()
+
+        # validate form
+        errors = {}
+        if not full_name:
+            errors['full_name'] = "Full name is required."
+        if not subject:
+            errors['subject'] = "Subject is required."
+        if not email:
+            errors['email'] = "Email is required."
+        if not message:
+            errors['message'] = "Message is required."
+
+        if errors:
+            self.object = None
+            return self.render_to_response(self.get_context_data(
+                errors=errors,
+                full_name=full_name,
+                subject=subject,
+                email=email,
+                message=message))
+
+        self.object = ContactUs.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            full_name=full_name,
+            subject=subject,
+            email=email,
+            message=message
+        )
+
+        return self.render_to_response(self.get_context_data(success=True))
+# class ContactUsView(CreateView):
+#     form_class = ContactUsModelForm
+#     template_name = 'main_app/contact_us_page.html'
+#     success_url = '/contact-us'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         setting: SiteSetting = SiteSetting.objects.all().first()
+#         context['site_setting'] = setting
+#         return context

@@ -99,6 +99,26 @@
                     </div>
                 </div>
             </div>
+            <!-- map -->
+            <div class="row pt-30px">
+                <div class="col-lg-12">
+                    <div class="map-container">
+                        <div id="map">{{ site_setting.map_embed|safe }}</div>
+                    </div>
+                </div>
+            </div>
+            <!-- balad & neshan -->
+            <div class="d-flex gap-3">
+                <!-- بلد -->
+                <a href="{{ site_setting.balad_link }}" target="_blank" class="social-icon">
+                    <img src="/static/images/balad.png" alt="Balad" width="40" height="40">
+                </a>
+
+                <!-- نشان -->
+                <a href="{{ site_setting.neshan_link }}" target="_blank" class="social-icon">
+                    <img src="/static/images/neshan.png" alt="Neshan" width="40" height="40">
+                </a>
+            </div>
             <!-- text -->
             <div class="col-lg-12">
                 <div class="contact-content pb-5">
@@ -117,14 +137,39 @@
                 <div class="col-lg-12">
                     <div class="card card-item">
                         <div class="card-body">
+                            {% if errors %}
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        {% for field, error in errors.items %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
                             <form method="post"
-                                  action="http://techydevs.com/demos/themes/html/aduca-demo/aduca/php/contact.php"
+                                  action="{% url 'main_app:contact_us_page' %}"
                                   class="contact-form">
                                 {% csrf_token %}
-                                <div class="alert alert-success contact-success-message" role="alert">
-                                    متشکرم! پیام شما ارسال شد
-                                </div>
+                                {% if success %}
+                                    <div class="alert alert-success contact-success-message" role="alert">
+                                        متشکرم! پیام شما ارسال شد
+                                    </div>
+                                {% endif %}
                                 {% if request.user.is_authenticated %}
+                                    <!-- full_name -->
+                                    <div class="input-box">
+                                        <div class="form-group">
+                                            <input id="subject" class="form-control form--control" type="hidden" name="full_name"
+                                                   placeholder="موضوع" value="{{ request.user.get_full_name }}"/>
+                                        </div>
+                                    </div>
+                                    <!-- email -->
+                                    <div class="input-box">
+                                        <div class="form-group">
+                                            <input id="subject" class="form-control form--control" type="hidden" name="email"
+                                                   placeholder="موضوع" value="{{ request.user.email }}"/>
+                                        </div>
+                                    </div>
                                     <!-- subject -->
                                     <div class="input-box">
                                         <label class="label-text">موضوع</label>
@@ -200,26 +245,7 @@
                 </div>
             </div>
 
-            <!-- map -->
-            <div class="row pt-30px">
-                <div class="col-lg-12">
-                    <div class="map-container">
-                        <div id="map">{{ site_setting.map_embed|safe }}</div>
-                    </div>
-                </div>
-            </div>
-            <!-- balad & neshan -->
-            <div class="d-flex gap-3">
-                <!-- بلد -->
-                <a href="{{ site_setting.balad_link }}" target="_blank" class="social-icon">
-                    <img src="/static/images/balad.png" alt="Balad" width="40" height="40">
-                </a>
 
-                <!-- نشان -->
-                <a href="{{ site_setting.neshan_link }}" target="_blank" class="social-icon">
-                    <img src="/static/images/neshan.png" alt="Neshan" width="40" height="40">
-                </a>
-            </div>
         </div>
     </section>
 {% endblock %}

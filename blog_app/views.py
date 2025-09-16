@@ -3,8 +3,6 @@ from django.db.models import Q
 from django.http import HttpRequest
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-
-from blog_app.forms import CommentForm
 from blog_app.models import Article, ArticleCategory, ArticleComment
 from django.core.paginator import Paginator
 
