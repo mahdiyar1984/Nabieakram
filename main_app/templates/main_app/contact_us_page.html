@@ -137,108 +137,74 @@
                 <div class="col-lg-12">
                     <div class="card card-item">
                         <div class="card-body">
-                            {% if errors %}
-                                <div class="alert alert-danger">
-                                    <ul>
-                                        {% for field, error in errors.items %}
-                                            <li>{{ error }}</li>
-                                        {% endfor %}
-                                    </ul>
+                            {% if messages %}
+                                <div class="mb-3">
+                                    {% for message in messages %}
+                                        <div class="alert alert-{{ message.tags }}">
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
                                 </div>
                             {% endif %}
                             <form method="post"
                                   action="{% url 'main_app:contact_us_page' %}"
                                   class="contact-form">
                                 {% csrf_token %}
-                                {% if success %}
-                                    <div class="alert alert-success contact-success-message" role="alert">
-                                        متشکرم! پیام شما ارسال شد
+
+                                {% if form.non_field_errors %}
+                                    <div class="alert alert-danger">
+                                        {{ form.non_field_errors }}
                                     </div>
                                 {% endif %}
-                                {% if request.user.is_authenticated %}
-                                    <!-- full_name -->
-                                    <div class="input-box">
-                                        <div class="form-group">
-                                            <input id="subject" class="form-control form--control" type="hidden" name="full_name"
-                                                   placeholder="موضوع" value="{{ request.user.get_full_name }}"/>
-                                        </div>
+                                <!-- full_name -->
+                                <div class="input-box">
+                                    <label class="label-text">اسم شما</label>
+                                    <div class="form-group">
+                                        {{ form.full_name }}
+                                        {% for error in form.full_name.errors %}
+                                            <div class="text-danger">{{ error }}</div>
+                                        {% endfor %}
+                                        <span class="la la-user input-icon"></span>
                                     </div>
-                                    <!-- email -->
-                                    <div class="input-box">
-                                        <div class="form-group">
-                                            <input id="subject" class="form-control form--control" type="hidden" name="email"
-                                                   placeholder="موضوع" value="{{ request.user.email }}"/>
-                                        </div>
+                                </div>
+                                <!-- email -->
+                                <div class="input-box">
+                                    <label class="label-text">آدرس ایمیل</label>
+                                    <div class="form-group">
+                                        {{ form.email }}
+                                        {% for error in form.email.errors %}
+                                            <div class="text-danger">{{ error }}</div>
+                                        {% endfor %}
+                                        <span class="la la-envelope input-icon"></span>
                                     </div>
-                                    <!-- subject -->
-                                    <div class="input-box">
-                                        <label class="label-text">موضوع</label>
-                                        <div class="form-group">
-                                            <input id="subject" class="form-control form--control" type="text" name="subject"
-                                                   placeholder="موضوع"/>
-                                            <span class="la la-envelope input-icon"></span>
-                                        </div>
+                                </div>
+                                <!-- subject -->
+                                <div class="input-box">
+                                    <label class="label-text">موضوع</label>
+                                    <div class="form-group">
+                                        {{ form.subject }}
+                                        {% for error in form.subject.errors %}
+                                            <div class="text-danger">{{ error }}</div>
+                                        {% endfor %}
+                                        <span class="la la-envelope input-icon"></span>
                                     </div>
-                                    <!-- message -->
-                                    <div class="input-box">
-                                        <label class="label-text">پیام</label>
-                                        <div class="form-group">
-                                        <textarea id="message" class="form-control form--control pl-4" name="message"
-                                                  rows="5" placeholder="پیام"></textarea>
-                                        </div>
+                                </div>
+                                <!-- message -->
+                                <div class="input-box">
+                                    <label class="label-text">پیام</label>
+                                    <div class="form-group">
+                                        {{ form.message }}
+                                        {% for error in form.message.errors %}
+                                            <div class="text-danger">{{ error }}</div>
+                                        {% endfor %}
                                     </div>
+                                </div>
 
-                                    <!-- submit -->
-                                    <div class="btn-box">
-                                        <button id="send-message-btn" class="btn theme-btn" type="submit">ارسال پیام
-                                        </button>
-                                    </div>
-                                {% else %}
-                                    <!-- name -->
-                                    <div class="input-box">
-                                        <label class="label-text">اسم شما</label>
-                                        <div class="form-group">
-                                            <input id="name" class="form-control form--control" type="text" name="full_name"
-                                                   placeholder="اسم شما"/>
-                                            <span class="la la-user input-icon"></span>
-                                        </div>
-                                    </div>
-
-                                    <!-- email -->
-                                    <div class="input-box">
-                                        <label class="label-text">آدرس ایمیل</label>
-                                        <div class="form-group">
-                                            <input id="email" class="form-control form--control" type="email" name="email"
-                                                   placeholder="آدرس ایمیل"/>
-                                            <span class="la la-envelope input-icon"></span>
-                                        </div>
-                                    </div>
-
-                                    <!-- subject -->
-                                    <div class="input-box">
-                                        <label class="label-text">موضوع</label>
-                                        <div class="form-group">
-                                            <input id="subject" class="form-control form--control" type="text" name="subject"
-                                                   placeholder="موضوع"/>
-                                            <span class="la la-envelope input-icon"></span>
-                                        </div>
-                                    </div>
-
-                                    <!-- message -->
-                                    <div class="input-box">
-                                        <label class="label-text">پیام</label>
-                                        <div class="form-group">
-                                        <textarea id="message" class="form-control form--control pl-4" name="message"
-                                                  rows="5" placeholder="پیام"></textarea>
-                                        </div>
-                                    </div>
-
-                                    <!-- submit -->
-                                    <div class="btn-box">
-                                        <button id="send-message-btn" class="btn theme-btn" type="submit">ارسال پیام
-                                        </button>
-                                    </div>
-                                {% endif %}
+                                <!-- submit -->
+                                <div class="btn-box">
+                                    <button id="send-message-btn" class="btn theme-btn" type="submit">ارسال پیام
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>
