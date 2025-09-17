@@ -151,11 +151,6 @@
                                   class="contact-form">
                                 {% csrf_token %}
 
-                                {% if form.non_field_errors %}
-                                    <div class="alert alert-danger">
-                                        {{ form.non_field_errors }}
-                                    </div>
-                                {% endif %}
                                 <!-- full_name -->
                                 <div class="input-box">
                                     <label class="label-text">اسم شما</label>
