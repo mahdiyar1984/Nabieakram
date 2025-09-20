@@ -36,12 +36,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
 
     # internal app
     'main_app',
     'blog_app',
     'account_app',
     'media_app',
+    'templatetags_app',
 
     # external app
     'django_render_partial',

@@ -1,13 +1,18 @@
+{% load shamsi_tags %}
 <div class="card card-item">
     <div class="card-body">
         <h3 class="card-title fs-18 pb-2">آرشیوها</h3>
         <div class="divider"><span></span></div>
         <ul class="generic-list-item">
-
-            {% for article in articles %}
-                <li><a href="{% url 'blog_app:blog_list' %}?archive={{ article.create_date.month }}">{{ article.create_date.date }}</a></li>
+            {% for article in articles|dictsort:"create_date.month" %}
+                {% ifchanged article.create_date.month %}
+                    <li>
+                        <a href="{% url 'blog_app:blog_list' %}?archive={{ article.create_date.month }}">
+                            {{ article.create_date.month|to_persian_month }}
+                        </a>
+                    </li>
+                {% endifchanged %}
             {% endfor %}
-
         </ul>
     </div>
 </div>

@@ -1,6 +1,8 @@
 {% extends 'shared/_layout.html' %}
 {% load render_partial %}
 {% load static %}
+{% load shamsi_tags %}
+{% load humanize %}
 
 
 {% block title %}{% endblock %}
@@ -19,7 +21,7 @@
                 <ul class="generic-list-item generic-list-item-bullet generic-list-item--bullet d-flex align-items-center flex-wrap fs-14 pt-2">
                     <li class="d-flex align-items-center">توسط: <a href="#">&nbsp;{{ article.author.get_full_name }}</a>
                     </li>
-                    <li class="d-flex align-items-center">{{ article.create_date }}</li>
+                    <li class="d-flex align-items-center">{{ article.create_date|to_shamsi }}</li>
                     <li class="d-flex align-items-center"><a href="#comments"
                                                              class="page-scroll">{{ article.articlecomment_set.all.count }}
                         نظر</a></li>
@@ -131,7 +133,7 @@
                                         </div>
                                         <div class="media-body">
                                             <h5 class="pb-2">{{ comment.user.get_full_name }}</h5>
-                                            <span class="d-block lh-18 pb-2">یک ماه قبل</span>
+                                            <span class="d-block lh-18 pb-2">{{ article.create_date|timeago }}</span>
                                             <p class="pb-3">{{ comment.text }}</p>
                                             <div class="helpful-action d-flex align-items-center justify-content-between">
                                                 <a href="#" onclick="setParentId({{ comment.id }}); return false;"
@@ -150,7 +152,7 @@
                                                 </div>
                                                 <div class="media-body">
                                                     <h5 class="pb-2">{{ reply.user.get_full_name }}</h5>
-                                                    <span class="d-block lh-18 pb-2">1 ماه پیش</span>
+                                                    <span class="d-block lh-18 pb-2">{{ reply.create_date|timeago }}</span>
                                                     <p class="pb-3">{{ reply.text }}</p>
 
                                                 </div>

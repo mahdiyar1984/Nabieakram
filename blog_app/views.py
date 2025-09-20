@@ -1,3 +1,4 @@
+import jdatetime
 from django.db.models import QuerySet
 from django.db.models import Q
 from django.http import HttpRequest
@@ -23,6 +24,7 @@ class BlogListView(View):
 
         if request.GET.get('tag'):
             articles: QuerySet[Article] = articles.filter(selected_tags__title=request.GET.get('tag'))
+
 
 
         paginator = Paginator(articles, 6)

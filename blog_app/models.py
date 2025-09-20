@@ -63,6 +63,7 @@ class Article(models.Model):
         verbose_name = 'مقاله'
         verbose_name_plural = 'مقالات'
 
+
 class ArticleComment(models.Model):
     objects = models.Manager()
     article = models.ForeignKey(Article,
