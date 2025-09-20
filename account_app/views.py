@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -88,27 +89,27 @@ class LoginView(View):
         return render(request, template_name='account_app/users_authentication/login.html')
 
     def post(self, request):
-        email = request.POST.get('email')
+        email_or_admin = request.POST.get('email_or_admin')
         password = request.POST.get('password')
 
-        if not email or not password:
+        if not email_or_admin or not password:
             messages.error(request, 'لطفاً همه فیلدها را پر کنید')
             return redirect('account_app:login_page')
 
-        user = User.objects.get(email=email)
-        if user is not None:
-            if not user.is_active:
-                messages.error(request, 'حساب کاربری شما فعال نشده است')
-                return redirect('account_app:login_page')
-            else:
-                is_password_match: bool = user.check_password(password)
-                if is_password_match:
-                    login(request, user)
-                    return redirect('main_app:index')
-                else:
-                    messages.error(request, 'کلمه عبور اشتباه است')
-        else:
+        user = User.objects.filter(Q(email=email_or_admin) | Q(username=email_or_admin)).first()  # <- امن‌تر از get()
+        if user is None:
             messages.error(request, 'کاربری با مشخصات وارد شده یافت نشد')
+            return redirect('account_app:login_page')
+
+        if not user.is_active:
+            messages.error(request, 'حساب کاربری شما فعال نشده است')
+            return redirect('account_app:login_page')
+
+        if user.check_password(password):
+            login(request, user)
+            return redirect('main_app:index')
+        else:
+            messages.error(request, 'کلمه عبور اشتباه است')
             return redirect('account_app:login_page')
 
 

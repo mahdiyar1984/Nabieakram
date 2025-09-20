@@ -17,50 +17,11 @@
     </section>
     <section class="course-area section--padding">
         <div class="container">
-            <div class="filter-bar mb-4">
-                <div class="filter-bar-inner d-flex flex-wrap align-items-center justify-content-between">
-                    <p class="fs-14">ما <span class="text-black">56</span> دوره برای شما پیدا کردیم</p>
-                    <div class="d-flex flex-wrap align-items-center">
-                        <ul class="filter-nav mr-3">
-                            <li>
-                                <a href="course-grid.html" data-toggle="tooltip" data-placement="top" title=""
-                                   class="active" data-original-title="نمای شبکه"><span
-                                        class="la la-th-large"></span></a>
-                            </li>
-                            <li>
-                                <a href="course-list.html" data-toggle="tooltip" data-placement="top" title=""
-                                   data-original-title="نمایش لیست"><span class="la la-list"></span></a>
-                            </li>
-                        </ul>
-                        <div class="select-container select--container">
-                            <div class="dropdown bootstrap-select select-container-select">
-                                <select class="select-container-select" tabindex="-98">
-                                    <option value="all-category">همه دسته</option>
-                                    <option value="newest">جدیدترین دوره ها</option>
-                                    <option value="oldest">قدیمی ترین دوره ها</option>
-                                    <option value="high-rated">بالاترین امتیاز</option>
-                                    <option value="popular-courses">دوره های محبوب</option>
-                                    <option value="high-to-low">قیمت: بالا به پایین</option>
-                                    <option value="low-to-high">قیمت: کم به بالا</option>
-                                </select>
-                                <div class="dropdown-menu ">
-                                    <div class="bs-searchbox"><input type="search" class="form-control"
-                                                                     autocomplete="off" placeholder="جستجو"
-                                                                     role="combobox" aria-label="Search"
-                                                                     aria-controls="bs-select-1"
-                                                                     aria-autocomplete="list"></div>
-                                    <div class="inner show" role="listbox" id="bs-select-1" tabindex="-1">
-                                        <ul class="dropdown-menu inner show" role="presentation"></ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="row">
+                <!-- sidebar -->
                 <div class="col-lg-4">
                     <div class="sidebar mb-5">
+                        <!-- search -->
                         <div class="card card-item">
                             <div class="card-body">
                                 <h3 class="card-title fs-18 pb-2">فیلد جستجو</h3>
@@ -74,6 +35,8 @@
                                 </form>
                             </div>
                         </div>
+
+                        <!-- ranking -->
                         <div class="card card-item">
                             <div class="card-body">
                                 <h3 class="card-title fs-18 pb-2">رتبه بندی ها</h3>
@@ -160,6 +123,8 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!--  category -->
                         <div class="card card-item">
                             <div class="card-body">
                                 <h3 class="card-title fs-18 pb-2">دسته بندی ها</h3>
@@ -244,6 +209,8 @@
                                 </a>
                             </div>
                         </div>
+
+                        <!-- video duration -->
                         <div class="card card-item">
                             <div class="card-body">
                                 <h3 class="card-title fs-18 pb-2">مدت زمان ویدیو</h3>
@@ -282,6 +249,8 @@
                                 <!-- end custom-control -->
                             </div>
                         </div>
+
+                        <!-- level -->
                         <div class="card card-item">
                             <div class="card-body">
                                 <h3 class="card-title fs-18 pb-2">مرحله</h3>
@@ -316,6 +285,8 @@
                                 <!-- end custom-control -->
                             </div>
                         </div>
+
+                        <!-- language -->
                         <div class="card card-item">
                             <div class="card-body">
                                 <h3 class="card-title fs-18 pb-2">زبان</h3>
@@ -401,6 +372,8 @@
                                 </a>
                             </div>
                         </div>
+
+                        <!-- cost -->
                         <div class="card card-item">
                             <div class="card-body">
                                 <h3 class="card-title fs-18 pb-2">بر اساس هزینه</h3>
@@ -428,6 +401,8 @@
                                 <!-- end custom-control -->
                             </div>
                         </div>
+
+                        <!-- master -->
                         <div class="card card-item">
                             <div class="card-body">
                                 <h3 class="card-title fs-18 pb-2">مربیان</h3>
@@ -526,6 +501,7 @@
                                 </a>
                             </div>
                         </div>
+                        <!-- service -->
                         <div class="card card-item">
                             <div class="card-body">
                                 <h3 class="card-title fs-18 pb-2">امکانات</h3>
@@ -565,442 +541,246 @@
                             </div>
                         </div>
                     </div>
+                    <!-- end sidebar -->
                 </div>
+
+                <!-- lectures -->
                 <div class="col-lg-8">
-                    <div class="row">
-                        <div class="col-lg-6 responsive-column-half">
-                            <div class="card card-item card-preview tooltipstered"
-                                 data-tooltip-content="#tooltip_content_1">
-                                <div class="card-image">
-                                    <a href="course-details.html" class="d-block">
-                                        <img class="card-img-top lazy" src="{% static 'images/img8.jpg' %}"
-                                             alt="درپوش تصویر کارت" style="">
-                                    </a>
+                    {% for lecture in lectures %}
+                        <div class="card card-item card-preview card-item-list-layout">
+                            <!-- image -->
+                            <div class="card-image">
+                                <a href="{% url 'media_app:lecture_detail_page' pk=lecture.id %}" class="d-block">
+                                    <img class="card-img-top lazy" src="{{ lecture.image.url }}"
+                                         alt="درپوش تصویر کارت" style="">
                                     <div class="course-badge-labels">
-                                        <div class="course-badge">کتاب پرفروش</div>
-                                        <div class="course-badge blue">-39٪</div>
+                                        <div class="course-badge">{{ lecture.created_date }}</div>
                                     </div>
-                                </div>
-                                <!-- end card-image -->
-                                <div class="card-body">
-                                    <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">همه مراحل</h6>
-                                    <h5 class="card-title"><a href="course-details.html">دوره تحلیلگر هوش تجاری 1400</a>
-                                    </h5>
-                                    <p class="card-text"><a href="teacher-detail.html">خوزه پورتیلا</a></p>
-                                    <div class="rating-wrap d-flex align-items-center py-2">
-                                        <div class="review-stars">
-                                            <span class="rating-number">4.4</span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star-o"></span>
-                                        </div>
-                                        <span class="rating-total pl-1">(20230)</span>
-                                    </div>
-                                    <!-- end rating-wrap -->
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="card-price text-black font-weight-bold">12.99 <span
-                                                class="before-price font-weight-medium">129.99</span></p>
-                                        <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
-                                             title="به لیست علاقه مندی ها اضافه کنید"><i class="la la-heart-o"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end card-body -->
+                                </a>
+
                             </div>
-                            <!-- end card -->
-                        </div>
-                        <!-- end col-lg-6 -->
-                        <div class="col-lg-6 responsive-column-half">
-                            <div class="card card-item card-preview tooltipstered"
-                                 data-tooltip-content="#tooltip_content_1">
-                                <div class="card-image">
-                                    <a href="course-details.html" class="d-block">
-                                        <img class="card-img-top lazy" src="{% static 'images/img9.jpg' %}"
-                                             alt="درپوش تصویر کارت" style="">
-                                    </a>
-                                    <div class="course-badge-labels">
-                                        <div class="course-badge red">ویژه</div>
-                                    </div>
-                                </div>
-                                <!-- end card-image -->
-                                <div class="card-body">
-                                    <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">همه مراحل</h6>
-                                    <h5 class="card-title"><a href="course-details.html">دوره تحلیلگر هوش تجاری 1400</a>
-                                    </h5>
-                                    <p class="card-text"><a href="teacher-detail.html">خوزه پورتیلا</a></p>
-                                    <div class="rating-wrap d-flex align-items-center py-2">
-                                        <div class="review-stars">
-                                            <span class="rating-number">4.4</span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star-o"></span>
-                                        </div>
-                                        <span class="rating-total pl-1">(20230)</span>
-                                    </div>
-                                    <!-- end rating-wrap -->
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="card-price text-black font-weight-bold">129.99</p>
-                                        <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
-                                             title="به لیست علاقه مندی ها اضافه کنید"><i class="la la-heart-o"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end card-body -->
-                            </div>
-                            <!-- end card -->
-                        </div>
-                        <!-- end col-lg-6 -->
-                        <div class="col-lg-6 responsive-column-half">
-                            <div class="card card-item card-preview tooltipstered"
-                                 data-tooltip-content="#tooltip_content_1">
-                                <div class="card-image">
-                                    <a href="course-details.html" class="d-block">
-                                        <img class="card-img-top lazy" src="{% static 'images/img10.jpg' %}"
-                                             alt="درپوش تصویر کارت" style="">
+                            <!-- body -->
+                            <div class="card-body">
+                                <h5 class="card-title"><a href="{% url 'media_app:lecture_detail_page' pk=lecture.id %}">{{ lecture.title }}</a></h5>
+                                <ul class="generic-list-item generic-list-item-bullet generic-list-item--bullet d-flex align-items-center flex-wrap fs-14 pt-2">
+                                    <li class="d-flex align-items-center">توسط: {{ lecture.author.get_full_name }}<a
+                                            href="#">&nbsp;</a></li>
+                                    <li class="d-flex align-items-center"><a href="#">0 نظر</a></li>
+                                </ul>
+                                <div class="d-flex justify-content-end align-items-center pt-3">
+                                    <a href="{% url 'media_app:lecture_detail_page' pk=lecture.id %}" class="btn theme-btn theme-btn-sm theme-btn-white">
+                                        ادامه مطلب
+                                        <i class="la la-arrow-left icon ml-1"></i>
                                     </a>
                                 </div>
-                                <!-- end card-image -->
-                                <div class="card-body">
-                                    <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">همه مراحل</h6>
-                                    <h5 class="card-title"><a href="course-details.html">دوره تحلیلگر هوش تجاری 1400</a>
-                                    </h5>
-                                    <p class="card-text"><a href="teacher-detail.html">خوزه پورتیلا</a></p>
-                                    <div class="rating-wrap d-flex align-items-center py-2">
-                                        <div class="review-stars">
-                                            <span class="rating-number">4.4</span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star-o"></span>
-                                        </div>
-                                        <span class="rating-total pl-1">(20230)</span>
-                                    </div>
-                                    <!-- end rating-wrap -->
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="card-price text-black font-weight-bold">129.99</p>
-                                        <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
-                                             title="به لیست علاقه مندی ها اضافه کنید"><i class="la la-heart-o"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end card-body -->
                             </div>
-                            <!-- end card -->
+
                         </div>
-                        <!-- end col-lg-6 -->
-                        <div class="col-lg-6 responsive-column-half">
-                            <div class="card card-item card-preview tooltipstered"
-                                 data-tooltip-content="#tooltip_content_1">
-                                <div class="card-image">
-                                    <a href="course-details.html" class="d-block">
-                                        <img class="card-img-top lazy" src="{% static 'images/img11.jpg' %}"
-                                             alt="درپوش تصویر کارت" style="">
-                                    </a>
-                                </div>
-                                <!-- end card-image -->
-                                <div class="card-body">
-                                    <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">همه مراحل</h6>
-                                    <h5 class="card-title"><a href="course-details.html">دوره تحلیلگر هوش تجاری 1400</a>
-                                    </h5>
-                                    <p class="card-text"><a href="teacher-detail.html">خوزه پورتیلا</a></p>
-                                    <div class="rating-wrap d-flex align-items-center py-2">
-                                        <div class="review-stars">
-                                            <span class="rating-number">4.4</span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star-o"></span>
-                                        </div>
-                                        <span class="rating-total pl-1">(20230)</span>
-                                    </div>
-                                    <!-- end rating-wrap -->
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="card-price text-black font-weight-bold">129.99</p>
-                                        <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
-                                             title="به لیست علاقه مندی ها اضافه کنید"><i class="la la-heart-o"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end card-body -->
+                    {% endfor %}
+
+                    {% comment %}<div class="card card-item card-preview card-item-list-layout">
+                        <div class="card-image">
+                            <a href="course-details.html" class="d-block">
+                                <img class="card-img-top lazy" src="{% static 'images/img8.jpg' %}"
+                                     alt="درپوش تصویر کارت" style="">
+                            </a>
+                            <div class="course-badge-labels">
+                                <div class="course-badge">کتاب پرفروش</div>
+                                <div class="course-badge blue">-39٪</div>
                             </div>
-                            <!-- end card -->
                         </div>
-                        <!-- end col-lg-6 -->
-                        <div class="col-lg-6 responsive-column-half">
-                            <div class="card card-item card-preview tooltipstered"
-                                 data-tooltip-content="#tooltip_content_1">
-                                <div class="card-image">
-                                    <a href="course-details.html" class="d-block">
-                                        <img class="card-img-top lazy" src="{% static 'images/img12.jpg' %}"
-                                             alt="درپوش تصویر کارت" style="">
-                                    </a>
-                                    <div class="course-badge-labels">
-                                        <div class="course-badge green">رایگان</div>
-                                    </div>
+                        <!-- end card-image -->
+                        <div class="card-body">
+                            <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">همه مراحل</h6>
+                            <h5 class="card-title"><a href="course-details.html">دوره تحلیلگر هوش تجاری 1400</a></h5>
+                            <p class="card-text"><a href="teacher-detail.html">خوزه پورتیلا</a></p>
+                            <div class="rating-wrap d-flex align-items-center py-2">
+                                <div class="review-stars">
+                                    <span class="rating-number">4.4</span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star-o"></span>
                                 </div>
-                                <!-- end card-image -->
-                                <div class="card-body">
-                                    <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">همه مراحل</h6>
-                                    <h5 class="card-title"><a href="course-details.html">دوره تحلیلگر هوش تجاری 1400</a>
-                                    </h5>
-                                    <p class="card-text"><a href="teacher-detail.html">خوزه پورتیلا</a></p>
-                                    <div class="rating-wrap d-flex align-items-center py-2">
-                                        <div class="review-stars">
-                                            <span class="rating-number">4.4</span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star-o"></span>
-                                        </div>
-                                        <span class="rating-total pl-1">(20230)</span>
-                                    </div>
-                                    <!-- end rating-wrap -->
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="card-price text-black font-weight-bold">رایگان</p>
-                                        <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
-                                             title="به لیست علاقه مندی ها اضافه کنید"><i class="la la-heart-o"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end card-body -->
+                                <span class="rating-total pl-1">(20230)</span>
                             </div>
-                            <!-- end card -->
-                        </div>
-                        <!-- end col-lg-6 -->
-                        <div class="col-lg-6 responsive-column-half">
-                            <div class="card card-item card-preview tooltipstered"
-                                 data-tooltip-content="#tooltip_content_1">
-                                <div class="card-image">
-                                    <a href="course-details.html" class="d-block">
-                                        <img class="card-img-top lazy" src="{% static 'images/img13.jpg' %}"
-                                             alt="درپوش تصویر کارت" style="">
-                                    </a>
-                                    <div class="course-badge-labels">
-                                        <div class="course-badge sky-blue">بالاترین امتیاز</div>
-                                    </div>
-                                </div>
-                                <!-- end card-image -->
-                                <div class="card-body">
-                                    <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">همه مراحل</h6>
-                                    <h5 class="card-title"><a href="course-details.html">دوره تحلیلگر هوش تجاری 1400</a>
-                                    </h5>
-                                    <p class="card-text"><a href="teacher-detail.html">خوزه پورتیلا</a></p>
-                                    <div class="rating-wrap d-flex align-items-center py-2">
-                                        <div class="review-stars">
-                                            <span class="rating-number">4.4</span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star-o"></span>
-                                        </div>
-                                        <span class="rating-total pl-1">(20230)</span>
-                                    </div>
-                                    <!-- end rating-wrap -->
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="card-price text-black font-weight-bold">129.99</p>
-                                        <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
-                                             title="به لیست علاقه مندی ها اضافه کنید"><i class="la la-heart-o"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end card-body -->
+                            <!-- end rating-wrap -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p class="card-price text-black font-weight-bold">12.99 <span
+                                        class="before-price font-weight-medium">129.99</span></p>
+                                <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
+                                     title="به لیست علاقه مندی ها اضافه کنید"><i class="la la-heart-o"></i></div>
                             </div>
-                            <!-- end card -->
                         </div>
-                        <!-- end col-lg-6 -->
-                        <div class="col-lg-6 responsive-column-half">
-                            <div class="card card-item card-preview tooltipstered"
-                                 data-tooltip-content="#tooltip_content_1">
-                                <div class="card-image">
-                                    <a href="course-details.html" class="d-block">
-                                        <img class="card-img-top lazy" src="{% static 'images/img-loading.png' %}"
-                                             data-src="{% static 'images/img10.jpg' %}" alt="درپوش تصویر کارت">
-                                    </a>
-                                </div>
-                                <!-- end card-image -->
-                                <div class="card-body">
-                                    <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">همه مراحل</h6>
-                                    <h5 class="card-title"><a href="course-details.html">دوره تحلیلگر هوش تجاری 1400</a>
-                                    </h5>
-                                    <p class="card-text"><a href="teacher-detail.html">خوزه پورتیلا</a></p>
-                                    <div class="rating-wrap d-flex align-items-center py-2">
-                                        <div class="review-stars">
-                                            <span class="rating-number">4.4</span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star-o"></span>
-                                        </div>
-                                        <span class="rating-total pl-1">(20230)</span>
-                                    </div>
-                                    <!-- end rating-wrap -->
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="card-price text-black font-weight-bold">129.99</p>
-                                        <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
-                                             title="به لیست علاقه مندی ها اضافه کنید"><i class="la la-heart-o"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end card-body -->
-                            </div>
-                            <!-- end card -->
-                        </div>
-                        <!-- end col-lg-6 -->
-                        <div class="col-lg-6 responsive-column-half">
-                            <div class="card card-item card-preview tooltipstered"
-                                 data-tooltip-content="#tooltip_content_1">
-                                <div class="card-image">
-                                    <a href="course-details.html" class="d-block">
-                                        <img class="card-img-top lazy" src="{% static 'images/img-loading.png' %}"
-                                             data-src="{% static 'images/img11.jpg' %}" alt="درپوش تصویر کارت">
-                                    </a>
-                                </div>
-                                <!-- end card-image -->
-                                <div class="card-body">
-                                    <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">همه مراحل</h6>
-                                    <h5 class="card-title"><a href="course-details.html">دوره تحلیلگر هوش تجاری 1400</a>
-                                    </h5>
-                                    <p class="card-text"><a href="teacher-detail.html">خوزه پورتیلا</a></p>
-                                    <div class="rating-wrap d-flex align-items-center py-2">
-                                        <div class="review-stars">
-                                            <span class="rating-number">4.4</span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star-o"></span>
-                                        </div>
-                                        <span class="rating-total pl-1">(20230)</span>
-                                    </div>
-                                    <!-- end rating-wrap -->
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="card-price text-black font-weight-bold">129.99</p>
-                                        <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
-                                             title="به لیست علاقه مندی ها اضافه کنید"><i class="la la-heart-o"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end card-body -->
-                            </div>
-                            <!-- end card -->
-                        </div>
-                        <!-- end col-lg-6 -->
-                        <div class="col-lg-6 responsive-column-half">
-                            <div class="card card-item card-preview tooltipstered"
-                                 data-tooltip-content="#tooltip_content_1">
-                                <div class="card-image">
-                                    <a href="course-details.html" class="d-block">
-                                        <img class="card-img-top lazy" src="{% static 'images/img-loading.png' %}"
-                                             data-src="{% static 'images/img12.jpg' %}" alt="درپوش تصویر کارت">
-                                    </a>
-                                    <div class="course-badge-labels">
-                                        <div class="course-badge green">رایگان</div>
-                                    </div>
-                                </div>
-                                <!-- end card-image -->
-                                <div class="card-body">
-                                    <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">همه مراحل</h6>
-                                    <h5 class="card-title"><a href="course-details.html">دوره تحلیلگر هوش تجاری 1400</a>
-                                    </h5>
-                                    <p class="card-text"><a href="teacher-detail.html">خوزه پورتیلا</a></p>
-                                    <div class="rating-wrap d-flex align-items-center py-2">
-                                        <div class="review-stars">
-                                            <span class="rating-number">4.4</span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star-o"></span>
-                                        </div>
-                                        <span class="rating-total pl-1">(20230)</span>
-                                    </div>
-                                    <!-- end rating-wrap -->
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="card-price text-black font-weight-bold">رایگان</p>
-                                        <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
-                                             title="به لیست علاقه مندی ها اضافه کنید"><i class="la la-heart-o"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end card-body -->
-                            </div>
-                            <!-- end card -->
-                        </div>
-                        <!-- end col-lg-6 -->
-                        <div class="col-lg-6 responsive-column-half">
-                            <div class="card card-item card-preview tooltipstered"
-                                 data-tooltip-content="#tooltip_content_1">
-                                <div class="card-image">
-                                    <a href="course-details.html" class="d-block">
-                                        <img class="card-img-top lazy" src="{% static 'images/img-loading.png' %}"
-                                             data-src="{% static 'images/img13.jpg' %}" alt="درپوش تصویر کارت">
-                                    </a>
-                                    <div class="course-badge-labels">
-                                        <div class="course-badge sky-blue">بالاترین امتیاز</div>
-                                    </div>
-                                </div>
-                                <!-- end card-image -->
-                                <div class="card-body">
-                                    <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">همه مراحل</h6>
-                                    <h5 class="card-title"><a href="course-details.html">دوره تحلیلگر هوش تجاری 1400</a>
-                                    </h5>
-                                    <p class="card-text"><a href="teacher-detail.html">خوزه پورتیلا</a></p>
-                                    <div class="rating-wrap d-flex align-items-center py-2">
-                                        <div class="review-stars">
-                                            <span class="rating-number">4.4</span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star-o"></span>
-                                        </div>
-                                        <span class="rating-total pl-1">(20230)</span>
-                                    </div>
-                                    <!-- end rating-wrap -->
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="card-price text-black font-weight-bold">129.99</p>
-                                        <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
-                                             title="به لیست علاقه مندی ها اضافه کنید"><i class="la la-heart-o"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- end card-body -->
-                            </div>
-                            <!-- end card -->
-                        </div>
-                        <!-- end col-lg-6 -->
+                        <!-- end card-body -->
                     </div>
-                    <div class="text-center pt-3">
-                        <nav aria-label="مثال ناوبری صفحه" class="pagination-box">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="قبلی">
-                                        <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
-                                        <span class="sr-only">قبلی</span>
-                                    </a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="بعد">
-                                        <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
-                                        <span class="sr-only">بعد</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                        <p class="fs-14 pt-2">نمایش 1-10 از 56 نتیجه</p>
+                    <div class="card card-item card-preview card-item-list-layout">
+                        <div class="card-image">
+                            <a href="course-details.html" class="d-block">
+                                <img class="card-img-top lazy" src="{% static 'images/img8.jpg' %}"
+                                     alt="درپوش تصویر کارت" style="">
+                            </a>
+                            <div class="course-badge-labels">
+                                <div class="course-badge">کتاب پرفروش</div>
+                                <div class="course-badge blue">-39٪</div>
+                            </div>
+                        </div>
+                        <!-- end card-image -->
+                        <div class="card-body">
+                            <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">همه مراحل</h6>
+                            <h5 class="card-title"><a href="course-details.html">دوره تحلیلگر هوش تجاری 1400</a></h5>
+                            <p class="card-text"><a href="teacher-detail.html">خوزه پورتیلا</a></p>
+                            <div class="rating-wrap d-flex align-items-center py-2">
+                                <div class="review-stars">
+                                    <span class="rating-number">4.4</span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star-o"></span>
+                                </div>
+                                <span class="rating-total pl-1">(20230)</span>
+                            </div>
+                            <!-- end rating-wrap -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p class="card-price text-black font-weight-bold">12.99 <span
+                                        class="before-price font-weight-medium">129.99</span></p>
+                                <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
+                                     title="به لیست علاقه مندی ها اضافه کنید"><i class="la la-heart-o"></i></div>
+                            </div>
+                        </div>
+                        <!-- end card-body -->
                     </div>
+                    <div class="card card-item card-preview card-item-list-layout">
+                        <div class="card-image">
+                            <a href="course-details.html" class="d-block">
+                                <img class="card-img-top lazy" src="{% static 'images/img8.jpg' %}"
+                                     alt="درپوش تصویر کارت" style="">
+                            </a>
+                            <div class="course-badge-labels">
+                                <div class="course-badge">کتاب پرفروش</div>
+                                <div class="course-badge blue">-39٪</div>
+                            </div>
+                        </div>
+                        <!-- end card-image -->
+                        <div class="card-body">
+                            <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">همه مراحل</h6>
+                            <h5 class="card-title"><a href="course-details.html">دوره تحلیلگر هوش تجاری 1400</a></h5>
+                            <p class="card-text"><a href="teacher-detail.html">خوزه پورتیلا</a></p>
+                            <div class="rating-wrap d-flex align-items-center py-2">
+                                <div class="review-stars">
+                                    <span class="rating-number">4.4</span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star-o"></span>
+                                </div>
+                                <span class="rating-total pl-1">(20230)</span>
+                            </div>
+                            <!-- end rating-wrap -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p class="card-price text-black font-weight-bold">12.99 <span
+                                        class="before-price font-weight-medium">129.99</span></p>
+                                <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
+                                     title="به لیست علاقه مندی ها اضافه کنید"><i class="la la-heart-o"></i></div>
+                            </div>
+                        </div>
+                        <!-- end card-body -->
+                    </div>
+                    <div class="card card-item card-preview card-item-list-layout">
+                        <div class="card-image">
+                            <a href="course-details.html" class="d-block">
+                                <img class="card-img-top lazy" src="{% static 'images/img8.jpg' %}"
+                                     alt="درپوش تصویر کارت" style="">
+                            </a>
+                            <div class="course-badge-labels">
+                                <div class="course-badge">کتاب پرفروش</div>
+                                <div class="course-badge blue">-39٪</div>
+                            </div>
+                        </div>
+                        <!-- end card-image -->
+                        <div class="card-body">
+                            <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">همه مراحل</h6>
+                            <h5 class="card-title"><a href="course-details.html">دوره تحلیلگر هوش تجاری 1400</a></h5>
+                            <p class="card-text"><a href="teacher-detail.html">خوزه پورتیلا</a></p>
+                            <div class="rating-wrap d-flex align-items-center py-2">
+                                <div class="review-stars">
+                                    <span class="rating-number">4.4</span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star"></span>
+                                    <span class="la la-star-o"></span>
+                                </div>
+                                <span class="rating-total pl-1">(20230)</span>
+                            </div>
+                            <!-- end rating-wrap -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p class="card-price text-black font-weight-bold">12.99 <span
+                                        class="before-price font-weight-medium">129.99</span></p>
+                                <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
+                                     title="به لیست علاقه مندی ها اضافه کنید"><i class="la la-heart-o"></i></div>
+                            </div>
+                        </div>
+                        <!-- end card-body -->
+                    </div>{% endcomment %}
+
+                    {% if is_paginated %}
+                        <div class="text-center pt-3">
+                            <nav aria-label="مثال ناوبری صفحه" class="pagination-box">
+                                <ul class="pagination justify-content-center">
+                                    {% if page_obj.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}"
+                                               aria-label="قبلی">
+                                                <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
+                                                <span class="sr-only">قبلی</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" aria-label="قبلی">
+                                                <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
+                                                <span class="sr-only">قبلی</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
+                                    {% for num in paginator.page_range %}
+                                        {% if page_obj.number == num %}
+                                            <li class="page-item active"><a class="page-link" href="#">{{ num }}</a>
+                                            </li>
+                                        {% elif num > page_obj.number|add:-3 and num < page_obj.number|add:3 %}
+                                            <li class="page-item"><a class="page-link"
+                                                                            href="?page={{ num }}">{{ num }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if page_obj.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="بعد">
+                                                <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
+                                                <span class="sr-only">بعد</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link disabled" href="#" aria-label="بعد">
+                                                <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
+                                                <span class="sr-only">بعد</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
+                                </ul>
+                            </nav>
+                            <p class="fs-14 pt-2">نمایش 1-10 از 56 نتیجه</p>
+                        </div>
+                    {% endif %}
+
+
                 </div>
             </div>
         </div>

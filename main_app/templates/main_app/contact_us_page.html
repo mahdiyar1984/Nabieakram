@@ -1,4 +1,5 @@
 {% extends 'shared/_layout.html' %}
+{% load static %}
 {% block title %}
     تماس با ما
 {% endblock %}
@@ -99,33 +100,45 @@
                     </div>
                 </div>
             </div>
+            <!-- balad & neshan -->
+            <div class="row pt-3">
+                <div class="col-lg-12">
+                    <div class="row text-center">
+                        <!-- Box Neshan -->
+                        <div class="col-md-6 mb-3">
+                            <a href="{{ site_setting.neshan_link }}" target="_blank"
+                               class="d-flex align-items-center justify-content-center p-3 border rounded shadow-sm h-100">
+                                <span class="fw-bold fs-5 mx-auto">نبی اکرم در نشان</span>
+                                <img src="{% static 'images/neshan.png' %}" alt="نشان" style="width:48px;height:48px;" class="ms-2">
+
+                            </a>
+                        </div>
+                        <!-- Box Balad -->
+                        <div class="col-md-6 mb-3">
+                            <a href="{{ site_setting.balad_link }}" target="_blank"
+                               class="d-flex align-items-center justify-content-center p-3 border rounded shadow-sm h-100">
+                                <span class="fw-bold fs-5 mx-auto">نبی اکرم در بلد</span>
+                                <img src="{% static 'images/balad.png' %}" alt="بلد" style="width:48px;height:48px;" class="ms-2">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- map -->
-            <div class="row pt-30px">
+            <div class="row mb-5">
                 <div class="col-lg-12">
                     <div class="map-container">
                         <div id="map">{{ site_setting.map_embed|safe }}</div>
                     </div>
                 </div>
             </div>
-            <!-- balad & neshan -->
-            <div class="d-flex gap-3">
-                <!-- بلد -->
-                <a href="{{ site_setting.balad_link }}" target="_blank" class="social-icon">
-                    <img src="/static/images/balad.png" alt="Balad" width="40" height="40">
-                </a>
-
-                <!-- نشان -->
-                <a href="{{ site_setting.neshan_link }}" target="_blank" class="social-icon">
-                    <img src="/static/images/neshan.png" alt="Neshan" width="40" height="40">
-                </a>
-            </div>
             <!-- text -->
             <div class="col-lg-12">
                 <div class="contact-content pb-5">
                     <!-- text -->
                     <div class="section-heading">
-                        <h2 class="section__title pt-3">ارتباط با ما</h2>
-                        <p class="text-justify font-weight-bold">خوشحال می‌شویم با ما در ارتباط باشید!
+                        <h3 class="section__title pt-3">ارتباط با ما</h3>
+                        <p class="text-justify font-weight-bold mt-2">خوشحال می‌شویم با ما در ارتباط باشید!
                             اگر پرسشی دارید، پیشنهاد یا انتقادی، لطفاً فرم را پر کنید.
                             ما سعی می‌کنیم در سریع‌ترین زمان ممکن پاسخ دهیم.</p>
                     </div>
@@ -133,19 +146,21 @@
             </div>
             <!-- contact form -->
             <div class="row align-items-center">
+
+                {% if messages %}
+                    <div class="mb-3">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
                 <!-- form -->
                 <div class="col-lg-12">
                     <div class="card card-item">
                         <div class="card-body">
-                            {% if messages %}
-                                <div class="mb-3">
-                                    {% for message in messages %}
-                                        <div class="alert alert-{{ message.tags }}">
-                                            {{ message }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
                             <form method="post"
                                   action="{% url 'main_app:contact_us_page' %}"
                                   class="contact-form">
@@ -205,7 +220,6 @@
                     </div>
                 </div>
             </div>
-
 
         </div>
     </section>
