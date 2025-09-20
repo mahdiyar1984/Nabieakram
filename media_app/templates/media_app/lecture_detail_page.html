@@ -1,6 +1,7 @@
 {% extends 'shared/_layout.html' %}
 {% load static %}
 {% load shamsi_tags %}
+{% load render_partial %}
 
 {% block title %}
     سخنرانی
@@ -174,7 +175,7 @@
                                                     <span class="la la-star"></span>
                                                 </div>
                                             </div>
-                                            <span class="d-block lh-18 pb-2">1 ماه پیش</span>
+                                            <span class="d-block lh-18 pb-2">{{ lecture.created_date|timeago }}</span>
                                             <p class="pb-2">این یکی از بهترین دوره هایی است که من در Udemy گذرانده ام.
                                                 این بسیار کامل است و باعث شده است که در مورد پایگاه های داده جاوا و SQL
                                                 نیز به یادگیری ادامه دهید.</p>
@@ -278,101 +279,10 @@
                 <div class="col-lg-4">
                     <div class="sidebar">
 
-                        <!-- search -->
-                        <div class="card card-item">
-                            <div class="card-body">
-                                <h3 class="card-title fs-18 pb-2">فیلد جستجو</h3>
-                                <div class="divider"><span></span></div>
-                                <form method="post">
-                                    <div class="form-group mb-0">
-                                        <input class="form-control form--control pl-3" type="text" name="search"
-                                               placeholder="دوره های جستجو">
-                                        <span class="la la-search search-icon"></span>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-
-                        <!-- category -->
-                        <div class="card card-item">
-                            <div class="card-body">
-                                <h3 class="card-title fs-18 pb-2">دسته بندی دروس</h3>
-                                <div class="divider"><span></span></div>
-                                <ul class="generic-list-item">
-                                    <li><a href="#">توسعه</a></li>
-                                    <li><a href="#">طراحی وب سایت</a></li>
-                                    <li><a href="#">فن آوری</a></li>
-                                    <li><a href="#">فناوری اطلاعات و نرم افزار</a></li>
-                                    <li><a href="#">بک اند</a></li>
-                                    <li><a href="#">بازار یابی</a></li>
-                                    <li><a href="#">عکاسی</a></li>
-                                    <li><a href="#">فرانت اند</a></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- archive -->
-                        <div class="card card-item">
-                            <div class="card-body">
-                                <h3 class="card-title fs-18 pb-2">آرشیوها</h3>
-                                <div class="divider"><span></span></div>
-                                <ul class="generic-list-item">
-                                    <li><a href="#">18 سپتامبر 2025</a></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- related lectures -->
-                        <div class="card card-item">
-                            <div class="card-body">
-                                <h3 class="card-title fs-18 pb-2">دوره های مرتبط</h3>
-                                <div class="divider"><span></span></div>
-                                <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
-                                    <a href="course-details.html" class="media-img">
-                                        <img class="mr-3 lazy" src="{% static 'images/img-loading.png' %}"
-                                             data-src="{% static 'images/small-img-2.jpg' %}"
-                                             alt="تصویر دوره مرتبط"/>
-                                    </a>
-                                    <div class="media-body">
-                                        <h5 class="fs-15"><a href="course-details.html">دوره کامل جاوا اسکریپت
-                                            1400</a>
-                                        </h5>
-                                        <span class="d-block lh-18 py-1 fs-14">کامران احمد</span>
-                                        <p class="text-black font-weight-semi-bold lh-18 fs-15">12.99 تومان<span
-                                                class="before-price fs-14"> 129.99 تومان</span></p>
-                                    </div>
-                                </div>
-                                <!-- end media -->
-                                <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
-                                    <a href="course-details.html" class="media-img">
-                                        <img class="mr-3 lazy" src="{% static 'images/img-loading.png' %}"
-                                             data-src="{% static 'images/small-img-3.jpg' %}"
-                                             alt="تصویر دوره مرتبط"/>
-                                    </a>
-                                    <div class="media-body">
-                                        <h5 class="fs-15"><a href="course-details.html">آموزش jQuery Mobile برای
-                                            مبتدیان</a></h5>
-                                        <span class="d-block lh-18 py-1 fs-14">کامران احمد</span>
-                                        <p class="text-black font-weight-semi-bold lh-18 fs-15">129.99 تومان</p>
-                                    </div>
-                                </div>
-                                <!-- end media -->
-                                <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
-                                    <a href="course-details.html" class="media-img">
-                                        <img class="mr-3 lazy" src="{% static 'images/img-loading.png' %}"
-                                             data-src="{% static 'images/small-img-4.jpg' %}"
-                                             alt="تصویر دوره مرتبط"/>
-                                    </a>
-                                    <div class="media-body">
-                                        <h5 class="fs-15"><a href="course-details.html">مقدمه LearnPress –
-                                            افزونه
-                                            LMS</a></h5>
-                                        <span class="d-block lh-18 py-1 fs-14">کامران احمد</span>
-                                        <p class="text-black font-weight-semi-bold lh-18 fs-15">رایگان</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {% render_partial 'media_app.views.SearchLectureView' %}
+                        {% render_partial 'media_app.views.CategoryLecturesView' %}
+                        {% render_partial 'media_app.views.ArchiveLecturesView' %}
+                        {% render_partial 'media_app.views.RecentLecturesView' %}
 
                         <!-- tag lecture -->
                         <div class="card card-item">
@@ -380,15 +290,10 @@
                                 <h3 class="card-title fs-18 pb-2">برچسب های دوره</h3>
                                 <div class="divider"><span></span></div>
                                 <ul class="generic-list-item generic-list-item-boxed d-flex flex-wrap fs-15">
-                                    <li class="mr-2"><a href="#">مبتدی</a></li>
-                                    <li class="mr-2"><a href="#">پیشرفته</a></li>
-                                    <li class="mr-2"><a href="#">نکات</a></li>
-                                    <li class="mr-2"><a href="#">فتوشاپ</a></li>
-                                    <li class="mr-2"><a href="#">نرم افزار</a></li>
-                                    <li class="mr-2"><a href="#">بک اند</a></li>
-                                    <li class="mr-2"><a href="#">آزاد</a></li>
-                                    <li class="mr-2"><a href="#">فرانت اند</a></li>
-                                    <li class="mr-2"><a href="#">فن آوری</a></li>
+                                    {% for tag in lecture.selected_tags.all %}
+                                    	<li class="mr-2"><a href="{% url 'media_app:lecture_list_page' %}?tag={{ tag.id }}">{{ tag.title }}</a></li>
+                                    {% endfor %}
+
                                 </ul>
                             </div>
                         </div>

@@ -10,8 +10,7 @@
             </a>
             <div class="media-body">
                 <h5 class="fs-15"><a href="{% url 'blog_app:blog_detail' pk=article.id %}">{{ article.title }}</a></h5>
-                <span class="d-block lh-18 py-1 fs-14">کامران احمد</span>
-                <p class="text-black font-weight-semi-bold lh-18 fs-15">12.99 تومان <span class="before-price fs-14">129.99 تومان</span>
+                <span class="d-block lh-18 py-1 fs-14">{{ article.author.get_full_name }}</span>
                 </p>
             </div>
         </div>

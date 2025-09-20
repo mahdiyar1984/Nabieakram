@@ -1,0 +1,18 @@
+{% load shamsi_tags %}
+<div class="card card-item">
+    <div class="card-body">
+        <h3 class="card-title fs-18 pb-2">آرشیوها</h3>
+        <div class="divider"><span></span></div>
+        <ul class="generic-list-item">
+            {% for lecture in lectures|dictsort:"created_date.month" %}
+                {% ifchanged lecture.created_date.month %}
+                    <li>
+                        <a href="{% url 'media_app:lecture_list_page' %}?archive={{ lecture.created_date.month }}">
+                            {{ lecture.created_date.month|to_persian_month }}
+                        </a>
+                    </li>
+                {% endifchanged %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>

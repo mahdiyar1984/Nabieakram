@@ -1,0 +1,22 @@
+{% load static %}
+{% load shamsi_tags %}
+<div class="card card-item">
+    <div class="card-body">
+        <h3 class="card-title fs-18 pb-2">پستهای اخیر</h3>
+        <div class="divider"><span></span></div>
+        {% for lecture in lectures %}
+        	<div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
+            <a href="{% url 'blog_app:blog_detail' pk=lecture.id %}" class="media-img">
+                <img class="mr-3" src="{{ lecture.image.url }}" alt="تصویر دوره مرتبط">
+            </a>
+            <div class="media-body">
+                <h5 class="fs-15"><a href="{% url 'media_app:lecture_detail_page' pk=lecture.id %}">{{ lecture.title }}</a></h5>
+                <span class="d-block lh-18 py-1 fs-14">{{ lecture.created_date|timeago}}</span>
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+
+
+    </div>
+</div>

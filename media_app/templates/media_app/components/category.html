@@ -1,0 +1,26 @@
+<div class="card card-item">
+    <div class="card-body">
+        <h3 class="card-title fs-18 pb-2">دسته بندی ها</h3>
+        <div class="divider"><span></span></div>
+        <ul class="generic-list-item list-styled">
+            {% for category in categories %}
+                <li>
+                    <a href="?category={{ category.id }}" class="d-block mb-1">
+                        {{ category.title }}
+                    </a>
+                     {% if category.articlecategory_set.exists %}
+                        <ul class="list-styled pl-3">
+                             {% for child in category.articlecategory_set.all %}
+                                <li class="mb-1"> <!-- فاصله پایین برای زیر دسته ها -->
+                                    <a href="?category={{ child.id }}" class="d-block py-0 px-1">
+                                        {{ child.title }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
