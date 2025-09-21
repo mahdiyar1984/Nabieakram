@@ -3,48 +3,56 @@ from account_app.models import User
 from config_app import settings
 
 
-# class FooterLinkBox(models.Model):
-#     objects = models.Manager()
-#     title = models.CharField(max_length=200, verbose_name='عنوان')
-#
-#     class Meta:
-#         verbose_name = 'دسته بندی لینک های فوتر'
-#         verbose_name_plural = 'دسته بندی های لینک های فوتر'
-#
-#     def __str__(self):
-#         return self.title
-#
-#
-# class FooterLink(models.Model):
-#     objects = models.Manager()
-#     title = models.CharField(max_length=200, verbose_name='عنوان')
-#     url = models.URLField(max_length=500, verbose_name='لینک')
-#     footer_link_box = models.ForeignKey(to=FooterLinkBox, on_delete=models.CASCADE, verbose_name='دسته بندی',
-#                                         related_name='footer_links')
-#
-#     class Meta:
-#         verbose_name = 'لینک فوتر'
-#         verbose_name_plural = 'لینک های فوتر'
-#
-#     def __str__(self):
-#         return self.title
-#
-#
-# class Slider(models.Model):
-#     objects = models.Manager()
-#     title = models.CharField(max_length=200, verbose_name='عنوان')
-#     url = models.URLField(max_length=500, verbose_name='لینک')
-#     url_title = models.CharField(max_length=200, verbose_name='عنوان لینک')
-#     description = models.TextField(verbose_name='توضیحات اسلایدر')
-#     image = models.ImageField(upload_to='sliders/images', verbose_name='تصویر اسلایدر')
-#     is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
-#
-#     class Meta:
-#         verbose_name = 'اسلایدر'
-#         verbose_name_plural = 'اسلایدرها'
-#
-#     def __str__(self):
-#         return self.title
+class FooterLinkBox(models.Model):
+    objects = models.Manager()
+    title = models.CharField(max_length=200, verbose_name='عنوان')
+
+    class Meta:
+        verbose_name = 'دسته بندی لینک های فوتر'
+        verbose_name_plural = 'دسته بندی های لینک های فوتر'
+
+    def __str__(self):
+        return self.title
+
+
+class FooterLink(models.Model):
+    objects = models.Manager()
+    footer_link_box = models.ForeignKey(to=FooterLinkBox, on_delete=models.CASCADE, verbose_name='دسته بندی',
+                                        related_name='footer_links')
+    order = models.PositiveIntegerField(default=0, verbose_name="ترتیب نمایش")
+    title = models.CharField(max_length=200, verbose_name='عنوان')
+    url = models.URLField(max_length=500, verbose_name='لینک')
+
+
+
+    class Meta:
+        verbose_name = 'لینک فوتر'
+        verbose_name_plural = 'لینک های فوتر'
+        ordering = ["order"]
+
+    def __str__(self):
+        return self.title
+
+
+class Slider(models.Model):
+    objects = models.Manager()
+    title = models.CharField(max_length=200, verbose_name='عنوان', null=True, blank=True)
+    url = models.URLField(max_length=500, verbose_name='لینک', null=True, blank=True)
+    url_title = models.CharField(max_length=200, verbose_name='عنوان لینک', null=True, blank=True)
+    description = models.TextField(verbose_name='توضیحات اسلایدر', null=True, blank=True)
+    image = models.ImageField(upload_to='sliders/images', verbose_name='تصویر اسلایدر')
+    is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
+    order = models.PositiveIntegerField(default=0, verbose_name="ترتیب نمایش")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="تاریخ آخرین بروزرسانی")
+
+    class Meta:
+        verbose_name = "اسلایدر"
+        verbose_name_plural = "اسلایدرها"
+        ordering = ["order", "-created_at"]
+
+    def __str__(self):
+        return self.title if self.title else f"اسلاید {self.id}"
 
 
 class ContactUs(models.Model):

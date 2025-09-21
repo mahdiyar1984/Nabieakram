@@ -1,17 +1,28 @@
 from django.contrib import messages
+from django.db.models import QuerySet
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView
 from main_app.forms import ContactUsModelForm
-from main_app.models import SiteSetting, ContactUs
+from main_app.models import SiteSetting, ContactUs, FooterLink, FooterLinkBox
 
 
 def site_header_component(request):
-    return render(request, 'shared/site_header_component.html')
+    site_setting: SiteSetting = SiteSetting.objects.all().first()
+    context = {
+        'site_setting': site_setting,
+    }
+    return render(request, 'shared/site_header_component.html',context)
 
 
 def site_footer_component(request):
-    return render(request, 'shared/site_footer_component.html')
+    footer_link_boxes: QuerySet[FooterLinkBox] = FooterLinkBox.objects.all()
+    site_setting: SiteSetting = SiteSetting.objects.all().first()
+    context = {
+        'footer_link_boxes': footer_link_boxes,
+        'site_setting': site_setting,
+    }
+    return render(request, 'shared/site_footer_component.html', context)
 
 
 def index(request):
