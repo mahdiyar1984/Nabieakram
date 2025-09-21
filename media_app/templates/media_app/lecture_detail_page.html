@@ -7,7 +7,7 @@
     سخنرانی
 {% endblock %}
 {% block content %}
-    <section class="breadcrumb-area section-padding img-bg-2">
+    <section class="breadcrumb-area section-padding img-bg-3">
         <div class="overlay"></div>
         <div class="container">
             <div class="row">
@@ -121,156 +121,79 @@
                             </div>
                         </div>
                     </div>
+                    {% if comments %}
+                        <!-- comments -->
+                        <div class="card card-item">
+                            <div class="card-body">
+                                <div class="course-overview-card pt-4">
+                                    <h3 class="fs-24 font-weight-semi-bold pb-4">نظرات</h3>
+                                    <div class="review-wrap">
+                                        {% for comment in comments %}
+                                            <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
+                                                <div class="media-img mr-4 rounded-full">
+                                                    <img class="rounded-full lazy"
+                                                         src="{{ comment.user.avatar.url }}"
+                                                         alt="تصویر کاربر" style="">
+                                                </div>
+                                                <div class="media-body">
+                                                    <div class="d-flex flex-wrap align-items-center justify-content-between pb-1">
+                                                        <h5>{{ comment.user.get_full_name }}</h5>
+                                                        <div class="review-stars">
+                                                            <span class="la la-star"></span>
+                                                            <span class="la la-star"></span>
+                                                            <span class="la la-star"></span>
+                                                            <span class="la la-star"></span>
+                                                            <span class="la la-star"></span>
+                                                        </div>
+                                                    </div>
+                                                    <span class="d-block lh-18 pb-2">{{ comment.created_date|timeago }}</span>
+                                                    <p class="pb-2">{{ comment.text }}</p>
+                                                    <div class="helpful-action">
+                                                        <span class="d-block fs-13">آیا این بررسی مفید بود؟</span>
+                                                        <button class="btn">آره</button>
+                                                        <button class="btn">خیر</button>
+                                                        <span class="btn-text fs-14 cursor-pointer pl-1" data-toggle="modal"
+                                                              data-target="#reportModal">گزارش</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
 
-                    <!-- comments -->
-                    <div class="card card-item">
-                        <div class="card-body">
-                            <div class="course-overview-card pt-4">
-                                <h3 class="fs-24 font-weight-semi-bold pb-4">نظرات</h3>
-                                <div class="review-wrap">
-                                    <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
-                                        <div class="media-img mr-4 rounded-full">
-                                            <img class="rounded-full lazy"
-                                                 src="{% static 'images/small-avatar-1.jpg' %}"
-                                                 alt="تصویر کاربر" style="">
-                                        </div>
-                                        <div class="media-body">
-                                            <div class="d-flex flex-wrap align-items-center justify-content-between pb-1">
-                                                <h5>کاوی آرسان</h5>
-                                                <div class="review-stars">
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                </div>
-                                            </div>
-                                            <span class="d-block lh-18 pb-2">dsd</span>
-                                            <p class="pb-2">این یکی از بهترین دوره هایی است که من در Udemy گذرانده ام.
-                                                این بسیار کامل است و باعث شده است که در مورد پایگاه های داده جاوا و SQL
-                                                نیز به یادگیری ادامه دهید.</p>
-                                            <div class="helpful-action">
-                                                <span class="d-block fs-13">آیا این بررسی مفید بود؟</span>
-                                                <button class="btn">آره</button>
-                                                <button class="btn">خیر</button>
-                                                <span class="btn-text fs-14 cursor-pointer pl-1" data-toggle="modal"
-                                                      data-target="#reportModal">گزارش</span>
-                                            </div>
-                                        </div>
                                     </div>
-                                    <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
-                                        <div class="media-img mr-4 rounded-full">
-                                            <img class="rounded-full lazy"
-                                                 src="{% static 'images/small-avatar-2.jpg' %}"
-                                                 alt="تصویر کاربر" style="">
-                                        </div>
-                                        <div class="media-body">
-                                            <div class="d-flex flex-wrap align-items-center justify-content-between pb-1">
-                                                <h5>جیتش شاو</h5>
-                                                <div class="review-stars">
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                </div>
-                                            </div>
-                                            <span class="d-block lh-18 pb-2">{{ lecture.created_date|timeago }}</span>
-                                            <p class="pb-2">این یکی از بهترین دوره هایی است که من در Udemy گذرانده ام.
-                                                این بسیار کامل است و باعث شده است که در مورد پایگاه های داده جاوا و SQL
-                                                نیز به یادگیری ادامه دهید.</p>
-                                            <div class="helpful-action">
-                                                <span class="d-block fs-13">آیا این بررسی مفید بود؟</span>
-                                                <button class="btn">آره</button>
-                                                <button class="btn">خیر</button>
-                                                <span class="btn-text fs-14 cursor-pointer pl-1" data-toggle="modal"
-                                                      data-target="#reportModal">گزارش</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
-                                        <div class="media-img mr-4 rounded-full">
-                                            <img class="rounded-full lazy"
-                                                 src="{% static 'images/small-avatar-3.jpg' %}"
-                                                 alt="تصویر کاربر" style="">
-                                        </div>
-                                        <div class="media-body">
-                                            <div class="d-flex flex-wrap align-items-center justify-content-between pb-1">
-                                                <h5>میگل سانچس</h5>
-                                                <div class="review-stars">
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                </div>
-                                            </div>
-                                            <span class="d-block lh-18 pb-2">2 ماه پیش</span>
-                                            <p class="pb-2">این یکی از بهترین دوره هایی است که من در Udemy گذرانده ام.
-                                                این بسیار کامل است و باعث شده است که در مورد پایگاه های داده جاوا و SQL
-                                                نیز به یادگیری ادامه دهید.</p>
-                                            <div class="helpful-action">
-                                                <span class="d-block fs-13">آیا این بررسی مفید بود؟</span>
-                                                <button class="btn">آره</button>
-                                                <button class="btn">خیر</button>
-                                                <span class="btn-text fs-14 cursor-pointer pl-1" data-toggle="modal"
-                                                      data-target="#reportModal">گزارش</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    {% endif %}
+
 
                     <!-- add comment -->
                     <div class="card card-item">
                         <div class="card-body">
-                            <div class="course-overview-card pt-4">
-                                <h3 class="fs-24 font-weight-semi-bold pb-4">نظر خود را ارسال کنید</h3>
-                                <form method="post" class="row">
-                                    <div class="input-box col-lg-6">
-                                        <label class="label-text">نام</label>
-                                        <div class="form-group">
-                                            <input class="form-control form--control" type="text" name="name"
-                                                   placeholder="اسم شما"/>
-                                            <span class="la la-user input-icon"></span>
+                            <div id="comment-form"></div>
+                            <div class="add-comment-wrap pt-5">
+                                <h3 class="fs-22 font-weight-semi-bold pb-4">یک نظر اضافه کنید</h3>
+
+                                {% if user.is_authenticated %}
+                                    <form method="post" class="row"
+                                          action="{% url 'media_app:lecture_detail_page' pk=lecture.pk %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="parent_id" id="parent_id" value="">
+                                        <div class="input-box col-lg-12">
+                                            <div class="form-group">
+                                                <textarea class="form-control form--control pl-3" name="message"
+                                                          placeholder="پیام بنویس" rows="10"></textarea>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <!-- end input-box -->
-                                    <div class="input-box col-lg-6">
-                                        <label class="label-text">پست الکترونیک</label>
-                                        <div class="form-group">
-                                            <input class="form-control form--control" type="email" name="email"
-                                                   placeholder="آدرس ایمیل"/>
-                                            <span class="la la-envelope input-icon"></span>
+
+                                        <div class="btn-box col-lg-12">
+                                            <button class="btn theme-btn" type="submit">ثبت کردن نظر</button>
                                         </div>
-                                    </div>
-                                    <!-- end input-box -->
-                                    <div class="input-box col-lg-12">
-                                        <label class="label-text">پیام</label>
-                                        <div class="form-group">
-                                        <textarea class="form-control form--control pl-3" name="message"
-                                                  placeholder="پیام بنویس" rows="5"></textarea>
-                                        </div>
-                                    </div>
-                                    <!-- end input-box -->
-                                    <div class="btn-box col-lg-12">
-                                        <div class="custom-control custom-checkbox mb-3 fs-15">
-                                            <input type="checkbox" class="custom-control-input" id="saveCheckbox"
-                                                   required=""/>
-                                            <label class="custom-control-label custom--control-label"
-                                                   for="saveCheckbox">
-                                                برای دفعه بعد که نظر دادم نام و ایمیل من را در این مرورگر ذخیره
-                                                کنید.
-                                            </label>
-                                        </div>
-                                        <!-- end custom-control -->
-                                        <button class="btn theme-btn" type="submit">ارسال بررسی</button>
-                                    </div>
-                                    <!-- end btn-box -->
-                                </form>
+
+                                    </form>
+                                {% else %}
+                                    <p>برای ثبت نظر باید <a href="{% url 'account_app:login_page' %}">وارد شوید</a>.</p>
+                                {% endif %}
+
                             </div>
                         </div>
                     </div>
@@ -291,7 +214,7 @@
                                 <div class="divider"><span></span></div>
                                 <ul class="generic-list-item generic-list-item-boxed d-flex flex-wrap fs-15">
                                     {% for tag in lecture.selected_tags.all %}
-                                    	<li class="mr-2"><a href="{% url 'media_app:lecture_list_page' %}?tag={{ tag.id }}">{{ tag.title }}</a></li>
+                                        <li class="mr-2"><a href="{% url 'media_app:lecture_list_page' %}?tag={{ tag.id }}">{{ tag.title }}</a></li>
                                     {% endfor %}
 
                                 </ul>

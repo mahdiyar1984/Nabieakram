@@ -1,10 +1,10 @@
 from django.db.models import QuerySet, Q
 from django.http import HttpRequest
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView
 
-from media_app.models import GalleryImage, GalleryCategory, Lecture, LectureClip, LectureCategory
+from media_app.models import GalleryImage, GalleryCategory, Lecture, LectureClip, LectureCategory, LectureComment
 
 
 class GalleryListView(ListView):
@@ -84,7 +84,26 @@ class LectureDetailView(DetailView):
     template_name = 'media_app/lecture_detail_page.html'
     context_object_name = 'lecture'
 
+    def get_success_url(self):
+        return self.request.path
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['clips'] = LectureClip.objects.filter(lecture=self.object)
+        context['comments'] = LectureComment.objects.filter(lecture=self.object)
         return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        message = request.POST.get('message', '').strip()
+        parent_id = request.POST.get('parent_id')
+
+        if message and request.user.is_authenticated:
+            comment = LectureComment.objects.create(
+                lecture=self.object,
+                user=request.user,
+                text=message,
+                parent_id=parent_id if parent_id else None
+            )
+        return redirect(self.get_success_url())
+

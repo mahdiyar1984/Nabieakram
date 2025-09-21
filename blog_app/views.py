@@ -80,7 +80,7 @@ class BlogDetailView(View):
     def post(self, request:HttpRequest, pk):
         article = get_object_or_404(Article, pk=pk)
         if not request.user.is_authenticated:
-            return redirect('/')
+            return redirect('account_app:login_page')
 
         message = request.POST.get('message')
         parent_id = request.POST.get('parent_id')

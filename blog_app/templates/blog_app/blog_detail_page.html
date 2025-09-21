@@ -10,7 +10,7 @@
 {% block content %}
 
     {% comment %}breadcrumb{% endcomment %}
-    <section class="breadcrumb-area pt-80px pb-80px pattern-bg">
+    <section class="breadcrumb-area section-padding img-bg-3">
         <div class="container">
             <div class="breadcrumb-content">
                 <ul class="generic-list-item generic-list-item-arrow d-flex flex-wrap align-items-center">
@@ -189,7 +189,7 @@
 
                             </form>
                         {% else %}
-                            <p>برای ثبت نظر باید <a href="/">وارد شوید</a>.</p>
+                            <p>برای ثبت نظر باید <a href="{% url 'account_app:login_page' %}">وارد شوید</a>.</p>
                         {% endif %}
 
                     </div>

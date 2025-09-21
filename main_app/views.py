@@ -6,12 +6,13 @@ from main_app.forms import ContactUsModelForm
 from main_app.models import SiteSetting, ContactUs
 
 
-
 def site_header_component(request):
     return render(request, 'shared/site_header_component.html')
 
+
 def site_footer_component(request):
     return render(request, 'shared/site_footer_component.html')
+
 
 def index(request):
     return render(request, "main_app/index.html")
@@ -19,6 +20,10 @@ def index(request):
 
 class AboutView(TemplateView):
     template_name = 'main_app/about_page.html'
+
+    def get_context_data(self, **kwargs):
+        pass
+
 
 class ContactUsView(CreateView):
     form_class = ContactUsModelForm
