@@ -1,10 +1,12 @@
 from django.contrib import messages
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Count
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView
+
+from blog_app.models import ArticleCategory
 from main_app.forms import ContactUsModelForm
-from main_app.models import SiteSetting, ContactUs, FooterLink, FooterLinkBox
+from main_app.models import SiteSetting, ContactUs, FooterLink, FooterLinkBox, Slider
 
 
 def site_header_component(request):
@@ -12,7 +14,7 @@ def site_header_component(request):
     context = {
         'site_setting': site_setting,
     }
-    return render(request, 'shared/site_header_component.html',context)
+    return render(request, 'shared/site_header_component.html', context)
 
 
 def site_footer_component(request):
@@ -26,7 +28,20 @@ def site_footer_component(request):
 
 
 def index(request):
-    return render(request, "main_app/index.html")
+    sliders: QuerySet[Slider] = Slider.objects.filter(is_active=True).order_by("order")
+    site_setting: SiteSetting = SiteSetting.objects.all().first()
+    article_categories = (
+        ArticleCategory.objects
+        .filter(parent__isnull=True)
+        .annotate(article_count=Count("article"))
+        .order_by("-article_count")[:6]
+    )
+    context = {
+        'sliders': sliders,
+        'site_setting': site_setting,
+        'article_categories': article_categories
+    }
+    return render(request, "main_app/index.html", context)
 
 
 class AboutView(TemplateView):

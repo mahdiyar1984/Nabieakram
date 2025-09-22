@@ -11,20 +11,13 @@
 
     {% comment %}breadcrumb{% endcomment %}
     <section class="breadcrumb-area section-padding img-bg-3">
+        <div class="overlay"></div>
         <div class="container">
-            <div class="breadcrumb-content">
-                <ul class="generic-list-item generic-list-item-arrow d-flex flex-wrap align-items-center">
+            <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between">
+                <ul class="generic-list-item generic-list-item-white generic-list-item-arrow d-flex flex-wrap align-items-center">
                     <li><a href="{% url 'main_app:index' %}">صفحه اصلی</a></li>
                     <li><a href="{% url 'blog_app:blog_list' %}">وبلاگ</a></li>
                     <li>{{ article.title }}</li>
-                </ul>
-                <ul class="generic-list-item generic-list-item-bullet generic-list-item--bullet d-flex align-items-center flex-wrap fs-14 pt-2">
-                    <li class="d-flex align-items-center">توسط: <a href="#">&nbsp;{{ article.author.get_full_name }}</a>
-                    </li>
-                    <li class="d-flex align-items-center">{{ article.create_date|to_shamsi }}</li>
-                    <li class="d-flex align-items-center"><a href="#comments"
-                                                             class="page-scroll">{{ article.articlecomment_set.all.count }}
-                        نظر</a></li>
                 </ul>
             </div>
             <!-- end breadcrumb-content -->
@@ -81,119 +74,128 @@
                     </div>
 
                     {% comment %}about author{% endcomment %}
-                    <div class="instructor-wrap py-5">
-                        <h3 class="fs-22 font-weight-semi-bold pb-4 ml-4">نویسنده</h3>
-                        <div class="media media-card">
-                            <div class="media-img rounded-full avatar-lg mr-4">
-                                {% if article.author.avatar %}
-                                    <img src="{{ article.author.avatar.url }}" alt="تصویر آواتار"
-                                         class="rounded-full lazy" style="">
-                                {% else %}
-                                    <img src="{% static 'images/small-avatar-1.jpg' %}" alt="تصویر آواتار"
-                                         class="rounded-full lazy" style="">
+                    <div class="card card-item">
+                        <div class="card-body">
+                            <div class="instructor-wrap py-5">
+                                <h3 class="fs-22 font-weight-semi-bold pb-4 ml-4">نویسنده</h3>
+                                <div class="media media-card">
+                                    <div class="media-img rounded-full avatar-lg mr-4">
+                                        {% if article.author.avatar %}
+                                            <img src="{{ article.author.avatar.url }}" alt="تصویر آواتار"
+                                                 class="rounded-full lazy" style="">
+                                        {% else %}
+                                            <img src="{% static 'images/small-avatar-1.jpg' %}" alt="تصویر آواتار"
+                                                 class="rounded-full lazy" style="">
 
-                                {% endif %}
-                            </div>
-                            <div class="media-body">
-                                <h5>{{ article.author.get_full_name }}</h5>
-                                <span class="d-block lh-18 pt-2 pb-2">{{ article.author.email }}</span>
-                                <p class="pb-3">{{ article.author.about_user }}</p>
-                                <ul class="social-icons social-icons-styled social--icons-styled">
-                                    <li>
-                                        <a href="#"><i class="la la-facebook"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="la la-twitter"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="la la-instagram"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="la la-linkedin"></i></a>
-                                    </li>
-                                </ul>
+                                        {% endif %}
+                                    </div>
+                                    <div class="media-body">
+                                        <h5>{{ article.author.get_full_name }}</h5>
+                                        <span class="d-block lh-18 pt-2 pb-2">{{ article.author.email }}</span>
+                                        <p class="pb-3">{{ article.author.about_user }}</p>
+                                        <ul class="social-icons social-icons-styled social--icons-styled">
+                                            <li>
+                                                <a href="#"><i class="la la-facebook"></i></a>
+                                            </li>
+                                            <li>
+                                                <a href="#"><i class="la la-twitter"></i></a>
+                                            </li>
+                                            <li>
+                                                <a href="#"><i class="la la-instagram"></i></a>
+                                            </li>
+                                            <li>
+                                                <a href="#"><i class="la la-linkedin"></i></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-
                     {% comment %}show comment{% endcomment %}
                     {% if comments %}
-                        <div class="section-block"></div>
-                        <div class="comments-wrap pt-5" id="comments">
-                            <div class="d-flex align-items-center justify-content-between pb-4">
-                                <h3 class="fs-22 font-weight-semi-bold">نظرات</h3>
-                                <span class="ribbon ribbon-lg">{{ article.articlecomment_set.all.count }}</span>
-                            </div>
-                            <div class="comment-list">
-                                {% for comment in comments %}
-                                    <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
-                                        <div class="media-img mr-4 rounded-full">
-                                            <img class="rounded-full lazy" src="{{ comment.user.avatar.url }}"
-                                                 alt="تصویر کاربر" style="">
-                                        </div>
-                                        <div class="media-body">
-                                            <h5 class="pb-2">{{ comment.user.get_full_name }}</h5>
-                                            <span class="d-block lh-18 pb-2">{{ article.create_date|timeago }}</span>
-                                            <p class="pb-3">{{ comment.text }}</p>
-                                            <div class="helpful-action d-flex align-items-center justify-content-between">
-                                                <a href="#" onclick="setParentId({{ comment.id }}); return false;"
-                                                   class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30"><i
-                                                        class="la la-reply mr-1"></i> پاسخ</a>
-                                            </div>
-                                        </div>
+                        <div class="card card-item">
+                            <div class="card-body">
+                                <div class="section-block"></div>
+                                <div class="comments-wrap pt-5" id="comments">
+                                    <div class="d-flex align-items-center justify-content-between pb-4">
+                                        <h3 class="fs-22 font-weight-semi-bold">نظرات</h3>
+                                        <span class="ribbon ribbon-lg">{{ article.articlecomment_set.all.count }}</span>
                                     </div>
-                                    {% for reply in comment.articlecomment_set.all %}
-                                        {% if reply.is_active and not reply.is_delete %}
-                                            <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 review-reply">
+                                    <div class="comment-list">
+                                        {% for comment in comments %}
+                                            <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
                                                 <div class="media-img mr-4 rounded-full">
-                                                    <img class="rounded-full lazy"
-                                                         src="{{ reply.user.avatar.url }}"
+                                                    <img class="rounded-full lazy" src="{{ comment.user.avatar.url }}"
                                                          alt="تصویر کاربر" style="">
                                                 </div>
                                                 <div class="media-body">
-                                                    <h5 class="pb-2">{{ reply.user.get_full_name }}</h5>
-                                                    <span class="d-block lh-18 pb-2">{{ reply.create_date|timeago }}</span>
-                                                    <p class="pb-3">{{ reply.text }}</p>
-
+                                                    <h5 class="pb-2">{{ comment.user.get_full_name }}</h5>
+                                                    <span class="d-block lh-18 pb-2">{{ article.create_date|timeago }}</span>
+                                                    <p class="pb-3">{{ comment.text }}</p>
+                                                    <div class="helpful-action d-flex align-items-center justify-content-between">
+                                                        <a href="#" onclick="setParentId({{ comment.id }}); return false;"
+                                                           class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30"><i
+                                                                class="la la-reply mr-1"></i> پاسخ</a>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endfor %}
+                                            {% for reply in comment.articlecomment_set.all %}
+                                                {% if reply.is_active and not reply.is_delete %}
+                                                    <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 review-reply">
+                                                        <div class="media-img mr-4 rounded-full">
+                                                            <img class="rounded-full lazy"
+                                                                 src="{{ reply.user.avatar.url }}"
+                                                                 alt="تصویر کاربر" style="">
+                                                        </div>
+                                                        <div class="media-body">
+                                                            <h5 class="pb-2">{{ reply.user.get_full_name }}</h5>
+                                                            <span class="d-block lh-18 pb-2">{{ reply.create_date|timeago }}</span>
+                                                            <p class="pb-3">{{ reply.text }}</p>
+
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     {% endif %}
 
 
                     {% comment %}add comment{% endcomment %}
-                    <div id="comment-form"></div>
-                    <br><br><br>
-                    <div class="add-comment-wrap pt-5">
-                        <h3 class="fs-22 font-weight-semi-bold pb-4">یک نظر اضافه کنید</h3>
+                    <div class="card card-item">
+                        <div class="card-body">
+                            <div id="comment-form"></div>
+                            <div class="add-comment-wrap pt-5">
+                                <h3 class="fs-22 font-weight-semi-bold pb-4">یک نظر اضافه کنید</h3>
 
-                        {% if user.is_authenticated %}
-                            <form method="post" class="row"
-                                  action="{% url 'blog_app:blog_detail' pk=article.pk %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="parent_id" id="parent_id" value="">
-                                <div class="input-box col-lg-12">
-                                    <div class="form-group">
+                                {% if user.is_authenticated %}
+                                    <form method="post" class="row"
+                                          action="{% url 'blog_app:blog_detail' pk=article.pk %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="parent_id" id="parent_id" value="">
+                                        <div class="input-box col-lg-12">
+                                            <div class="form-group">
                                     <textarea class="form-control form--control pl-3" name="message"
                                               placeholder="پیام بنویس" rows="10"></textarea>
-                                    </div>
-                                </div>
+                                            </div>
+                                        </div>
 
-                                <div class="btn-box col-lg-12">
-                                    <button class="btn theme-btn" type="submit">ثبت کردن نظر</button>
-                                </div>
+                                        <div class="btn-box col-lg-12">
+                                            <button class="btn theme-btn" type="submit">ثبت کردن نظر</button>
+                                        </div>
 
-                            </form>
-                        {% else %}
-                            <p>برای ثبت نظر باید <a href="{% url 'account_app:login_page' %}">وارد شوید</a>.</p>
-                        {% endif %}
+                                    </form>
+                                {% else %}
+                                    <p>برای ثبت نظر باید <a href="{% url 'account_app:login_page' %}">وارد شوید</a>.</p>
+                                {% endif %}
 
+                            </div>
+                        </div>
                     </div>
-
                 </div>
 
                 {% comment %}sidebar{% endcomment %}

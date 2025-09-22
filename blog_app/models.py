@@ -11,6 +11,7 @@ class ArticleCategory(models.Model):
                                verbose_name='دسته بندی والد')
     title = models.CharField(max_length=200, verbose_name='عنوان دسته بندی')
     url_title = models.CharField(max_length=200, unique=True, verbose_name='عنوان در url')
+    image = models.ImageField(upload_to='blog_app/article_category/images', null=True, blank=True, verbose_name='تصویر دسته بندی')
     is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
     is_delete = models.BooleanField(default=False, verbose_name='حذف شده / نشده')
 
