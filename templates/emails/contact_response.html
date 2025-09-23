@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ subject }}</title>
+</head>
+<body>
+    <p>سلام {{ user.get_full_name|default:user.username }} عزیز،</p>
+    <p>پاسخی برای پیام شما دریافت کردید:</p>
+    <blockquote>
+        {{ text_message }}
+    </blockquote>
+    <p>با تشکر<br>تیم پشتیبانی</p>
+</body>
+</html>

@@ -74,3 +74,7 @@ class ContactUsView(CreateView):
         setting: SiteSetting = SiteSetting.objects.all().first()
         context['site_setting'] = setting
         return context
+
+
+class TimeTableView(TemplateView):
+    template_name = 'main_app/time_table_heiat.html'

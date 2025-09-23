@@ -38,9 +38,218 @@
                                 <!-- video -->
                                 {% if lecture.video %}
                                     <p>فیلم سخنرانی - <a href="{{ lecture.video.url }}" download>دانلود</a></p>
-                                    <video controls preload="metadata" style="width:100%; height:auto;">
-                                        <source src="{{ lecture.video.url }}" type="video/mp4">
-                                    </video>
+                                    <style>
+                                        .custom-player-container {
+                                            position: relative;
+                                            width: 100%;
+                                            max-width: 700px;
+                                            margin: 0 auto;
+                                            background: #181c24;
+                                            border-radius: 0;
+                                            overflow: hidden;
+                                            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+                                        }
+
+                                        .custom-video {
+                                            width: 100%;
+                                            display: block;
+                                            background: #000;
+                                        }
+
+                                        .custom-controls {
+                                            position: absolute;
+                                            bottom: 0;
+                                            left: 0;
+                                            right: 0;
+                                            background: linear-gradient(0deg, rgba(24, 28, 36, 0.95) 80%, rgba(24, 28, 36, 0.2) 100%);
+                                            display: flex;
+                                            flex-direction: row;
+                                            align-items: center;
+                                            justify-content: flex-start;
+                                            padding: 12px 18px 8px 18px;
+                                            gap: 10px;
+                                            z-index: 2;
+                                            transition: opacity 0.3s;
+                                        }
+
+                                        .custom-btn {
+                                            background: #232a36;
+                                            color: #fff;
+                                            border: none;
+                                            border-radius: 0;
+                                            padding: 7px 14px;
+                                            font-size: 1.1em;
+                                            cursor: pointer;
+                                            transition: background 0.2s;
+                                            outline: none;
+                                        }
+
+                                        .custom-btn:hover {
+                                            background: #2d3646;
+                                        }
+
+                                        .custom-slider {
+                                            flex: 1;
+                                            margin: 0 12px;
+                                            accent-color: #4fc3f7;
+                                            height: 4px;
+                                        }
+
+                                        .custom-time {
+                                            color: #b0b8c1;
+                                            font-size: 0.95em;
+                                            min-width: 70px;
+                                            text-align: center;
+                                            font-family: monospace;
+                                        }
+                                    </style>
+
+                                    <div class="custom-player-container">
+                                        <video id="myCustomVideo" class="custom-video" preload="metadata">
+                                            <source src="{{ lecture.video.url }}" type="video/mp4">
+                                            مرورگر شما از ویدیو پشتیبانی نمی‌کند.
+                                        </video>
+                                        <div class="custom-controls" id="myCustomControls">
+                                            <button class="custom-btn" id="playPauseBtn">▶️</button>
+                                            <span class="custom-time" id="currentTime">00:00</span>
+                                            <input type="range" class="custom-slider" id="seekBar" value="0" min="0" max="0" step="0.1">
+                                            <span class="custom-time" id="duration">00:00</span>
+                                            <button class="custom-btn" id="muteBtn">🔊</button>
+                                            <input type="range" class="custom-slider" id="volumeBar" value="100" min="0" max="100" style="max-width:80px;">
+                                            <button class="custom-btn" id="fullscreenBtn">⛶</button>
+                                        </div>
+                                    </div>
+                                    <script>
+                                        const video = document.getElementById('myCustomVideo');
+                                        const playPauseBtn = document.getElementById('playPauseBtn');
+                                        const seekBar = document.getElementById('seekBar');
+                                        const currentTimeEl = document.getElementById('currentTime');
+                                        const durationEl = document.getElementById('duration');
+                                        const muteBtn = document.getElementById('muteBtn');
+                                        const volumeBar = document.getElementById('volumeBar');
+                                        const fullscreenBtn = document.getElementById('fullscreenBtn');
+                                        const controls = document.getElementById('myCustomControls');
+                                        let hideControlsTimeout;
+                                        let isSeeking = false;
+                                        let isMetadataLoaded = false;   // ✅ پرچم برای لود شدن ویدیو
+
+                                        function formatTime(sec) {
+                                            sec = Math.floor(sec);
+                                            const m = Math.floor(sec / 60);
+                                            const s = sec % 60;
+                                            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                                        }
+
+                                        // وقتی ویدیو آماده شد
+                                        video.addEventListener('loadedmetadata', () => {
+                                            isMetadataLoaded = true; // ✅
+                                            seekBar.max = Math.floor(video.duration);
+                                            seekBar.value = 0;
+                                            durationEl.textContent = formatTime(video.duration);
+                                            currentTimeEl.textContent = formatTime(0);
+                                            seekBar.disabled = video.duration === 0;
+                                        });
+
+                                        // بروزرسانی زمان
+                                        video.addEventListener('timeupdate', () => {
+                                            if (!isSeeking && isMetadataLoaded) {
+                                                seekBar.value = video.currentTime;
+                                                currentTimeEl.textContent = formatTime(video.currentTime);
+                                            }
+                                        });
+
+                                        // نمایش زمان در هنگام کشیدن
+                                        seekBar.addEventListener('input', (e) => {
+                                            if (!isMetadataLoaded) return; // ✅ اگه آماده نیست، کاری نکن
+                                            currentTimeEl.textContent = formatTime(e.target.value);
+                                        });
+
+                                        // شروع Drag
+                                        seekBar.addEventListener('mousedown', () => isSeeking = true);
+                                        seekBar.addEventListener('touchstart', () => isSeeking = true);
+
+                                        // پایان Drag
+                                        seekBar.addEventListener('mouseup', () => {
+                                            if (!isMetadataLoaded) return; // ✅
+                                            isSeeking = false;
+                                            video.currentTime = Number(seekBar.value);
+                                        });
+                                        seekBar.addEventListener('touchend', () => {
+                                            if (!isMetadataLoaded) return; // ✅
+                                            isSeeking = false;
+                                            video.currentTime = Number(seekBar.value);
+                                        });
+
+                                        // کنترل پخش
+                                        playPauseBtn.addEventListener('click', () => {
+                                            if (video.paused) {
+                                                video.play();
+                                            } else {
+                                                video.pause();
+                                            }
+                                        });
+
+                                        video.addEventListener('play', () => {
+                                            playPauseBtn.textContent = '⏸️';
+                                        });
+                                        video.addEventListener('pause', () => {
+                                            playPauseBtn.textContent = '▶️';
+                                        });
+
+                                        // کنترل صدا
+                                        muteBtn.addEventListener('click', () => {
+                                            video.muted = !video.muted;
+                                            muteBtn.textContent = video.muted ? '🔇' : '🔊';
+                                        });
+
+                                        volumeBar.addEventListener('input', () => {
+                                            if (!isMetadataLoaded) return; // ✅
+                                            video.volume = volumeBar.value / 100;
+                                            video.muted = video.volume === 0;
+                                            muteBtn.textContent = video.muted ? '🔇' : '🔊';
+                                        });
+
+                                        video.addEventListener('volumechange', () => {
+                                            volumeBar.value = video.muted ? 0 : video.volume * 100;
+                                            muteBtn.textContent = video.muted ? '🔇' : '🔊';
+                                        });
+
+                                        // تمام‌صفحه
+                                        fullscreenBtn.addEventListener('click', () => {
+                                            if (document.fullscreenElement) {
+                                                document.exitFullscreen();
+                                            } else {
+                                                video.parentElement.requestFullscreen();
+                                            }
+                                        });
+
+                                        // نمایش/مخفی کردن کنترل‌ها
+                                        function showControls() {
+                                            controls.style.opacity = '1';
+                                            clearTimeout(hideControlsTimeout);
+                                            hideControlsTimeout = setTimeout(() => {
+                                                if (!video.paused) controls.style.opacity = '0';
+                                            }, 2500);
+                                        }
+
+                                        video.parentElement.addEventListener('mousemove', showControls);
+                                        video.addEventListener('play', showControls);
+                                        video.addEventListener('pause', () => controls.style.opacity = '1');
+                                        controls.addEventListener('mouseenter', () => clearTimeout(hideControlsTimeout));
+                                        controls.addEventListener('mouseleave', showControls);
+                                        controls.style.opacity = '1';
+
+                                        // اگر ویدیو duration صفر بود
+                                        video.addEventListener('durationchange', () => {
+                                            if (video.duration > 0) {
+                                                seekBar.disabled = false;
+                                                seekBar.max = Math.floor(video.duration);
+                                            } else {
+                                                seekBar.disabled = true;
+                                                seekBar.value = 0;
+                                            }
+                                        });
+                                    </script>
                                 {% else %}
                                     <p>هیچ فیلمی بارگذاری نشده است.</p>
                                 {% endif %}

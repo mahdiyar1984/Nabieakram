@@ -77,6 +77,8 @@ class ContactUs(models.Model):
         verbose_name_plural = 'لیست تماس با ما'
 
 
+
+
 class SiteSetting(models.Model):
     objects = models.Manager()
 
