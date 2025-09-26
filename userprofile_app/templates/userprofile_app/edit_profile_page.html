@@ -12,7 +12,7 @@
             <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between">
                 <ul class="generic-list-item generic-list-item-white generic-list-item-arrow d-flex flex-wrap align-items-center">
                     <li><a href="{% url 'main_app:index' %}">صفحه اصلی</a></li>
-                    <li><a href="{% url 'account_app:user_panel_dashboard_page' %}">پنل کاربری</a></li>
+                    <li><a href="{% url 'userprofile_app:user_panel_dashboard_page' %}">پنل کاربری</a></li>
                     <li>ویرایش حساب کاربری</li>
                 </ul>
             </div>
@@ -23,7 +23,7 @@
             <div class="main-body">
                 <div class="row">
 
-                    {% render_partial 'account_app.views.user_panel_menu_component' %}
+                    {% render_partial 'userprofile_app.views.user_panel_menu_component' %}
 
                     <div class="col-lg-8">
                         <div class="card">
@@ -31,7 +31,7 @@
                                 <h4>ویرایش حساب کاربری</h4>
                                 <hr>
                                 <br>
-                                <form action="{% url 'account_app:edit_user_profile_page' %}" method="post">
+                                <form action="{% url 'userprofile_app:edit_user_profile_page' %}" method="post">
                                     {% csrf_token %}
                                     <!-- first_name -->
                                     <div class="row mb-3">

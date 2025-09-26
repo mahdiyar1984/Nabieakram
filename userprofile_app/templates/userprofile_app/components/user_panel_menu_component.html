@@ -1,9 +1,9 @@
-<div class="col-lg-4">
+<div class="col-lg-3">
     <div class="card">
         <div class="card-body">
             <div class="d-flex flex-column align-items-center text-center">
                 <form style="text-align: center" id="avatar-form" method="post" enctype="multipart/form-data"
-                      action="{% url 'account_app:update_avatar' %}">
+                      action="{% url 'userprofile_app:update_avatar' %}">
                     {% csrf_token %}
                     <input type="file" name="avatar" id="avatar-input" accept="image/*"
                            style="display: none;">
@@ -31,18 +31,25 @@
                 </div>
             </div>
             <ul class="list-group list-group-flush mt-5">
+
+
                 <li class="list-group-item {% if request.resolver_match.url_name == 'user_panel_dashboard_page' %}active bg-info text-white{% endif %}">
-                    <a href="{% url 'account_app:user_panel_dashboard_page' %}" class="text-decoration-none text-reset">
+                    <a href="{% url 'userprofile_app:user_panel_dashboard_page' %}" class="text-decoration-none text-reset">
                         داشبورد
                     </a>
                 </li>
+                <li class="list-group-item {% if request.resolver_match.url_name == 'author_articles' %}active bg-info text-white{% endif %}">
+                    <a href="{% url 'userprofile_app:author_articles' %}" class="text-decoration-none text-reset">
+                        مقالات
+                    </a>
+                </li>
                 <li class="list-group-item {% if request.resolver_match.url_name == 'edit_user_profile_page' %}active bg-info text-white{% endif %}">
-                    <a href="{% url 'account_app:edit_user_profile_page' %}" class="text-decoration-none text-reset">
+                    <a href="{% url 'userprofile_app:edit_user_profile_page' %}" class="text-decoration-none text-reset">
                         ویرایش حساب کاربری
                     </a>
                 </li>
                 <li class="list-group-item {% if request.resolver_match.url_name == 'change_password_page' %}active bg-info text-white{% endif %}">
-                    <a href="{% url 'account_app:change_password_page' %}" class="text-decoration-none text-reset">
+                    <a href="{% url 'userprofile_app:change_password_page' %}" class="text-decoration-none text-reset">
                         تغییر کلمه عبور
                     </a>
                 </li>

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'main_app',
     'blog_app',
     'account_app',
+    'userprofile_app',
     'media_app',
     'templatetags_app',
 

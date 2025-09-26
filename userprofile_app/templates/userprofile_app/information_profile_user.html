@@ -1,0 +1,64 @@
+{% extends 'shared/dashboard.html' %}
+{% load shamsi_tags %}
+
+{% block title %}پروفایل کاربر - مشخصات{% endblock %}
+
+{% block content %}
+    <div class="dashboard-content-wrap">
+        <div class="dashboard-menu-toggler btn theme-btn theme-btn-sm lh-28 theme-btn-transparent mb-4 ml-3"><i
+                class="la la-bars mr-1"></i> منو
+        </div>
+        <div class="container-fluid">
+
+            <!-- breadcrumb -->
+            <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between mb-5">
+                <div class="media media-card align-items-center">
+                    <div class="media-img media--img media-img-md rounded-full">
+                        <img class="rounded-full" src="{{ object.avatar.url }}" alt="تصویر کوچک دانش آموز">
+                    </div>
+                    <div class="media-body">
+                        <h2 class="section__title fs-30">{{ object.get_full_name }}</h2>
+                        <div class="rating-wrap d-flex align-items-center pt-2">
+                            <div class="review-stars">
+                                <span class="rating-number">4.4</span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star-o"></span>
+                            </div>
+                            <span class="rating-total pl-1">(20230)</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- myprofile -->
+            <div class="section-block mb-5"></div>
+            <div class="dashboard-heading mb-5">
+                <h3 class="fs-22 font-weight-semi-bold">پروفایل من</h3>
+            </div>
+            <div class="profile-detail mb-5">
+                <ul class="generic-list-item generic-list-item-flash">
+                    <li><span class="profile-name">تاریخ ثبت نام: </span><span class="profile-desc">{{ object.date_joined|to_shamsi}}</span>
+                    </li>
+                    <li><span class="profile-name">نام: </span><span class="profile-desc">{{ object.first_name }}</span></li>
+                    <li><span class="profile-name">نام خانوادگی: </span><span class="profile-desc">{{ object.last_name }}</span></li>
+                    <li><span class="profile-name">نام کاربری: </span><span class="profile-desc">{{ object.username }}</span></li>
+                    <li><span class="profile-name">ایمیل: </span><span class="profile-desc">{{ object.email }}</span>
+                    </li>
+                    <li><span class="profile-name">شماره تلفن: </span><span class="profile-desc">{{ object.phone_number }}</span>
+                    </li>
+                    <li>
+                        <span class="profile-name">بیو: </span>
+                        <span class="profile-desc">{{ object.about_user }}</span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+

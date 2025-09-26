@@ -1,0 +1,133 @@
+{% extends 'shared/dashboard.html' %}
+{% load shamsi_tags %}
+
+{% block title %}پروفایل - ایجاد مقاله{% endblock %}
+
+{% block content %}
+
+    <div class="dashboard-content-wrap">
+        <div class="dashboard-menu-toggler btn theme-btn theme-btn-sm lh-28 theme-btn-transparent mb-4 ml-3"><i
+                class="la la-bars mr-1"></i> منو
+        </div>
+
+        <!-- main content -->
+        <div class="container-fluid">
+
+            <!-- breadcrumb -->
+            <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between mb-5">
+                <div class="media media-card align-items-center">
+                    <div class="media-img media--img media-img-md rounded-full">
+                        <img class="rounded-full" src="{{ request.user.avatar.url }}" alt="تصویر کوچک دانش آموز">
+                    </div>
+                    <div class="media-body">
+                        <h2 class="section__title fs-30">{{ request.user.get_full_name }}</h2>
+                        <div class="rating-wrap d-flex align-items-center pt-2">
+                            <div class="review-stars">
+                                <span class="rating-number">4.4</span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star-o"></span>
+                            </div>
+                            <span class="rating-total pl-1">(20230)</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="section-block mb-5"></div>
+            <div class="dashboard-heading mb-5">
+                <h3 class="fs-22 font-weight-semi-bold">مقاله جدید</h3>
+            </div>
+            <form action="{% url 'userprofile_app:author_article_create' %}"
+                  class="MultiFile-intercepted"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="card card-item">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <!-- title -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">عنوان مقاله</label>
+                                    <input class="form-control form--control pl-3" type="text" name="text">
+                                </div>
+                            </div>
+
+                            <!-- slug -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">اسلاگ</label>
+                                    <input class="form-control form--control pl-3" type="text" name="text">
+                                </div>
+                            </div>
+
+                            <!-- selected_categories -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">دسته بندی مقاله</label>
+                                    {{ form.selected_categories }}
+                                </div>
+                            </div>
+
+                            <!-- selected_tags -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">تگ های مقاله</label>
+                                    {{ form.selected_tags }}
+                                </div>
+                            </div>
+
+                            <!-- short_description -->
+                            <div class="input-box col-lg-12">
+                                <label class="label-text">شرح کوتاه از مقاله</label>
+                                <div class="form-group">
+                                            <textarea rows="4" class="form-control form--control user-text-editor pl-3"
+                                                      name="message">
+                                            </textarea>
+                                </div>
+                            </div>
+
+                            <!-- text -->
+                            <div class="input-box col-lg-12">
+                                <label class="label-text">متن مقاله</label>
+                                <div class="form-group">
+                                            <textarea rows="15" class="form-control form--control user-text-editor pl-3"
+                                                      name="message">
+                                            </textarea>
+                                </div>
+                            </div>
+
+                            <!-- image -->
+                            <div class="col-lg-12">
+                                <div class="form-group mb-0">
+                                    <label class="label-text">تصویر دوره</label>
+                                    <div class="file-upload-wrap">
+                                        <div class="MultiFile-wrap" id="MultiFile2"><input type="file" name="files[]"
+                                                                                           class="multi file-upload-input MultiFile-applied"
+                                                                                           multiple="" id="MultiFile2"
+                                                                                           value="">
+                                            <div class="MultiFile-list" id="MultiFile2_list"></div>
+                                        </div>
+                                        <span class="file-upload-text"><i class="la la-cloud-upload mr-2 fs-18"></i>فایل ها را اینجا رها کنید یا برای آپلود کلیک کنید.</span>
+                                    </div>
+                                    <!-- file-upload-wrap -->
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-submit-btn-box pb-4">
+                    <button class="btn theme-btn" type="submit">ارسال دوره</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

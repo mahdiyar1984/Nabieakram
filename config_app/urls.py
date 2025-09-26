@@ -21,7 +21,8 @@ from config_app import settings
 
 urlpatterns = [
     path('', include('main_app.urls')),
-    path('users/', include('account_app.urls')),
+    path('', include('account_app.urls')),
+    path('profile/', include('userprofile_app.urls')),
     path('blog/', include('blog_app.urls')),
     path('medias/', include('media_app.urls')),
     path('admin/', admin.site.urls),

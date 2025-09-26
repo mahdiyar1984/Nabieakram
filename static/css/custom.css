@@ -35,6 +35,13 @@
     filter: none !important;
 }
 
+.new-article-btn:hover {
+    background-color: #90caf9 !important;
+    color: #0d47a1 !important;
+    border-color: #64b5f6 !important;
+    font-weight: bold !important;
+}
+
 /* مرکزچین کردن شبکه‌های اجتماعی در بخش خودشون */
 @media (min-width: 768px) {
     .social-icons-center-md {

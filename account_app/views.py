@@ -1,22 +1,24 @@
 from django.contrib import messages
-from django.contrib.auth import login, logout, update_session_auth_hash
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import login, logout
 from django.db.models import Q
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.views import View
-from account_app.models import User
 from utils.email_service import send_activation_email
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from .models import User
+from .forms import UserCreateForm, UserUpdateForm
+from django.contrib.auth.models import Group
 
 
-# region Authentication Views
-
+# region authentication
 class RegisterView(View):
     def get(self, request):
-        return render(request, 'account_app/users_authentication/register.html')
+        return render(request, 'account_app/users_authentication/templates/account_app/register.html')
 
     def post(self, request):
         email = request.POST.get("email")
@@ -86,7 +88,7 @@ class ActiveAccountView(View):
 
 class LoginView(View):
     def get(self, request):
-        return render(request, template_name='account_app/users_authentication/login.html')
+        return render(request, template_name='account_app/users_authentication/templates/account_app/login.html')
 
     def post(self, request):
         email_or_admin = request.POST.get('email_or_admin')
@@ -115,7 +117,7 @@ class LoginView(View):
 
 class ForgotPasswordView(View):
     def get(self, request):
-        return render(request, template_name='account_app/users_authentication/forgot_password.html')
+        return render(request, template_name='account_app/users_authentication/templates/account_app/forgot_password.html')
 
     def post(self, request):
         email = request.POST.get('email')
@@ -144,7 +146,7 @@ class ResetPasswordView(View):
         user: User = User.objects.get(email_activation_code=email_active_code)
         if user is None:
             return redirect('account_app:login_page')
-        return render(request, template_name='account_app/users_authentication/reset_password.html')
+        return render(request, template_name='account_app/users_authentication/templates/account_app/reset_password.html')
 
     def post(self, request: HttpRequest, email_active_code):
         password = request.POST.get('password1')
@@ -170,73 +172,38 @@ class LogoutView(View):
         logout(request)
         return redirect('account_app:login_page')
 
+# endregion
+
+# region user & group management
+
+
+
+class AdminRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
+    model = User
+    template_name = "account_app/user_list.html"
+    context_object_name = "users"
+
+class UserCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
+    model = User
+    form_class = UserCreateForm
+    template_name = "account_app/user_form.html"
+    success_url = reverse_lazy("user_list")
+
+class UserUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
+    model = User
+    form_class = UserUpdateForm
+    template_name = "account_app/user_form.html"
+    success_url = reverse_lazy("user_list")
+
+class UserDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+    model = User
+    template_name = "account_app/user_confirm_delete.html"
+    success_url = reverse_lazy("user_list")
+
 
 # endregion
 
-
-# region user profile Views
-class UserPanelDashboardPage(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, template_name='account_app/users_profile/user_panel_dashboard_page.html')
-
-
-class EditUserProfilePage(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request,
-                      template_name='account_app/users_profile/edit_profile_page.html',
-                      context={'user': request.user})
-
-    def post(self, request):
-        user = request.user
-        user.first_name = request.POST.get('first_name', '')
-        user.last_name = request.POST.get('last_name', '')
-        user.address = request.POST.get('address', '')
-        user.phone_number = request.POST.get('phone_number','')
-        user.about_user = request.POST.get('about_user')
-        user.save()
-        messages.success(request, 'تغییرات با موفقیت ثبت گردید')
-        return redirect('account_app:edit_user_profile_page')
-
-
-class ChangePasswordPage(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, template_name='account_app/users_profile/change_password_page.html')
-
-    def post(self, request):
-        old_password = request.POST.get('old_password')
-        new_password = request.POST.get('new_password1')
-        confirm_password = request.POST.get('new_password2')
-
-        if not old_password or not new_password or not confirm_password:
-            messages.error(request, 'لطفاً همه فیلدها را پر کنید')
-            return redirect('account_app:change_password_page')
-
-        user = request.user
-        if not user.check_password(old_password):
-            messages.error(request, 'کلمه عبور وارد شده اشتباه می باشد')
-            return redirect('account_app:change_password_page')
-
-        if new_password != confirm_password:
-            messages.error(request, 'کلمه عبور و تکرار کلمه عبور یکسان نیستند')
-            return redirect('account_app:change_password_page')
-
-        user.set_password(new_password)
-        user.save()
-        update_session_auth_hash(request, user)
-        messages.success(request, 'کلمه عبور با موفقیت تغییر یافت')
-        return redirect('account_app:user_panel_dashboard_page')
-
-
-@login_required
-def update_avatar(request):
-    if request.method == 'POST' and request.FILES.get('avatar'):
-        user = request.user
-        user.avatar = request.FILES['avatar']
-        user.save()
-    return redirect('account_app:user_panel_dashboard_page')
-
-
-def user_panel_menu_component(request: HttpRequest):
-    return render(request, 'account_app/users_profile/components/user_panel_menu_component.html')
-
-# endregion

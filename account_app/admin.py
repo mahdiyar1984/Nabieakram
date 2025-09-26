@@ -5,13 +5,14 @@ from account_app.models import User
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ('id', 'username', 'email', 'first_name', 'last_name', 'is_superuser', 'is_staff','is_active')
-    list_editable = ('is_active', 'is_staff','is_superuser')
+    list_display = ('id', 'username', 'email', 'first_name', 'last_name', 'is_superuser', 'is_staff', 'is_active',
+                    'get_groups')
+    list_editable = ('is_active', 'is_staff', 'is_superuser')
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         ('اطلاعات شخصی',
          {'fields': ('first_name', 'last_name', 'email', 'phone_number', 'avatar', 'about_user', 'address')}),
-        ('مجوزها', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('مجوزها', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups')}),
         ('تاریخ‌ها', {'fields': ('last_login', 'date_joined')}),
         ('کد فعالسازی ایمیل', {'fields': ('email_activation_code',)}),
     )
@@ -22,6 +23,9 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('username', 'email', 'password1', 'password2', 'is_active', 'is_staff', 'phone_number', 'avatar')
         }),
     )
-    # search_fields = ('username', 'email', 'first_name', 'last_name', 'phone_number')
     ordering = ('id',)
-    # list_filter = ('is_active', 'is_staff', 'is_superuser', 'groups')
+
+    def get_groups(self, obj):
+        return ", ".join([g.name for g in obj.groups.all()])
+
+    get_groups.short_description = 'گروه ها'  # عنوان ستون در ادمین
