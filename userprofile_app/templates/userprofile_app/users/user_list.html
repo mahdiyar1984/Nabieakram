@@ -1,0 +1,159 @@
+{% extends 'shared/dashboard.html' %}
+{% load shamsi_tags %}
+
+{% block title %}پروفایل - لیست مقالات{% endblock %}
+
+{% block content %}
+
+    <div class="dashboard-content-wrap">
+        <div class="dashboard-menu-toggler btn theme-btn theme-btn-sm lh-28 theme-btn-transparent mb-4 ml-3"><i
+                class="la la-bars mr-1"></i> منو
+        </div>
+
+        <!-- main content -->
+        <div class="container-fluid">
+
+            <!-- breadcrumb -->
+            <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between mb-5">
+                <div class="media media-card align-items-center">
+                    <div class="media-img media--img media-img-md rounded-full">
+                        <img class="rounded-full" src="{{ request.user.avatar.url }}" alt="تصویر کوچک کاربر">
+                    </div>
+                    <div class="media-body">
+                        <h2 class="section__title fs-30">{{ request.user.get_full_name }}</h2>
+                        <div class="rating-wrap d-flex align-items-center pt-2">
+                            <div class="review-stars">
+                                <span class="rating-number">4.4</span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star-o"></span>
+                            </div>
+                            <span class="rating-total pl-1">(20230)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="{% url 'userprofile_app:user_create' %}" class="btn btn-info d-inline-flex align-items-center new-article-btn"
+                   style="background-color: #e3f2fd; color: #1976d2; border-color: #b3e5fc; font-weight: bold;">
+                    <i class="la la-plus mr-2"></i><span style="font-weight: bold;">ایجاد کاربر جدید</span>
+                </a>
+
+            </div>
+
+            <!-- user section -->
+            <div class="section-block mb-5"></div>
+            <div class="dashboard-heading mb-5">
+                <h3 class="fs-22 font-weight-semi-bold">
+                    لیست کاربران
+                    <span class="badge badge-primary pr-3 pl-3 pt-2 pb-2"
+                          style="font-size: 14px; vertical-align: middle; margin-right: 8px;">{{ user_list.count }}</span>
+                </h3>
+            </div>
+
+            <!-- article table -->
+            <div class="table-responsive pb-4">
+                <table class="table generic-table align-middle">
+                    <thead>
+                    <tr>
+                        <th scope="col">آیدی</th>
+                        <th scope="col">نام کاربری</th>
+                        <th scope="col">ایمیل</th>
+                        <th scope="col">نام کامل</th>
+                        <th scope="col">تاریخ ورود</th>
+                        <th scope="col">فعال</th>
+                        <th scope="col">گروه ها</th>
+                        <th scope="col">اقدام</th>
+                    </tr>
+                    </thead>
+
+
+                    <tbody>
+                    {% for user in user_list %}
+                        <tr>
+
+                            <th scope="row">
+                                <a href="course-details.html" class="text-black">{{ user.id }}</a>
+                            </th>
+
+                            <td>{{ user.username }}</td>
+
+                            <td>{{ user.email }}</td>
+
+                            <td>{{ user.get_full_name }}</td>
+
+                            <td>{{ user.date_joined|to_shamsi }}</td>
+
+                            <td>{{ user.is_active }}</td>
+
+                            <td>
+                                {% for group in user.groups.all %}
+                                	<span>{{ group }},</span>
+                                {% endfor %}
+
+
+                            </td>
+
+                            <td>
+                                <div class="card-action-wrap d-flex">
+                                    <a href="#"
+                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
+                                       data-toggle="tooltip" data-placement="top" title="مشاهده">
+                                        <i class="la la-eye"></i>
+                                    </a>
+                                    <a href="{% url 'userprofile_app:user_edit' pk=user.id %}"
+                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
+                                       data-toggle="tooltip" data-placement="top" title="ویرایش">
+                                        <i class="la la-edit"></i>
+                                    </a>
+                                    <a href="#"
+                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
+                                       data-toggle="tooltip" data-placement="top" title="حذف">
+                                        <i class="la la-trash"></i>
+                                    </a>
+                                    <form action="#" method="post" style="display:inline;">
+                                        <button type="submit"
+                                                class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-primary border-0"
+                                                data-toggle="tooltip" data-placement="top" title="تایید"
+                                                style="background: none;">
+                                            <i class="la la-check"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+
+            <!-- pagination -->
+            <div class="text-center py-3">
+                <nav aria-label="مثال ناوبری صفحه" class="pagination-box">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="قبلی">
+                                <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
+                                <span class="sr-only">قبلی</span>
+                            </a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="بعد">
+                                <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
+                                <span class="sr-only">بعد</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <p class="fs-14 pt-2">نمایش 1-5 از 16 نتیجه</p>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}

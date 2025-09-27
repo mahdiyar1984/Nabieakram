@@ -7,12 +7,7 @@ from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.views import View
 from utils.email_service import send_activation_email
-from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import User
-from .forms import UserCreateForm, UserUpdateForm
-from django.contrib.auth.models import Group
 
 
 # region authentication
@@ -174,36 +169,5 @@ class LogoutView(View):
 
 # endregion
 
-# region user & group management
 
-
-
-class AdminRequiredMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.is_superuser
-
-class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
-    model = User
-    template_name = "account_app/user_list.html"
-    context_object_name = "users"
-
-class UserCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
-    model = User
-    form_class = UserCreateForm
-    template_name = "account_app/user_form.html"
-    success_url = reverse_lazy("user_list")
-
-class UserUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
-    model = User
-    form_class = UserUpdateForm
-    template_name = "account_app/user_form.html"
-    success_url = reverse_lazy("user_list")
-
-class UserDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
-    model = User
-    template_name = "account_app/user_confirm_delete.html"
-    success_url = reverse_lazy("user_list")
-
-
-# endregion
 

@@ -1,17 +1,149 @@
-from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from blog_app.models import Article
+from .forms import ArticleForm, TagForm
+from django.contrib import messages
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.views import View
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from account_app.models import User
-from blog_app.models import Article
-from .forms import ArticleForm, TagForm
+from .forms import UserCreateForm, UserUpdateForm
+from django.contrib.auth.models import Group
 
 
+
+# region user & group management
+
+class AdminRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
+    model = User
+    template_name = "userprofile_app/users/user_list.html"
+
+class UserCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
+    model = User
+    form_class = UserCreateForm
+    template_name = "userprofile_app/users/user_form.html"
+    success_url = reverse_lazy('userprofile_app:user_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["groups"] = Group.objects.all()
+        return context
+
+    def form_valid(self, form):
+        form.instance.first_name = self.request.POST.get("first_name")
+        form.instance.last_name = self.request.POST.get("last_name")
+        form.instance.phone_number = self.request.POST.get("phone_number")
+        form.instance.address = self.request.POST.get("address")
+        form.instance.about_user = self.request.POST.get("about_user")
+
+        if self.request.FILES.get("avatar"):
+            form.instance.avatar = self.request.FILES["avatar"]
+
+        response = super().form_valid(form)
+
+        groups_ids = self.request.POST.getlist("groups")
+        if groups_ids:
+            self.object.groups.set(groups_ids)
+
+        return response
+
+
+class UserUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
+    model = User
+    form_class = UserUpdateForm
+    template_name = "userprofile_app/users/user_form.html"
+    success_url = reverse_lazy('userprofile_app:user_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["groups"] = Group.objects.all()
+        return context
+
+    def form_valid(self, form):
+        form.instance.first_name = self.request.POST.get("first_name")
+        form.instance.last_name = self.request.POST.get("last_name")
+        form.instance.phone_number = self.request.POST.get("phone_number")
+        form.instance.address = self.request.POST.get("address")
+        form.instance.about_user = self.request.POST.get("about_user")
+
+        if self.request.FILES.get("avatar"):
+            form.instance.avatar = self.request.FILES["avatar"]
+
+        response = super().form_valid(form)
+
+        groups_ids = self.request.POST.getlist("groups")
+        if groups_ids:
+            self.object.groups.set(groups_ids)
+
+        return response
+
+class UserDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+    model = User
+    template_name = "userprofile_app/users/user_confirm_delete.html"
+    success_url = reverse_lazy('userprofile_app:user_list')
+
+
+# endregion
+
+# region Article management
+class AuthorArticleListView(LoginRequiredMixin, ListView):
+    model = Article
+    template_name = 'userprofile_app/articles/article_list.html'
+
+    def get_queryset(self):
+        return Article.objects.filter(author=self.request.user, is_delete=False)
+class AuthorArticleCreateView(LoginRequiredMixin, CreateView):
+    model = Article
+    form_class = ArticleForm
+    template_name = 'userprofile_app/articles/article_form.html'
+    success_url = reverse_lazy('userprofile_app:author_articles')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if 'tag_form' not in context:
+            context['tag_form'] = TagForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if "add_tag" in request.POST:
+            tag_form = TagForm(request.POST)
+            if tag_form.is_valid():
+                tag_form.save()
+            return redirect('userprofile_app:article_create')
+
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.status = 'draft'
+        return super().form_valid(form)
+class AuthorArticleUpdateView(LoginRequiredMixin, UpdateView):
+    model = Article
+    form_class = ArticleForm
+    template_name = 'userprofile_app/articles/article_form.html'
+    success_url = reverse_lazy('author_articles')
+
+    def get_queryset(self):
+        return Article.objects.filter(author=self.request.user, is_delete=False)
+class AuthorArticleDeleteView(LoginRequiredMixin, DeleteView):
+    model = Article
+    template_name = 'userprofile_app/articles/article_confirm_delete.html'
+    success_url = reverse_lazy('author_articles')
+
+    def get_queryset(self):
+        return Article.objects.filter(author=self.request.user, is_delete=False)
+
+# endregion
+
+# region setting
 class UserPanelDashboardPage(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, template_name='userprofile_app/user_panel_dashboard_page.html')
@@ -24,7 +156,7 @@ class InformationUserProfile(LoginRequiredMixin, DetailView):
 
 class ArticleUserPanel(LoginRequiredMixin, ListView):
     model = Article
-    template_name = 'userprofile_app/article_list.html'
+    template_name = 'userprofile_app/articles/article_list.html'
 
 
     def get_queryset(self):
@@ -84,53 +216,4 @@ def user_panel_menu_component(request: HttpRequest):
     return render(request,
                   'userprofile_app/components/user_panel_menu_component.html')
 
-
-
-
-# CRUD Actions
-class AuthorArticleListView(LoginRequiredMixin, ListView):
-    model = Article
-    template_name = 'userprofile_app/article_list.html'
-
-    def get_queryset(self):
-        return Article.objects.filter(author=self.request.user, is_delete=False)
-class AuthorArticleCreateView(LoginRequiredMixin, CreateView):
-    model = Article
-    form_class = ArticleForm
-    template_name = 'userprofile_app/article_form.html'
-    success_url = reverse_lazy('userprofile_app:author_articles')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if 'tag_form' not in context:
-            context['tag_form'] = TagForm()
-        return context
-
-    def post(self, request, *args, **kwargs):
-        if "add_tag" in request.POST:
-            tag_form = TagForm(request.POST)
-            if tag_form.is_valid():
-                tag_form.save()
-            return redirect('userprofile_app:article_create')
-
-        return super().post(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        form.instance.status = 'draft'
-        return super().form_valid(form)
-class AuthorArticleUpdateView(LoginRequiredMixin, UpdateView):
-    model = Article
-    form_class = ArticleForm
-    template_name = 'userprofile_app/article_form.html'
-    success_url = reverse_lazy('author_articles')
-
-    def get_queryset(self):
-        return Article.objects.filter(author=self.request.user, is_delete=False)
-class AuthorArticleDeleteView(LoginRequiredMixin, DeleteView):
-    model = Article
-    template_name = 'userprofile_app/article_confirm_delete.html'
-    success_url = reverse_lazy('author_articles')
-
-    def get_queryset(self):
-        return Article.objects.filter(author=self.request.user, is_delete=False)
+# endregion
