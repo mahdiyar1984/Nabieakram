@@ -2,7 +2,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from blog_app.models import Article
-from .forms import ArticleForm, TagForm
+from .forms import ArticleForm, TagForm, GroupForm
 from django.contrib import messages
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
@@ -16,7 +16,7 @@ from django.contrib.auth.models import Group
 
 
 
-# region user & group management
+# region user management
 
 class AdminRequiredMixin(UserPassesTestMixin):
     def test_func(self):
@@ -93,6 +93,35 @@ class UserDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
 
 # endregion
 
+# region Groups management
+
+class AdminRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+class GroupListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
+    model = Group
+    template_name = "userprofile_app/groups/group_list.html"
+
+class GroupCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
+    model = Group
+    form_class = GroupForm
+    template_name = "userprofile_app/groups/group_form.html"
+    success_url = reverse_lazy("group_list")
+
+class GroupUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
+    model = Group
+    form_class = GroupForm
+    template_name = "userprofile_app/groups/group_form.html"
+    success_url = reverse_lazy("group_list")
+
+class GroupDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+    model = Group
+    template_name = "userprofile_app/groups/group_confirm_delete.html"
+    success_url = reverse_lazy("group_list")
+
+# endregion
+
 # region Article management
 class AuthorArticleListView(LoginRequiredMixin, ListView):
     model = Article
@@ -146,10 +175,10 @@ class AuthorArticleDeleteView(LoginRequiredMixin, DeleteView):
 # region setting
 class UserPanelDashboardPage(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, template_name='userprofile_app/user_panel_dashboard_page.html')
+        return render(request, template_name='userprofile_app/settings/user_panel_dashboard_page.html')
 class InformationUserProfile(LoginRequiredMixin, DetailView):
     model = User
-    template_name = 'userprofile_app/information_profile_user.html'
+    template_name = 'userprofile_app/settings/information_profile_user.html'
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -165,7 +194,7 @@ class ArticleUserPanel(LoginRequiredMixin, ListView):
 class EditUserProfilePage(LoginRequiredMixin, View):
     def get(self, request):
         return render(request,
-                      template_name='userprofile_app/edit_profile_page.html',
+                      template_name='userprofile_app/settings/edit_profile_page.html',
                       context={'user': request.user})
 
     def post(self, request):
@@ -180,7 +209,7 @@ class EditUserProfilePage(LoginRequiredMixin, View):
         return redirect('userprofile_app:edit_user_profile_page')
 class ChangePasswordPage(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, template_name='userprofile_app/change_password_page.html')
+        return render(request, template_name='userprofile_app/settings/change_password_page.html')
 
     def post(self, request):
         old_password = request.POST.get('old_password')

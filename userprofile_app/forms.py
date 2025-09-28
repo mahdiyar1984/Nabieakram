@@ -2,9 +2,10 @@ from blog_app.models import Article, ArticleCategory, ArticleTag
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from account_app.models import User
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 
-# فرم ایجاد کاربر
+
+# region User management
 class UserCreateForm(UserCreationForm):
     groups = forms.ModelMultipleChoiceField(
         queryset=Group.objects.all(),
@@ -14,7 +15,9 @@ class UserCreateForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'avatar', 'about_user', 'address', 'groups', 'password1', 'password2']
+        fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'avatar', 'about_user', 'address',
+                  'groups', 'password1', 'password2']
+
 
 # فرم ویرایش کاربر
 class UserUpdateForm(UserChangeForm):
@@ -27,7 +30,8 @@ class UserUpdateForm(UserChangeForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'avatar', 'about_user', 'address', 'groups']
+        fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'avatar', 'about_user', 'address',
+                  'groups']
 
 
 class ArticleForm(forms.ModelForm):
@@ -39,6 +43,7 @@ class ArticleForm(forms.ModelForm):
             'selected_tags': forms.SelectMultiple(attrs={'class': 'form-control'}),
         }
 
+
 class TagForm(forms.ModelForm):
     class Meta:
         model = ArticleTag
@@ -49,3 +54,21 @@ class TagForm(forms.ModelForm):
                 'placeholder': 'عنوان تگ جدید را وارد کنید'
             })
         }
+
+# endregion
+
+
+# region User management
+
+class GroupForm(forms.ModelForm):
+    permissions = forms.ModelMultipleChoiceField(
+        queryset=Permission.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    class Meta:
+        model = Group
+        fields = ['name', 'permissions']
+
+# endregion
