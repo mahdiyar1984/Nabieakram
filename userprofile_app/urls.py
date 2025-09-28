@@ -12,7 +12,6 @@ urlpatterns = [
     path('update_avatar/', views.update_avatar, name='update_avatar'),
     # endregion
 
-
     # region User management
     path('users/', views.UserListView.as_view(), name='user_list'),
     path('users/create/', views.UserCreateView.as_view(), name='user_create'),
@@ -20,19 +19,18 @@ urlpatterns = [
     path('users/<int:pk>/delete/', views.UserDeleteView.as_view(), name='user_delete'),
     # endregion
 
-
     # region Group management
-    path('groups/', views.GroupListView.as_view(), name='group_list'),
+    path('groups/', views.GroupPermissionMatrixView.as_view(), name='group_list'),
     path('groups/create/', views.GroupCreateView.as_view(), name='group_create'),
     path('groups/<int:pk>/edit/', views.GroupUpdateView.as_view(), name='group_edit'),
     path('groups/<int:pk>/delete/', views.GroupDeleteView.as_view(), name='group_delete'),
     # endregion
 
-
     # region articles management
-    path('articles/', views.AuthorArticleListView.as_view(), name='author_articles'),
-    path('articles/create/', views.AuthorArticleCreateView.as_view(), name='author_article_create'),
-    path('articles/<int:pk>/edit/', views.AuthorArticleUpdateView.as_view(), name='author_article_edit'),
-    path('articles/<int:pk>/delete/', views.AuthorArticleDeleteView.as_view(), name='author_article_delete'),
+    path('articles/', views.AuthorArticleListView.as_view(), name='articles_list'),
+    path('articles/create/', views.AuthorArticleCreateView.as_view(), name='article_create'),
+    path('articles/<int:pk>/edit/', views.AuthorArticleUpdateView.as_view(), name='article_edit'),
+    path('articles/<int:pk>/delete/', views.AuthorArticleDeleteView.as_view(), name='article_delete'),
+    path("articles/<int:pk>/status/", views.ArticleChangeStatusView.as_view(), name="article_change_status"),
     # endregion
 ]

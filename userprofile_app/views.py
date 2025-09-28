@@ -1,19 +1,19 @@
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
 from blog_app.models import Article
 from .forms import ArticleForm, TagForm, GroupForm
 from django.contrib import messages
 from django.http import HttpRequest
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from account_app.models import User
 from .forms import UserCreateForm, UserUpdateForm
-from django.contrib.auth.models import Group
-
+from django.contrib.auth.models import Group, Permission
+from django.apps import apps
 
 
 # region user management
@@ -22,9 +22,11 @@ class AdminRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_superuser
 
+
 class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
     model = User
     template_name = "userprofile_app/users/user_list.html"
+
 
 class UserCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
     model = User
@@ -85,6 +87,7 @@ class UserUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
 
         return response
 
+
 class UserDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
     model = User
     template_name = "userprofile_app/users/user_confirm_delete.html"
@@ -99,9 +102,71 @@ class AdminRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_superuser
 
+
+class GroupPermissionMatrixView(TemplateView):
+    template_name = "userprofile_app/groups/group_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        groups = Group.objects.all()
+        actions = ["add", "change", "delete", "view"]
+
+        apps_dict = {}
+        for perm in Permission.objects.all().select_related("content_type"):
+            app_label = perm.content_type.app_label
+            model_name = perm.content_type.model  # lowercase مثل articlecategory
+
+            app_config = apps.get_app_config(app_label)
+            app_verbose = app_config.verbose_name.title()
+
+            model_class = apps.get_model(app_label, model_name)
+            model_verbose = model_class._meta.verbose_name.title()
+
+            codename = perm.codename
+
+            if app_verbose not in apps_dict:
+                apps_dict[app_verbose] = {}
+
+            if model_name not in apps_dict[app_verbose]:
+                apps_dict[app_verbose][model_name] = {
+                    "verbose": model_verbose,
+                    "perms": []
+                }
+
+            apps_dict[app_verbose][model_name]["perms"].append(codename)
+
+        for group in groups:
+            group.codename_list = set(group.permissions.values_list("codename", flat=True))
+
+        context.update({
+            "groups": groups,
+            "actions": actions,
+            "apps_dict": apps_dict,
+        })
+        return context
+
+    def post(self, request, *args, **kwargs):
+        groups = Group.objects.all()
+        for group in groups:
+            selected_codenames = request.POST.getlist(f'permissions_{group.id}[]')
+
+            all_perms = Permission.objects.all()
+            group.permissions.clear()
+            for codename in selected_codenames:
+                try:
+                    perm = all_perms.get(codename=codename)
+                    group.permissions.add(perm)
+                except Permission.DoesNotExist:
+                    pass
+
+        return redirect(request.path)
+
+
 class GroupListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
     model = Group
     template_name = "userprofile_app/groups/group_list.html"
+
 
 class GroupCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
     model = Group
@@ -109,16 +174,19 @@ class GroupCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
     template_name = "userprofile_app/groups/group_form.html"
     success_url = reverse_lazy("group_list")
 
+
 class GroupUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
     model = Group
     form_class = GroupForm
     template_name = "userprofile_app/groups/group_form.html"
     success_url = reverse_lazy("group_list")
 
+
 class GroupDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
     model = Group
     template_name = "userprofile_app/groups/group_confirm_delete.html"
     success_url = reverse_lazy("group_list")
+
 
 # endregion
 
@@ -129,11 +197,12 @@ class AuthorArticleListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Article.objects.filter(author=self.request.user, is_delete=False)
+
 class AuthorArticleCreateView(LoginRequiredMixin, CreateView):
     model = Article
     form_class = ArticleForm
     template_name = 'userprofile_app/articles/article_form.html'
-    success_url = reverse_lazy('userprofile_app:author_articles')
+    success_url = reverse_lazy('userprofile_app:articles_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -146,7 +215,7 @@ class AuthorArticleCreateView(LoginRequiredMixin, CreateView):
             tag_form = TagForm(request.POST)
             if tag_form.is_valid():
                 tag_form.save()
-            return redirect('userprofile_app:article_create')
+            return redirect('userprofile_app:articles_list')
 
         return super().post(request, *args, **kwargs)
 
@@ -154,21 +223,52 @@ class AuthorArticleCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         form.instance.status = 'draft'
         return super().form_valid(form)
+
 class AuthorArticleUpdateView(LoginRequiredMixin, UpdateView):
     model = Article
     form_class = ArticleForm
     template_name = 'userprofile_app/articles/article_form.html'
-    success_url = reverse_lazy('author_articles')
+    success_url = reverse_lazy('userprofile_app:articles_list')
 
     def get_queryset(self):
         return Article.objects.filter(author=self.request.user, is_delete=False)
+
 class AuthorArticleDeleteView(LoginRequiredMixin, DeleteView):
     model = Article
     template_name = 'userprofile_app/articles/article_confirm_delete.html'
-    success_url = reverse_lazy('author_articles')
+    success_url = reverse_lazy('userprofile_app:articles_list')
 
     def get_queryset(self):
         return Article.objects.filter(author=self.request.user, is_delete=False)
+
+class ArticleChangeStatusView(LoginRequiredMixin, View):
+    def post(self, request, pk, *args, **kwargs):
+        article = get_object_or_404(Article, pk=pk)
+
+        action = request.POST.get("action")
+
+        # 1. اگر نویسنده بخواد مقاله خودش رو pending کنه
+        if action == "submit_for_review" and article.author == request.user:
+            article.status = "pending"
+            article.save()
+            messages.success(request, "مقاله برای بررسی ارسال شد.")
+            return redirect("articles_list")
+
+        # 2. اگر مدیر/ویراستار بخواد مقاله رو تایید یا رد کنه
+        if action == "publish" and request.user.has_perm("blog_app.can_publish_article"):
+            article.status = "published"
+            article.save()
+            messages.success(request, "مقاله منتشر شد.")
+            return redirect("articles_list")
+
+        if action == "reject" and request.user.has_perm("blog_app.can_reject_article"):
+            article.status = "rejected"
+            article.save()
+            messages.warning(request, "مقاله رد شد.")
+            return redirect("articles_list")
+
+        messages.error(request, "شما اجازه این کار را ندارید.")
+        return redirect("articles_list")
 
 # endregion
 
@@ -176,6 +276,8 @@ class AuthorArticleDeleteView(LoginRequiredMixin, DeleteView):
 class UserPanelDashboardPage(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, template_name='userprofile_app/settings/user_panel_dashboard_page.html')
+
+
 class InformationUserProfile(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'userprofile_app/settings/information_profile_user.html'
@@ -183,13 +285,14 @@ class InformationUserProfile(LoginRequiredMixin, DetailView):
     def get_object(self, queryset=None):
         return self.request.user
 
+
 class ArticleUserPanel(LoginRequiredMixin, ListView):
     model = Article
     template_name = 'userprofile_app/articles/article_list.html'
 
-
     def get_queryset(self):
         return Article.objects.filter(user=self.request.user)
+
 
 class EditUserProfilePage(LoginRequiredMixin, View):
     def get(self, request):
@@ -202,11 +305,13 @@ class EditUserProfilePage(LoginRequiredMixin, View):
         user.first_name = request.POST.get('first_name', '')
         user.last_name = request.POST.get('last_name', '')
         user.address = request.POST.get('address', '')
-        user.phone_number = request.POST.get('phone_number','')
+        user.phone_number = request.POST.get('phone_number', '')
         user.about_user = request.POST.get('about_user')
         user.save()
         messages.success(request, 'تغییرات با موفقیت ثبت گردید')
         return redirect('userprofile_app:edit_user_profile_page')
+
+
 class ChangePasswordPage(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, template_name='userprofile_app/settings/change_password_page.html')
@@ -234,6 +339,8 @@ class ChangePasswordPage(LoginRequiredMixin, View):
         update_session_auth_hash(request, user)
         messages.success(request, 'کلمه عبور با موفقیت تغییر یافت')
         return redirect('userprofile_app:user_panel_dashboard_page')
+
+
 @login_required
 def update_avatar(request):
     if request.method == 'POST' and request.FILES.get('avatar'):
@@ -241,6 +348,8 @@ def update_avatar(request):
         user.avatar = request.FILES['avatar']
         user.save()
     return redirect('userprofile_app:user_panel_dashboard_page')
+
+
 def user_panel_menu_component(request: HttpRequest):
     return render(request,
                   'userprofile_app/components/user_panel_menu_component.html')

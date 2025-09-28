@@ -38,13 +38,13 @@
                         داشبورد
                     </a>
                 </li>
-                <li class="list-group-item {% if request.resolver_match.url_name == 'author_articles' %}active bg-info text-white{% endif %}">
-                    <a href="{% url 'userprofile_app:author_articles' %}" class="text-decoration-none text-reset">
+                <li class="list-group-item {% if request.resolver_match.url_name == 'articles_list' %}active bg-info text-white{% endif %}">
+                    <a href="{% url 'userprofile_app:articles_list' %}" class="text-decoration-none text-reset">
                         مقالات
                     </a>
                 </li>
                 <li class="list-group-item {% if request.resolver_match.url_name == 'edit_user_profile_page' %}active bg-info text-white{% endif %}">
-                    <a href="{% url 'userprofile_app:edit_user_profile_page' %}" class="text-decoration-none text-reset">
+                    <a href="{% url 'userprofile_app:user_profile_page' %}" class="text-decoration-none text-reset">
                         ویرایش حساب کاربری
                     </a>
                 </li>

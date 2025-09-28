@@ -41,7 +41,7 @@
             <div class="dashboard-heading mb-5">
                 <h3 class="fs-22 font-weight-semi-bold">مقاله جدید</h3>
             </div>
-            <form action="{% url 'userprofile_app:author_article_create' %}"
+            <form action="{% url 'userprofile_app:article_create' %}"
                   class="MultiFile-intercepted"
                   enctype="multipart/form-data">
                 {% csrf_token %}

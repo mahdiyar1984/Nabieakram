@@ -4,8 +4,22 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from account_app.models import User
 from django.contrib.auth.models import Group, Permission
 
+# region group management
 
-# region User management
+class GroupForm(forms.ModelForm):
+    permissions = forms.ModelMultipleChoiceField(
+        queryset=Permission.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    class Meta:
+        model = Group
+        fields = ['name', 'permissions']
+
+# endregion
+
+# region user management
 class UserCreateForm(UserCreationForm):
     groups = forms.ModelMultipleChoiceField(
         queryset=Group.objects.all(),
@@ -19,7 +33,6 @@ class UserCreateForm(UserCreationForm):
                   'groups', 'password1', 'password2']
 
 
-# فرم ویرایش کاربر
 class UserUpdateForm(UserChangeForm):
     password = None  # پنهان کردن فیلد پسورد در فرم ویرایش
     groups = forms.ModelMultipleChoiceField(
@@ -33,7 +46,9 @@ class UserUpdateForm(UserChangeForm):
         fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'avatar', 'about_user', 'address',
                   'groups']
 
+# endregion
 
+# region article management
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
@@ -58,17 +73,3 @@ class TagForm(forms.ModelForm):
 # endregion
 
 
-# region User management
-
-class GroupForm(forms.ModelForm):
-    permissions = forms.ModelMultipleChoiceField(
-        queryset=Permission.objects.all(),
-        required=False,
-        widget=forms.CheckboxSelectMultiple
-    )
-
-    class Meta:
-        model = Group
-        fields = ['name', 'permissions']
-
-# endregion

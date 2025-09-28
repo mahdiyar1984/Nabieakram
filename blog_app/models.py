@@ -65,6 +65,10 @@ class Article(models.Model):
     class Meta:
         verbose_name = 'مقاله'
         verbose_name_plural = 'مقالات'
+        permissions = [
+            ("can_publish_article", "Can publish article"),
+            ("can_reject_article", "Can reject article"),
+        ]
 
 
 class ArticleComment(models.Model):

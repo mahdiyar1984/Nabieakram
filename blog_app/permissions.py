@@ -2,13 +2,13 @@ ACCESS_RIGHTS = {
     'ArticleCategory': {
         'admin':    ['add', 'change', 'delete', 'view_all'],
         'editor':   ['add', 'change', 'delete', 'view_all'],
-        'author':   ['view_select'],  # فقط انتخاب در فرم
+        'author':   ['view_select'],
         'subscriber':['view_all']
     },
     'ArticleTag': {
         'admin':    ['add', 'change', 'delete', 'view_all'],
         'editor':   ['add', 'change', 'delete', 'view_all'],
-        'author':   ['view_select'],  # فقط انتخاب در فرم
+        'author':   ['view_select'],
         'subscriber':['view_all']
     },
     'Article': {

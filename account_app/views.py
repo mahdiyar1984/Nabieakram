@@ -13,7 +13,7 @@ from .models import User
 # region authentication
 class RegisterView(View):
     def get(self, request):
-        return render(request, 'account_app/users_authentication/templates/account_app/register.html')
+        return render(request, 'account_app/register.html')
 
     def post(self, request):
         email = request.POST.get("email")
@@ -83,7 +83,7 @@ class ActiveAccountView(View):
 
 class LoginView(View):
     def get(self, request):
-        return render(request, template_name='account_app/users_authentication/templates/account_app/login.html')
+        return render(request, template_name='account_app/login.html')
 
     def post(self, request):
         email_or_admin = request.POST.get('email_or_admin')
@@ -112,7 +112,7 @@ class LoginView(View):
 
 class ForgotPasswordView(View):
     def get(self, request):
-        return render(request, template_name='account_app/users_authentication/templates/account_app/forgot_password.html')
+        return render(request, template_name='account_app/forgot_password.html')
 
     def post(self, request):
         email = request.POST.get('email')
@@ -141,7 +141,7 @@ class ResetPasswordView(View):
         user: User = User.objects.get(email_activation_code=email_active_code)
         if user is None:
             return redirect('account_app:login_page')
-        return render(request, template_name='account_app/users_authentication/templates/account_app/reset_password.html')
+        return render(request, template_name='account_app/reset_password.html')
 
     def post(self, request: HttpRequest, email_active_code):
         password = request.POST.get('password1')

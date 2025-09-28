@@ -35,7 +35,7 @@
                     </div>
                 </div>
 
-                <a href="{% url 'userprofile_app:author_article_create' %}" class="btn btn-info d-inline-flex align-items-center new-article-btn"
+                <a href="{% url 'userprofile_app:article_create' %}" class="btn btn-info d-inline-flex align-items-center new-article-btn"
                    style="background-color: #e3f2fd; color: #1976d2; border-color: #b3e5fc; font-weight: bold;">
                     <i class="la la-plus mr-2"></i><span style="font-weight: bold;">ایجاد مقاله جدید</span>
                 </a>
@@ -67,75 +67,87 @@
                     </tr>
                     </thead>
 
-
                     <tbody>
                     {% for article in article_list %}
                         <tr>
                             <th scope="row">
-                                <a href="course-details.html" class="text-black">{{ article.title }}</a>
+                                <a href="{% url 'blog_app:blog_detail' pk=article.id %}" class="text-black">{{ article.title }}</a>
                             </th>
                             <td>{{ article.author.get_full_name }}</td>
                             <td>
                                 {% for categories in article.selected_categories.all %}
-                                    <span>{{ categories.title }},</span>
+                                    <span>{{ categories.title }}{% if not forloop.last %}, {% endif %}</span>
                                 {% endfor %}
-
                             </td>
                             <td>
                                 {% for tags in article.selected_tags.all %}
-                                    <span>{{ tags.title }},</span>
+                                    <span>{{ tags.title }}{% if not forloop.last %}, {% endif %}</span>
                                 {% endfor %}
-
                             </td>
                             <td>{{ article.create_date|to_shamsi }}</td>
-                            {% if article.status == 'draft' %}
-                                <td>
-                                    <span class="badge bg-secondary text-white p-1"
-                                          style="display: block; width: 75%;">{{ article.get_status_display }}</span>
-                                </td>
 
-                            {% elif article.status == 'pending' %}
-                                <td>
-                                    <span class="badge badge-warning text-white p-1"
-                                          style="display: block; width: 75%;">در انتظار تایید</span>
-                                </td>
-
-                            {% elif article.status == 'published' %}
-                                <td>
-                                    <span class="badge badge-success text-white p-1"
-                                          style="display: block; width: 75%;">منتشر شده</span>
-                                </td>
-
-                            {% elif article.status == 'rejected' %}
-                                <td>
+                            <td>
+                                {% if article.status == 'draft' %}
+                                    <span class="badge bg-secondary text-white p-1" style="display: block; width: 75%;">{{ article.get_status_display }}</span>
+                                {% elif article.status == 'pending' %}
+                                    <span class="badge bg-warning text-white p-1" style="display: block; width: 75%;">در انتظار تایید</span>
+                                {% elif article.status == 'published' %}
+                                    <span class="badge bg-success text-white p-1" style="display: block; width: 75%;">منتشر شده</span>
+                                {% elif article.status == 'rejected' %}
                                     <span class="badge bg-danger text-white p-1" style="display: block; width: 75%;">رد شد</span>
-                                </td>
-                            {% endif %}
+                                {% endif %}
+                            </td>
 
                             <td>
                                 <div class="card-action-wrap d-flex">
+                                    <!-- مشاهده -->
                                     <a href="{% url 'blog_app:blog_detail' pk=article.id %}"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
-                                       data-toggle="tooltip" data-placement="top" title="مشاهده">
+                                       data-toggle="tooltip" title="مشاهده">
                                         <i class="la la-eye"></i>
                                     </a>
-                                    <a href="#"
-                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
-                                       data-toggle="tooltip" data-placement="top" title="ویرایش">
+
+                                    <!-- ویرایش -->
+                                    <a href="{% url 'userprofile_app:article_edit' pk=article.id %}"
+                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-warning"
+                                       data-toggle="tooltip" title="ویرایش">
                                         <i class="la la-edit"></i>
                                     </a>
-                                    <a href="#"
-                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
-                                       data-toggle="tooltip" data-placement="top" title="حذف">
+
+                                    <!-- حذف -->
+                                    <a href="{% url 'userprofile_app:article_delete' pk=article.id %}"
+                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-danger"
+                                       data-toggle="tooltip" title="حذف">
                                         <i class="la la-trash"></i>
                                     </a>
-                                    <form action="#" method="post" style="display:inline;">
-                                        <button type="submit"
-                                                class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-primary border-0"
-                                                data-toggle="tooltip" data-placement="top" title="تایید"
-                                                style="background: none;">
-                                            <i class="la la-check"></i>
-                                        </button>
+
+                                    <!-- فرم تغییر وضعیت -->
+                                    <form action="{% url 'userprofile_app:article_change_status' article.pk %}"
+                                          method="post" style="display:inline;">
+                                        {% csrf_token %}
+                                        {% if article.status == 'draft' and article.author == request.user %}
+                                            <button type="submit" name="action" value="submit_for_review"
+                                                    class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-primary border-0"
+                                                    data-toggle="tooltip" title="ارسال برای بررسی">
+                                                <i class="la la-upload"></i>
+                                            </button>
+                                        {% endif %}
+
+                                        {% if article.status == 'pending' and perms.blog_app.can_publish_article %}
+                                            <button type="submit" name="action" value="publish"
+                                                    class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success border-0"
+                                                    data-toggle="tooltip" title="انتشار">
+                                                <i class="la la-check"></i>
+                                            </button>
+                                        {% endif %}
+
+                                        {% if article.status == 'pending' and perms.blog_app.can_reject_article %}
+                                            <button type="submit" name="action" value="reject"
+                                                    class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-danger border-0"
+                                                    data-toggle="tooltip" title="رد کردن">
+                                                <i class="la la-times"></i>
+                                            </button>
+                                        {% endif %}
                                     </form>
                                 </div>
                             </td>
