@@ -37,7 +37,7 @@
 
                 <a href="{% url 'userprofile_app:group_create' %}" class="btn btn-info d-inline-flex align-items-center new-article-btn"
                    style="background-color: #e3f2fd; color: #1976d2; border-color: #b3e5fc; font-weight: bold;">
-                    <i class="la la-plus mr-2"></i><span style="font-weight: bold;">ایجاد کاربر جدید</span>
+                    <i class="la la-plus mr-2"></i><span style="font-weight: bold;">ایجاد گروه جدید</span>
                 </a>
 
             </div>
@@ -53,7 +53,81 @@
             </div>
 
             <!-- group table -->
-            <div class="table-responsive pb-4">
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- تب‌ها -->
+                <ul class="nav nav-tabs generic-tab pb-30px" id="myTab" role="tablist">
+                    {% for group in groups %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if forloop.first %}active{% endif %}"
+                               id="group-{{ group.id }}-tab"
+                               data-toggle="tab"
+                               href="#group-{{ group.id }}"
+                               role="tab"
+                               aria-controls="group-{{ group.id }}"
+                               aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                                {{ group.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <!-- محتوای تب‌ها -->
+                <div class="tab-content" id="myTabContent">
+                    {% for group in groups %}
+                        <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+                             id="group-{{ group.id }}"
+                             role="tabpanel"
+                             aria-labelledby="group-{{ group.id }}-tab">
+
+                            <div class="table-responsive pb-4">
+                                <table class="table generic-table align-middle">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">برنامه</th>
+                                        <th scope="col" class="text-center">مدل</th>
+                                        <th scope="col">ایجاد</th>
+                                        <th scope="col">ویرایش</th>
+                                        <th scope="col">حذف</th>
+                                        <th scope="col">مشاهده</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for app, models in apps_dict.items %}
+                                        <!-- ردیف عنوان برنامه -->
+                                        <tr style="background-color:#f8f9fa; font-weight:bold;">
+                                            <td colspan="6">{{ app }}</td>
+                                        </tr>
+
+                                        {% for model_name, model_data in models.items %}
+                                            <tr>
+                                                <td></td>
+                                                <td class="text-center">{{ model_data.verbose }}</td>
+                                                {% for action in actions %}
+                                                    <td>
+                                                        {% with codename=action|add:"_"|add:model_name %}
+                                                            <input type="checkbox"
+                                                                   name="permissions_{{ group.id }}[]"
+                                                                   value="{{ codename }}"
+                                                                   {% if codename in group.codename_list %}checked{% endif %}>
+                                                        {% endwith %}
+                                                    </td>
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-5 mb-5" style="width:200px;">ذخیره</button>
+            </form>
+
+            {% comment %}<div class="table-responsive pb-4">
                 <form method="post">
                     {% csrf_token %}
                     <table class="table generic-table align-middle">
@@ -95,32 +169,7 @@
                     </table>
                     <button type="submit" class="btn btn-primary mt-5">ذخیره</button>
                 </form>
-            </div>
-
-
-            <!-- pagination -->
-            <div class="text-center py-3">
-                <nav aria-label="مثال ناوبری صفحه" class="pagination-box">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="قبلی">
-                                <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
-                                <span class="sr-only">قبلی</span>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="بعد">
-                                <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
-                                <span class="sr-only">بعد</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <p class="fs-14 pt-2">نمایش 1-5 از 16 نتیجه</p>
-            </div>
+            </div>{% endcomment %}
 
         </div>
     </div>

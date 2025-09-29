@@ -16,86 +16,6 @@ from django.contrib.auth.models import Group, Permission
 from django.apps import apps
 
 
-# region user management
-
-class AdminRequiredMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.is_superuser
-
-
-class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
-    model = User
-    template_name = "userprofile_app/users/user_list.html"
-
-
-class UserCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
-    model = User
-    form_class = UserCreateForm
-    template_name = "userprofile_app/users/user_form.html"
-    success_url = reverse_lazy('userprofile_app:user_list')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["groups"] = Group.objects.all()
-        return context
-
-    def form_valid(self, form):
-        form.instance.first_name = self.request.POST.get("first_name")
-        form.instance.last_name = self.request.POST.get("last_name")
-        form.instance.phone_number = self.request.POST.get("phone_number")
-        form.instance.address = self.request.POST.get("address")
-        form.instance.about_user = self.request.POST.get("about_user")
-
-        if self.request.FILES.get("avatar"):
-            form.instance.avatar = self.request.FILES["avatar"]
-
-        response = super().form_valid(form)
-
-        groups_ids = self.request.POST.getlist("groups")
-        if groups_ids:
-            self.object.groups.set(groups_ids)
-
-        return response
-
-
-class UserUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
-    model = User
-    form_class = UserUpdateForm
-    template_name = "userprofile_app/users/user_form.html"
-    success_url = reverse_lazy('userprofile_app:user_list')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["groups"] = Group.objects.all()
-        return context
-
-    def form_valid(self, form):
-        form.instance.first_name = self.request.POST.get("first_name")
-        form.instance.last_name = self.request.POST.get("last_name")
-        form.instance.phone_number = self.request.POST.get("phone_number")
-        form.instance.address = self.request.POST.get("address")
-        form.instance.about_user = self.request.POST.get("about_user")
-
-        if self.request.FILES.get("avatar"):
-            form.instance.avatar = self.request.FILES["avatar"]
-
-        response = super().form_valid(form)
-
-        groups_ids = self.request.POST.getlist("groups")
-        if groups_ids:
-            self.object.groups.set(groups_ids)
-
-        return response
-
-
-class UserDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
-    model = User
-    template_name = "userprofile_app/users/user_confirm_delete.html"
-    success_url = reverse_lazy('userprofile_app:user_list')
-
-
-# endregion
-
 # region Groups management
 
 class AdminRequiredMixin(UserPassesTestMixin):
@@ -103,7 +23,7 @@ class AdminRequiredMixin(UserPassesTestMixin):
         return self.request.user.is_superuser
 
 
-class GroupPermissionMatrixView(TemplateView):
+class GroupPermissionMatrixView(LoginRequiredMixin, AdminRequiredMixin, TemplateView):
     template_name = "userprofile_app/groups/group_list.html"
 
     def get_context_data(self, **kwargs):
@@ -148,17 +68,17 @@ class GroupPermissionMatrixView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         groups = Group.objects.all()
+        all_perms = Permission.objects.all()
+        perm_map = {p.codename: p for p in all_perms}  # دیکشنری برای دسترسی سریع
+
         for group in groups:
             selected_codenames = request.POST.getlist(f'permissions_{group.id}[]')
 
-            all_perms = Permission.objects.all()
-            group.permissions.clear()
-            for codename in selected_codenames:
-                try:
-                    perm = all_perms.get(codename=codename)
-                    group.permissions.add(perm)
-                except Permission.DoesNotExist:
-                    pass
+            # گرفتن لیست پرمیشن‌ها از دیکشنری به صورت سریع
+            selected_perms = [perm_map[c] for c in selected_codenames if c in perm_map]
+
+            # جایگزینی پرمیشن‌ها به صورت bulk
+            group.permissions.set(selected_perms)
 
         return redirect(request.path)
 
@@ -190,6 +110,93 @@ class GroupDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
 
 # endregion
 
+# region user management
+
+class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
+    model = User
+    template_name = "userprofile_app/users/user_list.html"
+
+
+class UserCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
+    model = User
+    form_class = UserCreateForm
+    template_name = "userprofile_app/users/user_form.html"
+    success_url = reverse_lazy('userprofile_app:user_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["groups"] = Group.objects.all()
+        return context
+
+    def form_valid(self, form):
+        # فیلدهای پایه
+        form.instance.first_name = self.request.POST.get("first_name")
+        form.instance.last_name = self.request.POST.get("last_name")
+        form.instance.phone_number = self.request.POST.get("phone_number")
+        form.instance.address = self.request.POST.get("address")
+        form.instance.about_user = self.request.POST.get("about_user")
+
+        if self.request.FILES.get("avatar"):
+            form.instance.avatar = self.request.FILES["avatar"]
+
+        # ذخیره superuser فقط اگر کاربر جاری superuser باشد
+        if self.request.user.is_superuser:
+            form.instance.is_superuser = self.request.POST.get("is_superuser") == "on"
+
+        response = super().form_valid(form)
+
+        # ذخیره گروه‌ها
+        groups_ids = self.request.POST.getlist("groups")
+        if groups_ids:
+            self.object.groups.set(groups_ids)
+
+        return response
+
+
+class UserUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
+    model = User
+    form_class = UserUpdateForm
+    template_name = "userprofile_app/users/user_form.html"
+    success_url = reverse_lazy('userprofile_app:user_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["groups"] = Group.objects.all()
+        return context
+
+    def form_valid(self, form):
+        # فیلدهای پایه
+        form.instance.first_name = self.request.POST.get("first_name")
+        form.instance.last_name = self.request.POST.get("last_name")
+        form.instance.phone_number = self.request.POST.get("phone_number")
+        form.instance.address = self.request.POST.get("address")
+        form.instance.about_user = self.request.POST.get("about_user")
+
+        if self.request.FILES.get("avatar"):
+            form.instance.avatar = self.request.FILES["avatar"]
+
+        # ذخیره superuser فقط اگر کاربر جاری superuser باشد
+        if self.request.user.is_superuser:
+            form.instance.is_superuser = self.request.POST.get("is_superuser") == "on"
+
+        response = super().form_valid(form)
+
+        # ذخیره گروه‌ها
+        groups_ids = self.request.POST.getlist("groups")
+        if groups_ids:
+            self.object.groups.set(groups_ids)
+
+        return response
+
+
+class UserDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+    model = User
+    template_name = "userprofile_app/users/user_confirm_delete.html"
+    success_url = reverse_lazy('userprofile_app:user_list')
+
+
+# endregion
+
 # region Article management
 class AuthorArticleListView(LoginRequiredMixin, ListView):
     model = Article
@@ -197,6 +204,7 @@ class AuthorArticleListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Article.objects.filter(author=self.request.user, is_delete=False)
+
 
 class AuthorArticleCreateView(LoginRequiredMixin, CreateView):
     model = Article
@@ -224,6 +232,7 @@ class AuthorArticleCreateView(LoginRequiredMixin, CreateView):
         form.instance.status = 'draft'
         return super().form_valid(form)
 
+
 class AuthorArticleUpdateView(LoginRequiredMixin, UpdateView):
     model = Article
     form_class = ArticleForm
@@ -233,6 +242,17 @@ class AuthorArticleUpdateView(LoginRequiredMixin, UpdateView):
     def get_queryset(self):
         return Article.objects.filter(author=self.request.user, is_delete=False)
 
+    def form_valid(self, form):
+        # بررسی می‌کنیم فایل جدید آپلود شده باشد
+        if self.request.FILES.get('image'):  # نام فیلد فایل شما
+            form.instance.image = self.request.FILES['image']
+
+        if form.instance.status in ['rejected', 'draft', 'pending']:
+            form.instance.status = 'draft'
+
+        return super().form_valid(form)
+
+
 class AuthorArticleDeleteView(LoginRequiredMixin, DeleteView):
     model = Article
     template_name = 'userprofile_app/articles/article_confirm_delete.html'
@@ -241,34 +261,36 @@ class AuthorArticleDeleteView(LoginRequiredMixin, DeleteView):
     def get_queryset(self):
         return Article.objects.filter(author=self.request.user, is_delete=False)
 
+
 class ArticleChangeStatusView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         article = get_object_or_404(Article, pk=pk)
-
         action = request.POST.get("action")
 
-        # 1. اگر نویسنده بخواد مقاله خودش رو pending کنه
+        # if author wants to do pending in himself article
         if action == "submit_for_review" and article.author == request.user:
             article.status = "pending"
             article.save()
             messages.success(request, "مقاله برای بررسی ارسال شد.")
-            return redirect("articles_list")
+            return redirect("userprofile_app:articles_list")
 
-        # 2. اگر مدیر/ویراستار بخواد مقاله رو تایید یا رد کنه
+        # if editor or admin wants to confirm the article
         if action == "publish" and request.user.has_perm("blog_app.can_publish_article"):
             article.status = "published"
             article.save()
             messages.success(request, "مقاله منتشر شد.")
-            return redirect("articles_list")
+            return redirect("userprofile_app:articles_list")
 
+        # if editor or admin wants to reject the article
         if action == "reject" and request.user.has_perm("blog_app.can_reject_article"):
             article.status = "rejected"
             article.save()
             messages.warning(request, "مقاله رد شد.")
-            return redirect("articles_list")
+            return redirect("userprofile_app:articles_list")
 
         messages.error(request, "شما اجازه این کار را ندارید.")
-        return redirect("articles_list")
+        return redirect("userprofile_app:articles_list")
+
 
 # endregion
 

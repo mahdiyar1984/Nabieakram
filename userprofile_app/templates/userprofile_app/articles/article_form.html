@@ -41,7 +41,8 @@
             <div class="dashboard-heading mb-5">
                 <h3 class="fs-22 font-weight-semi-bold">مقاله جدید</h3>
             </div>
-            <form action="{% url 'userprofile_app:article_create' %}"
+            <form action=""
+                  method="post"
                   class="MultiFile-intercepted"
                   enctype="multipart/form-data">
                 {% csrf_token %}
@@ -54,7 +55,7 @@
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="label-text">عنوان مقاله</label>
-                                    <input class="form-control form--control pl-3" type="text" name="text">
+                                    <input class="form-control form--control pl-3" type="text" name="title" value="{{ object.title }}">
                                 </div>
                             </div>
 
@@ -62,7 +63,7 @@
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="label-text">اسلاگ</label>
-                                    <input class="form-control form--control pl-3" type="text" name="text">
+                                    <input class="form-control form--control pl-3" type="text" name="slug" value="{{ object.slug }}">
                                 </div>
                             </div>
 
@@ -87,7 +88,7 @@
                                 <label class="label-text">شرح کوتاه از مقاله</label>
                                 <div class="form-group">
                                             <textarea rows="4" class="form-control form--control user-text-editor pl-3"
-                                                      name="message">
+                                                      name="short_description">{{ object.short_description }}"
                                             </textarea>
                                 </div>
                             </div>
@@ -97,7 +98,7 @@
                                 <label class="label-text">متن مقاله</label>
                                 <div class="form-group">
                                             <textarea rows="15" class="form-control form--control user-text-editor pl-3"
-                                                      name="message">
+                                                      name="text">{{ object.text }}"
                                             </textarea>
                                 </div>
                             </div>
@@ -105,17 +106,31 @@
                             <!-- image -->
                             <div class="col-lg-12">
                                 <div class="form-group mb-0">
-                                    <label class="label-text">تصویر دوره</label>
-                                    <div class="file-upload-wrap">
-                                        <div class="MultiFile-wrap" id="MultiFile2"><input type="file" name="files[]"
-                                                                                           class="multi file-upload-input MultiFile-applied"
-                                                                                           multiple="" id="MultiFile2"
-                                                                                           value="">
-                                            <div class="MultiFile-list" id="MultiFile2_list"></div>
+                                    <label class="label-text">تصویر مقاله</label>
+                                    <div class="input-box col-lg-12 mb-5">
+                                        <div class="media media-card align-items-center">
+                                            <div class="media-img media-img-lg mr-4 bg-gray">
+                                                <a href="{{ object.image.url }}" target="_blank">
+                                                    <img class="mr-3" src="{{ object.image.url }}" alt="تصویر آواتار" style="max-width:200px;">
+                                                </a>
+                                            </div>
+
+                                            <div class="media-body">
+                                                <div class="file-upload-wrap file-upload-wrap-2">
+                                                    <div class="MultiFile-wrap" id="MultiFile2">
+                                                        <input type="file"
+                                                               name="image"
+                                                               class="multi file-upload-input with-preview MultiFile-applied"
+                                                               multiple=""
+                                                               id="MultiFile2"
+                                                               value="">
+                                                        <div class="MultiFile-list" id="MultiFile2_list"></div>
+                                                    </div>
+                                                    <span class="file-upload-text"><i class="la la-photo mr-2"></i>یک عکس آپلود کنید</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <span class="file-upload-text"><i class="la la-cloud-upload mr-2 fs-18"></i>فایل ها را اینجا رها کنید یا برای آپلود کلیک کنید.</span>
                                     </div>
-                                    <!-- file-upload-wrap -->
                                 </div>
                             </div>
 
@@ -124,7 +139,7 @@
                 </div>
 
                 <div class="course-submit-btn-box pb-4">
-                    <button class="btn theme-btn" type="submit">ارسال دوره</button>
+                    <button class="btn theme-btn" type="submit">ذخیره مقاله</button>
                 </div>
             </form>
         </div>

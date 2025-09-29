@@ -55,69 +55,77 @@
             <!-- article table -->
             <div class="table-responsive pb-4">
                 <table class="table generic-table align-middle">
-                    <thead>
-                    <tr>
-                        <th scope="col">آیدی</th>
-                        <th scope="col">نام کاربری</th>
-                        <th scope="col">ایمیل</th>
-                        <th scope="col">نام کامل</th>
-                        <th scope="col">تاریخ ورود</th>
-                        <th scope="col">فعال</th>
-                        <th scope="col">گروه ها</th>
-                        <th scope="col">اقدام</th>
-                    </tr>
-                    </thead>
+    <thead>
+        <tr>
+            <th scope="col">آیدی</th>
+            <th scope="col">نام کاربری</th>
+            <th scope="col">ایمیل</th>
+            <th scope="col">نام کامل</th>
+            <th scope="col">تاریخ ورود</th>
+            <th scope="col">اکتیو</th>
+            <th scope="col">ابرکاربر</th>
+            <th scope="col">گروه‌ها</th>
+            <th scope="col">اقدام</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in user_list %}
+        <tr>
+            <th scope="row">{{ user.id }}</th>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.get_full_name }}</td>
+            <td>{{ user.date_joined|to_shamsi }}</td>
 
+            <!-- ستون اکتیو -->
+            <td class="text-center">
+                {% if user.is_active %}
+                    <span style="color:green;">&#10004;</span>
+                {% else %}
+                    <span style="color:red;">&#10008;</span>
+                {% endif %}
+            </td>
 
-                    <tbody>
-                    {% for user in user_list %}
-                        <tr>
+            <!-- ستون Superuser -->
+            <td class="text-center">
+                {% if user.is_superuser %}
+                    <span style="color:green;">&#10004;</span>
+                {% else %}
+                    <span style="color:red;">&#10008;</span>
+                {% endif %}
+            </td>
 
-                            <th scope="row">
-                                <a href="course-details.html" class="text-black">{{ user.id }}</a>
-                            </th>
+            <!-- ستون گروه‌ها -->
+            <td>
+                {% for group in user.groups.all %}
+                    <span>{{ group }},</span>
+                {% endfor %}
+            </td>
 
-                            <td>{{ user.username }}</td>
-
-                            <td>{{ user.email }}</td>
-
-                            <td>{{ user.get_full_name }}</td>
-
-                            <td>{{ user.date_joined|to_shamsi }}</td>
-
-                            <td>{{ user.is_active }}</td>
-
-                            <td>
-                                {% for group in user.groups.all %}
-                                	<span>{{ group }},</span>
-                                {% endfor %}
-
-
-                            </td>
-
-                            <td>
-                                <div class="card-action-wrap d-flex">
-                                    <a href="#"
-                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
-                                       data-toggle="tooltip" data-placement="top" title="مشاهده">
-                                        <i class="la la-eye"></i>
-                                    </a>
-                                    <a href="{% url 'userprofile_app:user_edit' pk=user.id %}"
-                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
-                                       data-toggle="tooltip" data-placement="top" title="ویرایش">
-                                        <i class="la la-edit"></i>
-                                    </a>
-                                    <a href="#"
-                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
-                                       data-toggle="tooltip" data-placement="top" title="حذف">
-                                        <i class="la la-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+            <!-- اقدامات -->
+            <td>
+                <div class="card-action-wrap d-flex">
+                    <a href="#"
+                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
+                       data-toggle="tooltip" data-placement="top" title="مشاهده">
+                        <i class="la la-eye"></i>
+                    </a>
+                    <a href="{% url 'userprofile_app:user_edit' pk=user.id %}"
+                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
+                       data-toggle="tooltip" data-placement="top" title="ویرایش">
+                        <i class="la la-edit"></i>
+                    </a>
+                    <a href="#"
+                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
+                       data-toggle="tooltip" data-placement="top" title="حذف">
+                        <i class="la la-trash"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
             </div>
 
 
