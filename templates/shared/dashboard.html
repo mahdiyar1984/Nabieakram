@@ -413,7 +413,6 @@
     <div class="body-overlay"></div>
 </header>
 
-
 <section class="dashboard-area">
     <div class="off-canvas-menu dashboard-off-canvas-menu off--canvas-menu custom-scrollbar-styled pt-20px">
         <div class="off-canvas-menu-close dashboard-menu-close icon-element icon-element-sm shadow-sm"
@@ -449,21 +448,8 @@
                     پروفایل من
                 </a>
             </li>
-
-
-            <!-- Article -->
-            <li>
-                <a href="{% url 'userprofile_app:articles_list' %}">
-                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
-                        <path d="M0 0h24v24H0V0z" fill="none"></path>
-                        <path
-                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
-                        ></path>
-                    </svg>
-                    مقاله ها
-                </a>
-            </li>
             {% if request.user.is_superuser %}
+                <!-- Group -->
                 <li>
                     <a href="{% url 'userprofile_app:group_list' %}">
                         <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
@@ -472,10 +458,11 @@
                                     d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
                             ></path>
                         </svg>
-                        گروه ها و مجوزها
+                        مدیریت نقش ها و دسترسی ها
                     </a>
                 </li>
-
+                
+                <!-- users -->
                 <li>
                     <a href="{% url 'userprofile_app:user_list' %}">
                         <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
@@ -484,11 +471,54 @@
                                     d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
                             ></path>
                         </svg>
-                        کاربران
+                        مدیریت کاربران
                     </a>
                 </li>
             {% endif %}
 
+
+            <!-- Article -->
+            <li class="dropdown {% if request.resolver_match.url_name in 'articles_list article_categories article_tags article_comments' %}show{% endif %}"
+                style="position: relative;">
+                <a href="#" id="userProfileDropdown"
+                   data-toggle="dropdown" aria-haspopup="true"
+                   aria-expanded="{% if request.resolver_match.url_name in 'articles_list article_categories article_tags article_comments' %}true{% else %}false{% endif %}"
+                   style="display: flex; align-items: center; position: relative; font-size: 15px;">
+                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
+                        <path d="M0 0h24v24H0V0z" fill="none"></path>
+                        <path
+                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z">
+                        </path>
+                    </svg>
+                    مدیریت مقالات
+                    <span style="margin-right: auto; font-size: 12px;">▼</span>
+                </a>
+
+                <!-- زیرمنو -->
+                <div class="dropdown-menu {% if request.resolver_match.url_name in 'articles_list article_categories article_tags article_comments' %}show{% endif %}"
+                     aria-labelledby="userProfileDropdown"
+                     style="box-shadow: none; border: none; margin-top: 2px;
+                     right: 0; left: 0; min-width: unset; width: 100%; padding: 0.25rem 0.75rem 0.25rem 28px;">
+
+                    <a href="{% url 'userprofile_app:articles_list' %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'articles_list' %}active bg-secondary text-white{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">لیست مقالات</a>
+
+                    <a href="#"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'article_categories' %}active{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">دسته بندی ها</a>
+
+                    <a href="#"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'article_tags' %}active{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">تگ ها</a>
+
+                    <a href="#"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'article_comments' %}active{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">نظرات</a>
+                </div>
+            </li>
+
+            
 
         </ul>
     </div>
