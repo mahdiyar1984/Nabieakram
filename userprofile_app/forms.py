@@ -48,7 +48,7 @@ class UserUpdateForm(UserChangeForm):
 
 # endregion
 
-# region article management
+# region Article Management
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
@@ -57,9 +57,9 @@ class ArticleForm(forms.ModelForm):
             'selected_categories': forms.SelectMultiple(attrs={'class': 'form-control'}),
             'selected_tags': forms.SelectMultiple(attrs={'class': 'form-control'}),
         }
-
-
-class TagForm(forms.ModelForm):
+class ArticleCategoryForm(forms.ModelForm):
+    pass
+class ArticleTagForm(forms.ModelForm):
     class Meta:
         model = ArticleTag
         fields = ['title']  # فقط عنوان تگ
@@ -69,7 +69,46 @@ class TagForm(forms.ModelForm):
                 'placeholder': 'عنوان تگ جدید را وارد کنید'
             })
         }
-
+class ArticleCommentForm(forms.ModelForm):
+    pass
 # endregion
 
+# region Lecture Management
+class LectureForm(forms.ModelForm):
+    pass
+class LectureCategoryForm(forms.ModelForm):
+    pass
+class LectureTagForm(forms.ModelForm):
+    pass
+class LectureCommentForm(forms.ModelForm):
+    pass
+# endregion
 
+# region Lecture Management
+class GalleryImageForm(forms.ModelForm):
+    pass
+class GalleryCategoryForm(forms.ModelForm):
+    pass
+# endregion
+
+# region Footer Link Management
+class FooterLinkForm(forms.ModelForm):
+    pass
+class FooterLinkBoxForm(forms.ModelForm):
+    pass
+# endregion
+
+# region Lecture Management
+class ContactUsForm(forms.ModelForm):
+    pass
+# endregion
+
+# region Slider Management
+class SliderForm(forms.ModelForm):
+    pass
+# endregion
+
+# region SiteSetting Management
+class SiteSettingForm(forms.ModelForm):
+    pass
+# endregion

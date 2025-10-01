@@ -13,8 +13,6 @@ class FooterLinkBox(models.Model):
 
     def __str__(self):
         return self.title
-
-
 class FooterLink(models.Model):
     objects = models.Manager()
     footer_link_box = models.ForeignKey(to=FooterLinkBox, on_delete=models.CASCADE, verbose_name='دسته بندی',
@@ -32,7 +30,6 @@ class FooterLink(models.Model):
 
     def __str__(self):
         return self.title
-
 
 class Slider(models.Model):
     objects = models.Manager()
@@ -54,7 +51,6 @@ class Slider(models.Model):
     def __str__(self):
         return self.title if self.title else f"اسلاید {self.id}"
 
-
 class ContactUs(models.Model):
     objects = models.Manager()
 
@@ -75,9 +71,6 @@ class ContactUs(models.Model):
     class Meta:
         verbose_name = 'تماس با ما'
         verbose_name_plural = 'لیست تماس با ما'
-
-
-
 
 class SiteSetting(models.Model):
     objects = models.Manager()

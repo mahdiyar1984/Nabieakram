@@ -15,404 +15,6 @@
 </head>
 <body>
 
-<header class="header-menu-area">
-    <div class="header-menu-content dashboard-menu-content pr-30px pl-30px bg-white shadow-sm">
-        <div class="container-fluid">
-            <div class="main-menu-content">
-                <div class="row align-items-center">
-                    <div class="col-lg-12">
-                        <div class="logo-box logo--box">
-                            <a href="{% url 'main_app:index' %}" class="logo">
-                                <img src="{% static 'images/logo.png' %}" alt="لوگو"/>
-                            </a>
-                            <div class="user-btn-action">
-                                <div class="search-menu-toggle icon-element icon-element-sm shadow-sm mr-2"
-                                     data-toggle="tooltip" data-placement="top" title="جستجو کردن">
-                                    <i class="la la-search"></i>
-                                </div>
-                                <div class="off-canvas-menu-toggle cat-menu-toggle icon-element icon-element-sm shadow-sm mr-2"
-                                     data-toggle="tooltip" data-placement="top" title="منوی دسته بندی">
-                                    <i class="la la-th-large"></i>
-                                </div>
-                                <div class="off-canvas-menu-toggle main-menu-toggle icon-element icon-element-sm shadow-sm"
-                                     data-toggle="tooltip" data-placement="top" title="منوی اصلی">
-                                    <i class="la la-bars"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end logo-box -->
-                        <div class="menu-wrapper">
-                            <form method="post" class="mr-auto ml-0">
-                                <div class="form-group mb-0">
-                                    <input class="form-control form--control form--control-gray pl-3" type="text"
-                                           name="search" placeholder="هر چیزی را جستجو کنید"/>
-                                    <span class="la la-search search-icon"></span>
-                                </div>
-                            </form>
-                            <div class="nav-left-button d-flex align-items-center">
-                                <div class="user-action-wrap d-flex align-items-center">
-                                    <div class="shop-cart user-profile-cart">
-                                        <ul>
-                                            <li>
-                                                <div class="shop-cart-btn">
-                                                    <div class="avatar-xs">
-                                                        <img class="rounded-full img-fluid"
-                                                             src="{% static 'images/small-avatar-1.jpg' %}"
-                                                             alt="تصویر آواتار"/>
-                                                    </div>
-                                                    <!--<span class="dot-status bg-1"></span>-->
-                                                </div>
-                                                <ul class="cart-dropdown-menu after-none p-0 notification-dropdown-menu">
-                                                    <li class="menu-heading-block d-flex align-items-center">
-                                                        <a href="teacher-detail.html"
-                                                           class="avatar-sm flex-shrink-0 d-block">
-                                                            <img class="rounded-full img-fluid"
-                                                                 src="{% static 'images/small-avatar-1.jpg' %}"
-                                                                 alt="تصویر آواتار"/>
-                                                        </a>
-                                                        <div class="ml-2">
-                                                            <h4><a href="teacher-detail.html" class="text-black">مدیر
-                                                                سیستم</a></h4>
-                                                            <span class="d-block fs-14 lh-20">alexsmith@example.com</span>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="theme-picker d-flex align-items-center justify-content-center lh-40">
-                                                            <button class="theme-picker-btn dark-mode-btn w-100 font-weight-semi-bold justify-content-center"
-                                                                    title="حالت تاریک">
-                                                                <svg class="mr-1" viewBox="0 0 24 24" stroke-width="1.5"
-                                                                     stroke-linecap="round" stroke-linejoin="round">
-                                                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                                                                </svg>
-                                                                حالت تاریک
-                                                            </button>
-                                                            <button class="theme-picker-btn light-mode-btn w-100 font-weight-semi-bold justify-content-center"
-                                                                    title="حالت نور">
-                                                                <svg class="mr-1" viewBox="0 0 24 24" stroke-width="1.5"
-                                                                     stroke-linecap="round" stroke-linejoin="round">
-                                                                    <circle cx="12" cy="12" r="5"></circle>
-                                                                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                                                                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                                                                    <line x1="4.22" y1="4.22" x2="5.64"
-                                                                          y2="5.64"></line>
-                                                                    <line x1="18.36" y1="18.36" x2="19.78"
-                                                                          y2="19.78"></line>
-                                                                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                                                                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                                                                    <line x1="4.22" y1="19.78" x2="5.64"
-                                                                          y2="18.36"></line>
-                                                                    <line x1="18.36" y1="5.64" x2="19.78"
-                                                                          y2="4.22"></line>
-                                                                </svg>
-                                                                حالت نور
-                                                            </button>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <ul class="generic-list-item">
-                                                            <li>
-                                                                <a href="my-courses.html"> <i
-                                                                        class="la la-file-video-o mr-1"></i> دوره های من
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="shopping-cart.html"> <i
-                                                                        class="la la-shopping-basket mr-1"></i> سبد خرید
-                                                                    من </a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="my-courses.html"> <i
-                                                                        class="la la-heart-o mr-1"></i> لیست علاقه مندی
-                                                                    های من </a>
-                                                            </li>
-                                                            <li>
-                                                                <div class="section-block"></div>
-                                                            </li>
-                                                            <li>
-                                                                <a href="dashboard.html">
-                                                                    <i class="la la-bell mr-1"></i>اعلان&zwnj;ها
-                                                                    <span class="badge bg-info text-white ml-2 p-1">9+</span>
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="dashboard-message.html">
-                                                                    <i class="la la-envelope mr-1"></i>پیام های
-                                                                    <span class="badge bg-info text-white ml-2 p-1">12+</span>
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <div class="section-block"></div>
-                                                            </li>
-                                                            <li>
-                                                                <a href="dashboard-settings.html"> <i
-                                                                        class="la la-gear mr-1"></i> تنظیمات </a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="dashboard-purchase-history.html"> <i
-                                                                        class="la la-history mr-1"></i> سابقه خرید </a>
-                                                            </li>
-                                                            <li>
-                                                                <div class="section-block"></div>
-                                                            </li>
-                                                            <li>
-                                                                <a href="student-detail.html"> <i
-                                                                        class="la la-user mr-1"></i> پروفایل عمومی </a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="dashboard-settings.html"> <i
-                                                                        class="la la-edit mr-1"></i> ویرایش نمایه </a>
-                                                            </li>
-                                                            <li>
-                                                                <div class="section-block"></div>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#"> <i class="la la-question mr-1"></i> کمک
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="index.html"> <i
-                                                                        class="la la-power-off mr-1"></i> خروج </a>
-                                                            </li>
-                                                            <li>
-                                                                <div class="section-block"></div>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#" class="position-relative">
-                                                                    <span class="fs-17 font-weight-semi-bold d-block">آدوکا برای کسب و کار </span>
-                                                                    <span class="lh-20 d-block fs-14 text-gray">یادگیری را به شرکت خود بیاورید</span>
-                                                                    <span class="position-absolute top-0 left-0 mt-3 mr-3 fs-18 text-gray">
-                                                                                <i class="la la-external-link"></i>
-                                                                            </span>
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <!-- end shop-cart -->
-                                </div>
-                            </div>
-                            <!-- end nav-left-button -->
-                        </div>
-                        <!-- end menu-wrapper -->
-                    </div>
-                    <!-- end col-lg-10 -->
-                </div>
-                <!-- end row -->
-            </div>
-        </div>
-        <!-- end container-fluid -->
-    </div>
-    <!-- end header-menu-content -->
-    <div class="off-canvas-menu custom-scrollbar-styled main-off-canvas-menu">
-        <div class="off-canvas-menu-close main-menu-close icon-element icon-element-sm shadow-sm" data-toggle="tooltip"
-             data-placement="right" title="بستن منو">
-            <i class="la la-times"></i>
-        </div>
-        <!-- end off-canvas-menu-close -->
-        <h4 class="off-canvas-menu-heading pt-90px">هشدارها</h4>
-        <ul class="generic-list-item off-canvas-menu-list pt-1 pb-2 border-bottom border-bottom-gray">
-            <li><a href="dashboard.html">اطلاعیه</a></li>
-            <li><a href="dashboard-message.html">پیام ها</a></li>
-            <li><a href="my-courses.html">لیست علاقه مندیها</a></li>
-            <li><a href="shopping-cart.html">سبد خرید من</a></li>
-        </ul>
-        <h4 class="off-canvas-menu-heading pt-20px">حساب</h4>
-        <ul class="generic-list-item off-canvas-menu-list pt-1 pb-2 border-bottom border-bottom-gray">
-            <li><a href="dashboard-settings.html">تنظیمات حساب</a></li>
-            <li><a href="dashboard-purchase-history.html">سابقه خرید</a></li>
-        </ul>
-        <h4 class="off-canvas-menu-heading pt-20px">مشخصات</h4>
-        <ul class="generic-list-item off-canvas-menu-list pt-1 pb-2 border-bottom border-bottom-gray">
-            <li><a href="student-detail.html">پروفایل عمومی</a></li>
-            <li><a href="dashboard-settings.html">ویرایش نمایه</a></li>
-            <li><a href="index.html">خروج</a></li>
-        </ul>
-        <h4 class="off-canvas-menu-heading pt-20px">بیشتر از Aduca</h4>
-        <ul class="generic-list-item off-canvas-menu-list pt-1">
-            <li><a href="for-business.html">آدوکا برای تجارت</a></li>
-            <li><a href="#">برنامه را دریافت کنید</a></li>
-            <li><a href="invite.html">دوستان را دعوت کنید</a></li>
-            <li><a href="contact.html">کمک</a></li>
-        </ul>
-        <div class="theme-picker d-flex align-items-center justify-content-center mt-4 px-3">
-            <button class="theme-picker-btn dark-mode-btn btn theme-btn-sm theme-btn-white w-100 font-weight-semi-bold justify-content-center"
-                    title="حالت تاریک">
-                <svg class="mr-1" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                </svg>
-                حالت تاریک
-            </button>
-            <button class="theme-picker-btn light-mode-btn btn theme-btn-sm theme-btn-white w-100 font-weight-semi-bold justify-content-center"
-                    title="حالت نور">
-                <svg class="mr-1" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                </svg>
-                حالت نور
-            </button>
-        </div>
-    </div>
-    <!-- end off-canvas-menu -->
-    <div class="off-canvas-menu custom-scrollbar-styled category-off-canvas-menu">
-        <div class="off-canvas-menu-close cat-menu-close icon-element icon-element-sm shadow-sm" data-toggle="tooltip"
-             data-placement="right" title="بستن منو">
-            <i class="la la-times"></i>
-        </div>
-        <!-- end off-canvas-menu-close -->
-        <h4 class="off-canvas-menu-heading pt-90px">فرا گرفتن</h4>
-        <ul class="generic-list-item off-canvas-menu-list pt-1 pb-2 border-bottom border-bottom-gray">
-            <li><a href="my-courses.html">یادگیری من</a></li>
-        </ul>
-        <h4 class="off-canvas-menu-heading pt-20px">دسته بندی ها</h4>
-        <ul class="generic-list-item off-canvas-menu-list pt-1">
-            <li>
-                <a href="course-grid.html">توسعه</a>
-                <ul class="sub-menu">
-                    <li><a href="#">همه توسعه</a></li>
-                    <li><a href="#">توسعه وب</a></li>
-                    <li><a href="#">برنامه های موبایل</a></li>
-                    <li><a href="#">توسعه بازی</a></li>
-                    <li><a href="#">پایگاه های داده</a></li>
-                    <li><a href="#">زبانهای برنامه نویسی</a></li>
-                    <li><a href="#">تست نرم افزار</a></li>
-                    <li><a href="#">مهندسی نرم افزار</a></li>
-                    <li><a href="#">تجارت الکترونیک</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">کسب و کار</a>
-                <ul class="sub-menu">
-                    <li><a href="#">همه کسب و کار</a></li>
-                    <li><a href="#">دارایی، مالیه، سرمایه گذاری</a></li>
-                    <li><a href="#">کارآفرینی</a></li>
-                    <li><a href="#">استراتژی</a></li>
-                    <li><a href="#">مشاور املاک</a></li>
-                    <li><a href="#">مشاغل خانگی</a></li>
-                    <li><a href="#">ارتباطات</a></li>
-                    <li><a href="#">صنعت</a></li>
-                    <li><a href="#">دیگر</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">فناوری اطلاعات و نرم افزار</a>
-                <ul class="sub-menu">
-                    <li><a href="#">تمام IT و نرم افزار</a></li>
-                    <li><a href="#">گواهی IT</a></li>
-                    <li><a href="#">سخت افزار</a></li>
-                    <li><a href="#">امنیت شبکه</a></li>
-                    <li><a href="#">سیستم های عامل</a></li>
-                    <li><a href="#">دیگر</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">حسابداری مالی</a>
-                <ul class="sub-menu">
-                    <li><a href="#"> کلیه امور مالی و حسابداری</a></li>
-                    <li><a href="#">حسابداری و حسابداری</a></li>
-                    <li><a href="#">ارزهای دیجیتال و بلاک چین</a></li>
-                    <li><a href="#">اقتصاد</a></li>
-                    <li><a href="#">سرمایه گذاری و تجارت</a></li>
-                    <li><a href="#">سایر امور مالی و اقتصادی</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">طرح</a>
-                <ul class="sub-menu">
-                    <li><a href="#">تمام طراحی</a></li>
-                    <li><a href="#">طراحی گرافیک</a></li>
-                    <li><a href="#">طراحی وب سایت</a></li>
-                    <li><a href="#">ابزار طراحی</a></li>
-                    <li><a href="#">سه بعدی و انیمیشن</a></li>
-                    <li><a href="#">تجربه ی کاربر</a></li>
-                    <li><a href="#">دیگر</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">توسعه شخصی</a>
-                <ul class="sub-menu">
-                    <li><a href="#">تمام توسعه شخصی</a></li>
-                    <li><a href="#">تحول شخصی</a></li>
-                    <li><a href="#">بهره وری</a></li>
-                    <li><a href="#">رهبری</a></li>
-                    <li><a href="#">امور مالی شخصی</a></li>
-                    <li><a href="#">توسعه شغلی</a></li>
-                    <li><a href="#">والدین و روابط</a></li>
-                    <li><a href="#">خوشبختی</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">بازار یابی</a>
-                <ul class="sub-menu">
-                    <li><a href="#">تمام بازاریابی</a></li>
-                    <li><a href="#">بازاریابی دیجیتال</a></li>
-                    <li><a href="#">بهینه سازی موتور جستجو</a></li>
-                    <li><a href="#">بازاریابی از طریق رسانه های اجتماعی</a></li>
-                    <li><a href="#">نام تجاری</a></li>
-                    <li><a href="#">بازاریابی ویدئویی و موبایلی</a></li>
-                    <li><a href="#">بازاریابی وابسته</a></li>
-                    <li><a href="#">هک رشد</a></li>
-                    <li><a href="#">دیگر</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">سلامتی و تناسب اندام</a>
-                <ul class="sub-menu">
-                    <li><a href="#">همه سلامتی و تناسب اندام</a></li>
-                    <li><a href="#">تناسب اندام</a></li>
-                    <li><a href="#">ورزش ها</a></li>
-                    <li><a href="#">رژیم گرفتن</a></li>
-                    <li><a href="#">دفاع شخصی</a></li>
-                    <li><a href="#">مراقبه</a></li>
-                    <li><a href="#">سلامت روان</a></li>
-                    <li><a href="#">یوگا</a></li>
-                    <li><a href="#">رقص</a></li>
-                    <li><a href="#">دیگر</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="course-grid.html">عکاسی</a>
-                <ul class="sub-menu">
-                    <li><a href="#">تمام عکاسی</a></li>
-                    <li><a href="#">عکاسی دیجیتال</a></li>
-                    <li><a href="#">اصول عکاسی</a></li>
-                    <li><a href="#">عکاسی تجاری</a></li>
-                    <li><a href="#">طراحی ویدئو</a></li>
-                    <li><a href="#">ابزار عکاسی</a></li>
-                    <li><a href="#">دیگر</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-    <!-- end off-canvas-menu -->
-    <div class="mobile-search-form">
-        <div class="d-flex align-items-center">
-            <form method="post" class="flex-grow-1 mr-3">
-                <div class="form-group mb-0">
-                    <input class="form-control form--control pl-3" type="text" name="search"
-                           placeholder="هر چیزی را جستجو کنید"/>
-                    <span class="la la-search search-icon"></span>
-                </div>
-            </form>
-            <div class="search-bar-close icon-element icon-element-sm shadow-sm">
-                <i class="la la-times"></i>
-            </div>
-            <!-- end off-canvas-menu-close -->
-        </div>
-    </div>
-    <!-- end mobile-search-form -->
-    <div class="body-overlay"></div>
-</header>
-
 <section class="dashboard-area">
     <div class="off-canvas-menu dashboard-off-canvas-menu off--canvas-menu custom-scrollbar-styled pt-20px">
         <div class="off-canvas-menu-close dashboard-menu-close icon-element icon-element-sm shadow-sm"
@@ -421,12 +23,16 @@
         </div>
 
         <div class="logo-box px-4">
-            <a href="{% url 'main_app:index' %}" class="logo"><img src="{% static 'images/logo.png' %}" alt="لوگو"/></a>
+            <a href="{% url 'main_app:index' %}" class="logo">
+                <img src="{% static 'images/Heiat-Red.png' %}" alt="لوگو" width="100"/>
+            </a>
         </div>
+
+        
         <ul class="generic-list-item off-canvas-menu-list off--canvas-menu-list pt-35px">
 
             <!-- dashboard -->
-            <li class="page-active">
+            <li>
                 <a href="{% url 'userprofile_app:user_panel_dashboard_page' %}">
                     <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
                         <path d="M0 0h24v24H0V0z" fill="none"></path>
@@ -435,6 +41,221 @@
                     داشبورد
                 </a>
             </li>
+
+            <!-- Article -->
+            <li class="dropdown {% if request.resolver_match.url_name in 'articles_list article_categories_list article_tags_list article_comments_list' %}show{% endif %}"
+                style="position: relative;">
+                <a href="#" id="userProfileDropdown"
+                   data-toggle="dropdown" aria-haspopup="true"
+                   aria-expanded="{% if request.resolver_match.url_name in 'articles_list article_categories_list article_tags_list article_comments_list' %}true{% else %}false{% endif %}"
+                   style="display: flex; align-items: center; position: relative; font-size: 15px;">
+                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
+                        <path d="M0 0h24v24H0V0z" fill="none"></path>
+                        <path
+                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z">
+                        </path>
+                    </svg>
+                    مدیریت مقالات
+                    <span style="margin-right: auto; font-size: 12px;">▼</span>
+                </a>
+
+                <!-- زیرمنو -->
+                <div class="dropdown-menu {% if request.resolver_match.url_name in 'articles_list article_categories_list article_tags_list article_comments_list' %}show{% endif %}"
+                     aria-labelledby="userProfileDropdown"
+                     style="box-shadow: none; border: none; margin-top: 2px;
+                     right: 0; left: 0; min-width: unset; width: 100%; padding: 0.25rem 0.75rem 0.25rem 28px;">
+
+                    <a href="{% url 'userprofile_app:articles_list' %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'articles_list' %}active bg-secondary text-white{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">مقاله ها</a>
+
+                    <a href="{% url 'userprofile_app:article_categories_list' %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'article_categories_list' %}active bg-secondary text-white{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">دسته بندی ها</a>
+
+                    <a href="{% url 'userprofile_app:article_tags_list' %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'article_tags_list' %}active bg-secondary text-white{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">تگ ها</a>
+
+                    <a href="{% url 'userprofile_app:article_comments_list' %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'article_comments_list' %}active bg-secondary text-white{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">نظرات</a>
+                </div>
+            </li>
+
+            <!-- Lecture -->
+            <li class="dropdown {% if request.resolver_match.url_name in 'lectures_list lecture_categories_list lecture_tags_list lecture_comments_list' %}show{% endif %}"
+                style="position: relative;">
+                <a href="#" id="userProfileDropdown"
+                   data-toggle="dropdown" aria-haspopup="true"
+                   aria-expanded="{% if request.resolver_match.url_name in 'lectures_list lecture_categories_list lecture_tags_list lecture_comments_list' %}true{% else %}false{% endif %}"
+                   style="display: flex; align-items: center; position: relative; font-size: 15px;">
+                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
+                        <path d="M0 0h24v24H0V0z" fill="none"></path>
+                        <path
+                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z">
+                        </path>
+                    </svg>
+                    سخنرانی ها
+                    <span style="margin-right: auto; font-size: 12px;">▼</span>
+                </a>
+
+                <!-- زیرمنو -->
+                <div class="dropdown-menu {% if request.resolver_match.url_name in 'lectures_list lecture_categories_list lecture_tags_list lecture_comments_list' %}show{% endif %}"
+                     aria-labelledby="userProfileDropdown"
+                     style="box-shadow: none; border: none; margin-top: 2px;
+                     right: 0; left: 0; min-width: unset; width: 100%; padding: 0.25rem 0.75rem 0.25rem 28px;">
+
+                    <a href="{% url 'userprofile_app:lectures_list' %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'lectures_list' %}active bg-secondary text-white{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">مقاله ها</a>
+
+                    <a href="{% url 'userprofile_app:lecture_categories_list' %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'lecture_categories_list' %}active bg-secondary text-white{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">دسته بندی ها</a>
+
+                    <a href="{% url 'userprofile_app:lecture_tags_list' %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'lecture_tags_list' %}active bg-secondary text-white{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">تگ ها</a>
+
+                    <a href="{% url 'userprofile_app:lecture_comments_list' %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'lecture_comments_list' %}active bg-secondary text-white{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">نظرات</a>
+                </div>
+            </li>
+
+            <!-- gallery -->
+            <li class="dropdown {% if request.resolver_match.url_name in 'galleries_list gallery_categories_list' %}show{% endif %}"
+                style="position: relative;">
+                <a href="#" id="userProfileDropdown"
+                   data-toggle="dropdown" aria-haspopup="true"
+                   aria-expanded="{% if request.resolver_match.url_name in 'galleries_list gallery_categories_list' %}true{% else %}false{% endif %}"
+                   style="display: flex; align-items: center; position: relative; font-size: 15px;">
+                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
+                        <path d="M0 0h24v24H0V0z" fill="none"></path>
+                        <path
+                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z">
+                        </path>
+                    </svg>
+                    تصاویر
+                    <span style="margin-right: auto; font-size: 12px;">▼</span>
+                </a>
+
+                <!-- زیرمنو -->
+                <div class="dropdown-menu {% if request.resolver_match.url_name in 'galleries_list gallery_categories_list' %}show{% endif %}"
+                     aria-labelledby="userProfileDropdown"
+                     style="box-shadow: none; border: none; margin-top: 2px;
+                     right: 0; left: 0; min-width: unset; width: 100%; padding: 0.25rem 0.75rem 0.25rem 28px;">
+
+                    <a href="{% url 'userprofile_app:galleries_list' %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'galleries_list' %}active bg-secondary text-white{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">تصاویر</a>
+
+                    <a href="{% url 'userprofile_app:gallery_categories_list' %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'gallery_categories_list' %}active bg-secondary text-white{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">دسته بندی ها</a>
+                </div>
+            </li>
+
+            <!-- Footer Link -->
+            <li class="dropdown {% if request.resolver_match.url_name in 'footer_links_list footer_link_boxes_list' %}show{% endif %}"
+                style="position: relative;">
+                <a href="#" id="userProfileDropdown"
+                   data-toggle="dropdown" aria-haspopup="true"
+                   aria-expanded="{% if request.resolver_match.url_name in 'footer_links_list footer_link_boxes_list' %}true{% else %}false{% endif %}"
+                   style="display: flex; align-items: center; position: relative; font-size: 15px;">
+                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
+                        <path d="M0 0h24v24H0V0z" fill="none"></path>
+                        <path
+                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z">
+                        </path>
+                    </svg>
+                    لینک ها
+                    <span style="margin-right: auto; font-size: 12px;">▼</span>
+                </a>
+
+                <!-- زیرمنو -->
+                <div class="dropdown-menu {% if request.resolver_match.url_name in 'footer_links_list footer_link_boxes_list' %}show{% endif %}"
+                     aria-labelledby="userProfileDropdown"
+                     style="box-shadow: none; border: none; margin-top: 2px;
+                     right: 0; left: 0; min-width: unset; width: 100%; padding: 0.25rem 0.75rem 0.25rem 28px;">
+
+                    <a href="{% url 'userprofile_app:footer_links_list' %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'footer_links_list' %}active bg-secondary text-white{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">لینک ها</a>
+
+                    <a href="{% url 'userprofile_app:footer_link_boxes_list' %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'footer_link_boxes_list' %}active bg-secondary text-white{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">دسته بندی ها</a>
+                </div>
+            </li>
+
+            <!-- Contact Us -->
+            <li>
+                <a href="{% url 'userprofile_app:contact_us_list' %}">
+                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
+                        <path d="M0 0h24v24H0V0z" fill="none"></path>
+                        <path
+                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
+                        ></path>
+                    </svg>
+                    تماس با ما
+                </a>
+            </li>
+
+            <!-- slider -->
+            <li>
+                <a href="{% url 'userprofile_app:sliders_list' %}">
+                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
+                        <path d="M0 0h24v24H0V0z" fill="none"></path>
+                        <path
+                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
+                        ></path>
+                    </svg>
+                    اسلایدر
+                </a>
+            </li>
+
+            <!-- Site Setting -->
+            <li>
+                <a href="{% url 'userprofile_app:site_Settings_list' %}">
+                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
+                        <path d="M0 0h24v24H0V0z" fill="none"></path>
+                        <path
+                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
+                        ></path>
+                    </svg>
+                    تنظیمات سایت
+                </a>
+            </li>
+
+            {% if request.user.is_superuser %}
+                <!-- Group -->
+                <li>
+                    <a href="{% url 'userprofile_app:group_list' %}">
+                        <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
+                            <path d="M0 0h24v24H0V0z" fill="none"></path>
+                            <path
+                                    d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
+                            ></path>
+                        </svg>
+                        نقش ها و دسترسی ها
+                    </a>
+                </li>
+
+                <!-- users -->
+                <li>
+                    <a href="{% url 'userprofile_app:user_list' %}">
+                        <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
+                            <path d="M0 0h24v24H0V0z" fill="none"></path>
+                            <path
+                                    d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
+                            ></path>
+                        </svg>
+                        لیست کاربران
+                    </a>
+                </li>
+            {% endif %}
 
             <!-- user profile -->
             <li>
@@ -448,77 +269,7 @@
                     پروفایل من
                 </a>
             </li>
-            {% if request.user.is_superuser %}
-                <!-- Group -->
-                <li>
-                    <a href="{% url 'userprofile_app:group_list' %}">
-                        <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
-                            <path d="M0 0h24v24H0V0z" fill="none"></path>
-                            <path
-                                    d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
-                            ></path>
-                        </svg>
-                        مدیریت نقش ها و دسترسی ها
-                    </a>
-                </li>
-                
-                <!-- users -->
-                <li>
-                    <a href="{% url 'userprofile_app:user_list' %}">
-                        <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
-                            <path d="M0 0h24v24H0V0z" fill="none"></path>
-                            <path
-                                    d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
-                            ></path>
-                        </svg>
-                        مدیریت کاربران
-                    </a>
-                </li>
-            {% endif %}
 
-
-            <!-- Article -->
-            <li class="dropdown {% if request.resolver_match.url_name in 'articles_list article_categories article_tags article_comments' %}show{% endif %}"
-                style="position: relative;">
-                <a href="#" id="userProfileDropdown"
-                   data-toggle="dropdown" aria-haspopup="true"
-                   aria-expanded="{% if request.resolver_match.url_name in 'articles_list article_categories article_tags article_comments' %}true{% else %}false{% endif %}"
-                   style="display: flex; align-items: center; position: relative; font-size: 15px;">
-                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
-                        <path d="M0 0h24v24H0V0z" fill="none"></path>
-                        <path
-                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z">
-                        </path>
-                    </svg>
-                    مدیریت مقالات
-                    <span style="margin-right: auto; font-size: 12px;">▼</span>
-                </a>
-
-                <!-- زیرمنو -->
-                <div class="dropdown-menu {% if request.resolver_match.url_name in 'articles_list article_categories article_tags article_comments' %}show{% endif %}"
-                     aria-labelledby="userProfileDropdown"
-                     style="box-shadow: none; border: none; margin-top: 2px;
-                     right: 0; left: 0; min-width: unset; width: 100%; padding: 0.25rem 0.75rem 0.25rem 28px;">
-
-                    <a href="{% url 'userprofile_app:articles_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'articles_list' %}active bg-secondary text-white{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">لیست مقالات</a>
-
-                    <a href="#"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'article_categories' %}active{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">دسته بندی ها</a>
-
-                    <a href="#"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'article_tags' %}active{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">تگ ها</a>
-
-                    <a href="#"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'article_comments' %}active{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">نظرات</a>
-                </div>
-            </li>
-
-            
 
         </ul>
     </div>

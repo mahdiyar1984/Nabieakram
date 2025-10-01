@@ -22,8 +22,6 @@ class GalleryCategory(BaseModel):
     class Meta:
         verbose_name = 'دسته بندی تصاویر'
         verbose_name_plural = 'دسته بندهای تصاویر'
-
-
 class GalleryImage(BaseModel):
     objects = models.Manager()
     category = models.ForeignKey(

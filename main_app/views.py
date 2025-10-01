@@ -12,21 +12,17 @@ from main_app.models import SiteSetting, ContactUs, FooterLink, FooterLinkBox, S
 def site_header_component(request):
     site_setting: SiteSetting = SiteSetting.objects.all().first()
     context = {
-        'site_setting': site_setting,
+        'site_settings': site_setting,
     }
     return render(request, 'shared/site_header_component.html', context)
-
-
 def site_footer_component(request):
     footer_link_boxes: QuerySet[FooterLinkBox] = FooterLinkBox.objects.all()
     site_setting: SiteSetting = SiteSetting.objects.all().first()
     context = {
         'footer_link_boxes': footer_link_boxes,
-        'site_setting': site_setting,
+        'site_settings': site_setting,
     }
     return render(request, 'shared/site_footer_component.html', context)
-
-
 def index(request):
     sliders: QuerySet[Slider] = Slider.objects.filter(is_active=True).order_by("order")
     site_setting: SiteSetting = SiteSetting.objects.all().first()
@@ -38,19 +34,15 @@ def index(request):
     )
     context = {
         'sliders': sliders,
-        'site_setting': site_setting,
+        'site_settings': site_setting,
         'article_categories': article_categories
     }
     return render(request, "main_app/index.html", context)
-
-
 class AboutView(TemplateView):
     template_name = 'main_app/about_page.html'
 
     def get_context_data(self, **kwargs):
         pass
-
-
 class ContactUsView(CreateView):
     form_class = ContactUsModelForm
     template_name = 'main_app/contact_us_page.html'
@@ -72,9 +64,14 @@ class ContactUsView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         setting: SiteSetting = SiteSetting.objects.all().first()
-        context['site_setting'] = setting
+        context['site_settings'] = setting
         return context
-
-
 class TimeTableView(TemplateView):
     template_name = 'main_app/time_table_heiat.html'
+
+def d(request):
+    site_setting: SiteSetting = SiteSetting.objects.all().first()
+    context = {
+        'site_setting': site_setting,
+    }
+    return render(request, 'shared/dashboard.html', context)
