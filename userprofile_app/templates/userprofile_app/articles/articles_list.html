@@ -38,7 +38,8 @@
                 </div>
 
                 <!-- create new article -->
-                <a href="{% url 'userprofile_app:article_create' %}" class="btn btn-info d-inline-flex align-items-center new-article-btn"
+                <a href="{% url 'userprofile_app:article_create' %}"
+                   class="btn btn-info d-inline-flex align-items-center new-article-btn"
                    style="background-color: #e3f2fd; color: #1976d2; border-color: #b3e5fc; font-weight: bold;">
                     <i class="la la-plus mr-2"></i><span style="font-weight: bold;">ایجاد مقاله جدید</span>
                 </a>
@@ -67,6 +68,8 @@
                         <th scope="col">دسته بندی</th>
                         <th scope="col">تگ ها</th>
                         <th scope="col">تاریخ انتشار</th>
+                        <th scope="col">اکتیو</th>
+                        <th scope="col">حذف</th>
                         <th scope="col">وضعیت</th>
                         <th scope="col">اقدام</th>
                     </tr>
@@ -77,7 +80,8 @@
                         <tr>
 
                             <th scope="row">
-                                <a href="{% url 'blog_app:blog_detail' pk=article.id %}" class="text-black">{{ article.title }}</a>
+                                <a href="{% url 'blog_app:blog_detail' pk=article.id %}"
+                                   class="text-black">{{ article.title }}</a>
                             </th>
                             <td>{{ article.author.get_full_name }}</td>
                             <td>
@@ -92,22 +96,38 @@
                             </td>
                             <td>{{ article.create_date|to_shamsi }}</td>
 
+                            <td class="text-center">
+                                {% if article.is_active %}
+                                    <span style="color:green;">&#10004;</span>
+                                {% else %}
+                                    <span style="color:red;">&#10008;</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if article.is_delete %}
+                                    <span style="color:green;">&#10004;</span>
+                                {% else %}
+                                    <span style="color:red;">&#10008;</span>
+                                {% endif %}
+                            </td>
+
                             <td>
                                 {% if article.status == 'draft' %}
-                                    <span class="badge bg-secondary text-white p-1" style="display: block; width: 75%;">{{ article.get_status_display }}</span>
+                                    <span class="badge bg-secondary text-white p-1"
+                                          style="display: block; width: 100%;">{{ article.get_status_display }}</span>
                                 {% elif article.status == 'pending' %}
-                                    <span class="badge bg-warning text-white p-1" style="display: block; width: 75%;">در انتظار تایید</span>
+                                    <span class="badge bg-warning text-white p-1" style="display: block; width: 100%;">{{ article.get_status_display }}</span>
                                 {% elif article.status == 'published' %}
-                                    <span class="badge bg-success text-white p-1" style="display: block; width: 75%;">منتشر شده</span>
+                                    <span class="badge bg-success text-white p-1" style="display: block; width: 100%;">{{ article.get_status_display }}</span>
                                 {% elif article.status == 'rejected' %}
-                                    <span class="badge bg-danger text-white p-1" style="display: block; width: 75%;">رد شد</span>
+                                    <span class="badge bg-danger text-white p-1" style="display: block; width: 100%;">{{ article.get_status_display }}</span>
                                 {% endif %}
                             </td>
 
                             <td>
                                 <div class="card-action-wrap d-flex">
                                     <!-- view -->
-                                    <a href="{% url 'blog_app:blog_detail' pk=article.id %}"
+                                    <a href="{% url 'userprofile_app:article_detail' pk=article.id %}"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
                                        data-toggle="tooltip" title="مشاهده">
                                         <i class="la la-eye"></i>
@@ -121,11 +141,42 @@
                                     </a>
 
                                     <!-- delete -->
-                                    <a href="{% url 'userprofile_app:article_delete' pk=article.id %}"
+                                    <a href="javascript:void(0)" data-toggle="modal" data-target="#deleteModal"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-danger"
                                        data-toggle="tooltip" title="حذف">
                                         <i class="la la-trash"></i>
                                     </a>
+                                    <div class="modal fade modal-container" id="deleteModal" tabindex="-1" role="dialog"
+                                         aria-labelledby="deleteModalTitle"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-body text-center">
+                                                    <span class="la la-exclamation-circle fs-60 text-warning"></span>
+                                                    <h4 class="modal-title fs-19 font-weight-semi-bold pt-2 pb-1"
+                                                        id="deleteModalTitle">مقاله شما حذف خواهد شد!
+                                                    </h4>
+                                                    <p>آیا مطمئن هستید که می خواهید مقاله خود را حذف کنید؟</p>
+                                                    <div class="btn-box pt-4">
+
+                                                        <form
+                                                                action="{% url 'userprofile_app:article_delete' pk=article.id %}"
+                                                                method="post">
+                                                            {% csrf_token %}
+                                                            <button type="button" class="btn font-weight-medium mr-3"
+                                                                    data-dismiss="modal">لغو
+                                                            </button>
+                                                            <input type="hidden" name="id" value="{{ article.id }}">
+                                                            <button type="submit"
+                                                                    class="btn theme-btn theme-btn-sm lh-30">
+                                                                حذف
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <!-- confirm -->
                                     <form action="{% url 'userprofile_app:article_change_status' article.pk %}"
@@ -165,29 +216,40 @@
 
 
             <!-- pagination -->
-            <div class="text-center py-3">
-                <nav aria-label="مثال ناوبری صفحه" class="pagination-box">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="قبلی">
-                                <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
-                                <span class="sr-only">قبلی</span>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="بعد">
-                                <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
-                                <span class="sr-only">بعد</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <p class="fs-14 pt-2">نمایش 1-5 از 16 نتیجه</p>
-            </div>
-
+            {% if page_obj.paginator.count > page_obj.paginator.per_page %}
+                <div class="text-center pt-3">
+                    <nav aria-label="مثال ناوبری صفحه" class="pagination-box">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}"
+                                       aria-label="قبلی">
+                                        <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
+                                        <span class="sr-only">قبلی</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% for i in page_obj.paginator.page_range %}
+                                {% if page_obj.number == i %}
+                                    <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="بعد">
+                                        <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
+                                        <span class="sr-only">بعد</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    <p class="fs-14 pt-2">نمایش 1-10 از 56 نتیجه</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 

@@ -18,11 +18,13 @@ urlpatterns = [
     # region Article Category management
     path('article-categories/', views.AdminArticleCategoryListView.as_view(), name='article_categories_list'),
     path('article-categories/create/', views.AdminArticleCategoryCreateView.as_view(), name='article_category_create'),
+    path('profile/articles/categories/<int:pk>/', views.AdminArticleCategoryReadView.as_view(), name='article_category_read'),
     path('article-categories/<int:pk>/edit/', views.AdminArticleCategoryUpdateView.as_view(), name='article_category_edit'),
     path('article-categories/<int:pk>/delete/', views.AdminArticleCategoryDeleteView.as_view(), name='article_category_delete'),
     # endregion
     # region Article Tag management
     path('article-tags/', views.AdminArticleTagListView.as_view(), name='article_tags_list'),
+    path("articles/<int:pk>/", views.AdminArticleReadView.as_view(), name="article_detail"),
     path('article-tags/create/', views.AdminArticleTagCreateView.as_view(), name='article_tag_create'),
     path('article-tags/<int:pk>/edit/', views.AdminArticleTagUpdateView.as_view(), name='article_tag_edit'),
     path('article-tags/<int:pk>/delete/', views.AdminArticleTagDeleteView.as_view(), name='article_tag_delete'),
@@ -31,7 +33,8 @@ urlpatterns = [
     path('article-comments/', views.AdminArticleCommentListView.as_view(), name='article_comments_list'),
     path('article-comments/create/', views.AdminArticleCommentCreateView.as_view(), name='article_comment_create'),
     path('article-comments/<int:pk>/edit/', views.AdminArticleCommentUpdateView.as_view(), name='article_comment_edit'),
-    path('article-comments/<int:pk>/delete/', views.AdminArticleCommentDeleteView.as_view(), name='article_comment_delete'),
+    path('article-comments/<int:pk>/delete/', views.AdminArticleCommentDeleteView.as_view(),
+         name='article_comment_delete'),
     # endregion
 
     # region Lecture management
@@ -43,8 +46,10 @@ urlpatterns = [
     # region Lecture Category management
     path('lecture-categories/', views.AdminLectureCategoryListView.as_view(), name='lecture_categories_list'),
     path('lecture-categories/create/', views.AdminLectureCategoryCreateView.as_view(), name='lecture_category_create'),
-    path('lecture-categories/<int:pk>/edit/', views.AdminLectureCategoryUpdateView.as_view(), name='lecture_category_edit'),
-    path('lecture-categories/<int:pk>/delete/', views.AdminLectureCategoryDeleteView.as_view(), name='lecture_category_delete'),
+    path('lecture-categories/<int:pk>/edit/', views.AdminLectureCategoryUpdateView.as_view(),
+         name='lecture_category_edit'),
+    path('lecture-categories/<int:pk>/delete/', views.AdminLectureCategoryDeleteView.as_view(),
+         name='lecture_category_delete'),
     # endregion
     # region Lecture Tag management
     path('lecture-tags/', views.AdminLectureTagListView.as_view(), name='lecture_tags_list'),
@@ -56,7 +61,8 @@ urlpatterns = [
     path('lecture-comments/', views.AdminLectureCommentListView.as_view(), name='lecture_comments_list'),
     path('lecture-comments/create/', views.AdminLectureCommentCreateView.as_view(), name='lecture_comment_create'),
     path('lecture-comments/<int:pk>/edit/', views.AdminLectureCommentUpdateView.as_view(), name='lecture_comment_edit'),
-    path('lecture-comments/<int:pk>/delete/', views.AdminLectureCommentDeleteView.as_view(), name='lecture_comment_delete'),
+    path('lecture-comments/<int:pk>/delete/', views.AdminLectureCommentDeleteView.as_view(),
+         name='lecture_comment_delete'),
     # endregion
 
     # region Gallery management
@@ -68,8 +74,10 @@ urlpatterns = [
     # region Gallery Category management
     path('gallery-categories/', views.AdminGalleryCategoryListView.as_view(), name='gallery_categories_list'),
     path('gallery-categories/create/', views.AdminGalleryCategoryCreateView.as_view(), name='gallery_category_create'),
-    path('gallery-categories/<int:pk>/edit/', views.AdminGalleryCategoryUpdateView.as_view(), name='gallery_category_edit'),
-    path('gallery-categories/<int:pk>/delete/', views.AdminGalleryCategoryDeleteView.as_view(), name='gallery_category_delete'),
+    path('gallery-categories/<int:pk>/edit/', views.AdminGalleryCategoryUpdateView.as_view(),
+         name='gallery_category_edit'),
+    path('gallery-categories/<int:pk>/delete/', views.AdminGalleryCategoryDeleteView.as_view(),
+         name='gallery_category_delete'),
     # endregion
 
     # region FooterLink management
@@ -82,7 +90,8 @@ urlpatterns = [
     path('footer-link-boxes/', views.AdminFooterLinkBoxListView.as_view(), name='footer_link_boxes_list'),
     path('footer-link-boxes/create/', views.AdminFooterLinkBoxCreateView.as_view(), name='footer_link_box_create'),
     path('footer-link-boxes/<int:pk>/edit/', views.AdminFooterLinkBoxUpdateView.as_view(), name='footer_link_box_edit'),
-    path('footer-link-boxes/<int:pk>/delete/', views.AdminFooterLinkBoxDeleteView.as_view(), name='footer_link_box_delete'),
+    path('footer-link-boxes/<int:pk>/delete/', views.AdminFooterLinkBoxDeleteView.as_view(),
+         name='footer_link_box_delete'),
     # endregion
 
     # region Contact Us management

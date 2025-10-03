@@ -11,9 +11,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -25,7 +25,6 @@ SECRET_KEY = 'django-insecure-m2+o3an&7$lb5q*c8trpvou*c#+7_$*qj&3(acv$3qy(od$0e9
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -62,19 +61,33 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'config_app.urls'
 
 TEMPLATES = [
     {
+        # این مشخص می‌کنه که جنگو از چه "موتور تمپلیتی" برای رندر کردن HTML استفاده کنه.
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+
+        # اینجا مسیرهایی تعریف میشه که جنگو برای پیدا کردن template به اونها سر می‌زنه.
+        # اولویت با پوشه تمپلیت ریشه است اول اینجا بررسی میشه بعد میره سراغ پوشه تمپلیت اپ ها
+        'DIRS': [BASE_DIR / 'templates'],
+
+        # وقتی True باشه، جنگو به صورت خودکار داخل هر اپلیکیشن
+        # (هر فولدر اپی که در INSTALLED_APPS تعریف شده) دنبال پوشه‌ی templates می‌گرده.
         'APP_DIRS': True,
+
+        # اینجا می‌تونی تنظیمات اضافی موتور template رو بدی. یکی از مهم‌ترین‌هاش context_processors هست.
         'OPTIONS': {
+            # اینها فانکشن‌هایی هستند که وقتی تمپلیت رندر میشه، مقادیر جدیدی به context اضافه می‌کنن
+            # (یعنی متغیرهایی که داخل HTML قابل دسترسی میشن).
             'context_processors': [
                 'django.template.context_processors.request',
+
+                # باعث میشه user (کاربر لاگین‌شده) و perms (مجوزهای کاربر) در template در دسترس باشن.
                 'django.contrib.auth.context_processors.auth',
+
+                # باعث میشه پیام‌هایی که با framework پیام جنگو
+                # (messages.add_message, messages.success, ...) ساختی، در تمپلیت قابل استفاده باشن.
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -82,7 +95,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config_app.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -93,7 +105,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -125,7 +136,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
@@ -137,15 +147,13 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#setting email
-EMAIL_BACKEND =  'django.core.mail.backends.smtp.EmailBackend'
+# setting email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
 EMAIL_HOST_USER = '3370bfcd7fe3c0'
 EMAIL_HOST_PASSWORD = 'e4105258e6e18d'

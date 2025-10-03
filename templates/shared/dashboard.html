@@ -59,6 +59,7 @@
                     <span style="margin-right: auto; font-size: 12px;">▼</span>
                 </a>
 
+
                 <!-- زیرمنو -->
                 <div class="dropdown-menu {% if request.resolver_match.url_name in 'articles_list article_categories_list article_tags_list article_comments_list' %}show{% endif %}"
                      aria-labelledby="userProfileDropdown"
@@ -278,27 +279,6 @@
 
 </section>
 
-
-<div class="modal fade modal-container" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle"
-     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <span class="la la-exclamation-circle fs-60 text-warning"></span>
-                <h4 class="modal-title fs-19 font-weight-semi-bold pt-2 pb-1" id="deleteModalTitle">حساب شما برای همیشه
-                    حذف خواهد شد!</h4>
-                <p>آیا مطمئن هستید که می خواهید اکانت خود را حذف کنید؟</p>
-                <div class="btn-box pt-4">
-                    <button type="button" class="btn font-weight-medium mr-3" data-dismiss="modal">لغو کنید</button>
-                    <button type="submit" class="btn theme-btn theme-btn-sm lh-30">باشه حذف کن</button>
-                </div>
-            </div>
-            <!-- end modal-body -->
-        </div>
-        <!-- end modal-content -->
-    </div>
-    <!-- end modal-dialog -->
-</div>
 <div id="scroll-top">
     <i class="la la-arrow-up" title="برو بالا"></i>
 </div>

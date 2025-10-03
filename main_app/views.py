@@ -68,10 +68,3 @@ class ContactUsView(CreateView):
         return context
 class TimeTableView(TemplateView):
     template_name = 'main_app/time_table_heiat.html'
-
-def d(request):
-    site_setting: SiteSetting = SiteSetting.objects.all().first()
-    context = {
-        'site_setting': site_setting,
-    }
-    return render(request, 'shared/dashboard.html', context)
