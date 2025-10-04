@@ -63,8 +63,8 @@ class ContactUsView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        setting: SiteSetting = SiteSetting.objects.all().first()
-        context['site_settings'] = setting
+        site_setting: SiteSetting = SiteSetting.objects.all().first()
+        context['site_setting'] = site_setting
         return context
 class TimeTableView(TemplateView):
     template_name = 'main_app/time_table_heiat.html'

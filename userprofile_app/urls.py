@@ -20,7 +20,7 @@ urlpatterns = [
     path('article-categories/create/', views.article_category_create_view, name='article_category_create'),
     path('article-categories/<int:pk>/read', views.article_category_read_view, name='article_category_read'),
     path('article-categories/<int:pk>/edit/', views.article_category_update_view, name='article_category_edit'),
-    path('article-categories/<int:pk>/delete/', views.AdminArticleCategoryDeleteView.as_view(), name='article_category_delete'),
+    path('article-categories/<int:pk>/delete/', views.article_category_delete_view, name='article_category_delete'),
     # endregion
     # region Article Tag management
     path('article-tags/', views.AdminArticleTagListView.as_view(), name='article_tags_list'),

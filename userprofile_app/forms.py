@@ -58,6 +58,7 @@ class ArticleForm(forms.ModelForm):
         model = Article
         fields = ['title', 'slug', 'image', 'short_description', 'text', 'selected_categories', 'selected_tags',
                   'status', 'is_active', 'is_delete']
+
 class ArticleReadOnlyForm(ArticleForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -127,7 +128,6 @@ class ArticleTagForm(forms.ModelForm):
 
 class ArticleCommentForm(forms.ModelForm):
     pass
-
 
 # endregion
 

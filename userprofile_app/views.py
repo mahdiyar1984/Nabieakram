@@ -1,5 +1,6 @@
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, TemplateView
 from blog_app.models import Article, ArticleCategory, ArticleTag, ArticleComment
 from main_app.models import FooterLink, ContactUs, SiteSetting, Slider
@@ -208,6 +209,7 @@ class AdminArticleListView(LoginRequiredMixin, ListView):
     template_name = 'userprofile_app/articles/articles_list.html'
     paginate_by = 10
 
+
 class AdminArticleReadView(LoginRequiredMixin, DetailView):
     model = Article
     template_name = "userprofile_app/articles/article_form.html"
@@ -329,6 +331,8 @@ class AdminArticleChangeStatusView(LoginRequiredMixin, View):
 class AdminArticleCategoryListView(LoginRequiredMixin, ListView):
     model = ArticleCategory
     template_name = 'userprofile_app/articles/article_categories_list.html'
+    paginate_by = 10
+
 
 def article_category_create_view(request, pk=None):
     obj = get_object_or_404(ArticleCategory, pk=pk) if pk else None
@@ -375,8 +379,9 @@ def article_category_create_view(request, pk=None):
         'form': form,
         'object': obj,
         'all_categories': all_categories,
-        'read_only':False
+        'read_only': False
     })
+
 
 def article_category_update_view(request, pk):
     # بارگذاری شیء موجود
@@ -420,6 +425,7 @@ def article_category_update_view(request, pk):
         'read_only': False
     })
 
+
 def article_category_read_view(request, pk):
     article_category = get_object_or_404(ArticleCategory, pk=pk)
     initial = {
@@ -447,6 +453,15 @@ def article_category_read_view(request, pk):
         'all_categories': all_categories,
         'read_only': read_only
     })
+
+
+def article_category_delete_view(request, pk):
+    if request.method == 'POST':
+        article_category = get_object_or_404(ArticleCategory, pk=pk)
+        article_category.is_delete = True
+        article_category.save()
+    return redirect('userprofile_app:article_categories_list')
+
 
 # endregion
 # region Article Tag
