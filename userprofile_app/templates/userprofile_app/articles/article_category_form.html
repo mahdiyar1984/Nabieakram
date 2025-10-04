@@ -55,9 +55,10 @@
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="label-text">عنوان دسته بندی</label>
-                                    <input class="form-control form--control pl-3" type="text" name="title"
-                                           value="{{ object.title }}"
-                                           {% if read_only %}disabled{% endif %}>
+                                    {{ form.title }}
+                                    {% if form.title.errors %}
+                                        <div class="text-danger">{{ form.title.errors }}</div>
+                                    {% endif %}
                                 </div>
                             </div>
 
@@ -65,18 +66,10 @@
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="label-text">والد</label>
-                                    <select name="parent" class="form-control form--control pl-3"
-                                            {% if read_only %}disabled{% endif %}>
-                                        <option value="">ندارد</option>
-                                        {% for cat in all_categories %}
-                                            {% if cat != object %} {# جلوگیری از انتخاب خودش به عنوان والد #}
-                                                <option value="{{ cat.id }}"
-                                                        {% if object.parent == cat %}selected{% endif %}>
-                                                    {{ cat.title }}
-                                                </option>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </select>
+                                    {{ form.parent }}
+                                    {% if form.parent.errors %}
+                                        <div class="text-danger">{{ form.parent.errors }}</div>
+                                    {% endif %}
                                 </div>
                             </div>
 
@@ -84,34 +77,41 @@
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="label-text">url_title</label>
-                                    <input class="form-control form--control pl-3" type="text" name="url_title"
-                                           value="{{ object.url_title }}"
-                                           {% if read_only %}disabled{% endif %}>
+                                    {{ form.url_title }}
+                                    {% if form.url_title.errors %}
+                                        <div class="text-danger">{{ form.url_title.errors }}</div>
+                                    {% endif %}
                                 </div>
                             </div>
 
                             <!-- is_active -->
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label class="label-text">فعال؟</label>
-                                    <input class="form-control form--control pl-3" type="text" name="is_active"
-                                           value="{{ object.is_active }}"
-                                           {% if read_only %}disabled{% endif %}>
+                            <div class="col-lg-3" style="margin-top: 35px;">
+                                <div class="form-check d-flex align-items-center mt-2">
+                                    {{ form.is_active }}
+                                    <label class="form-check-label ml-2" for="{{ form.is_active.id_for_label }}">
+                                        فعال/غیرفعال
+                                    </label>
                                 </div>
+                                {% if form.is_active.errors %}
+                                    <div class="text-danger">{{ form.is_active.errors }}</div>
+                                {% endif %}
                             </div>
 
                             <!-- is_delete -->
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label class="label-text">حذف شده؟</label>
-                                    <input class="form-control form--control pl-3" type="text" name="is_delete"
-                                           value="{{ object.is_delete }}"
-                                           {% if read_only %}disabled{% endif %}>
+                            <div class="col-lg-3" style="margin-top: 35px;">
+                                <div class="form-check d-flex align-items-center mt-2">
+                                    {{ form.is_delete }}
+                                    <label class="form-check-label ml-2" for="{{ form.is_delete.id_for_label }}">
+                                        حذف شده/حذف نشده
+                                    </label>
                                 </div>
+                                {% if form.is_delete.errors %}
+                                    <div class="text-danger">{{ form.is_delete.errors }}</div>
+                                {% endif %}
                             </div>
 
                             <!-- image -->
-                            <div class="col-lg-12">
+                            <div class="col-lg-12 mt-5">
                                 <div class="form-group mb-0">
                                     <label class="label-text">تصویر دسته بندی</label>
                                     <div class="input-box col-lg-12 mb-5">
@@ -129,12 +129,7 @@
                                                 <div class="media-body">
                                                     <div class="file-upload-wrap file-upload-wrap-2">
                                                         <div class="MultiFile-wrap" id="MultiFile2">
-                                                            <input type="file"
-                                                                   name="image"
-                                                                   class="multi file-upload-input with-preview MultiFile-applied"
-                                                                   multiple=""
-                                                                   id="MultiFile2"
-                                                                   value="">
+                                                            {{ form.image }}
                                                             <div class="MultiFile-list" id="MultiFile2_list"></div>
                                                         </div>
                                                         <span class="file-upload-text"><i class="la la-photo mr-2"></i>یک عکس آپلود کنید</span>
@@ -143,17 +138,23 @@
                                             {% endif %}
                                         </div>
                                     </div>
+                                    {% if form.image.errors %}
+                                        <div class="text-danger">{{ form.image.errors }}</div>
+                                    {% endif %}
                                 </div>
                             </div>
 
                         </div>
                     </div>
                 </div>
+
                 {% if not read_only %}
                     <div class="course-submit-btn-box pb-4">
-                        <button class="btn theme-btn" type="submit">ذخیره دسته بندی</button>
+                        <button class="btn theme-btn" type="submit">ذخیره مقاله</button>
                     </div>
                 {% endif %}
+
+
             </form>
         </div>
     </div>

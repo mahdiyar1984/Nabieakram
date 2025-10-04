@@ -1,13 +1,12 @@
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
+from django.views.generic import DetailView, TemplateView
 from blog_app.models import Article, ArticleCategory, ArticleTag, ArticleComment
 from main_app.models import FooterLink, ContactUs, SiteSetting, Slider
 from media_app.models import Lecture, LectureCategory, LectureTag, LectureComment, GalleryImage, GalleryCategory
 from .forms import ArticleForm, GroupForm, ArticleCategoryForm, ArticleTagForm, LectureForm, LectureTagForm, \
     LectureCategoryForm, GalleryImageForm, \
-    GalleryCategoryForm, FooterLinkForm, ContactUsForm, SliderForm, SiteSettingForm, ArticleReadOnlyForm, \
-    ArticleCategoryReadOnlyForm
+    GalleryCategoryForm, FooterLinkForm, ContactUsForm, SliderForm, SiteSettingForm, ArticleReadOnlyForm
 from django.contrib import messages
 from django.http import HttpRequest
 from django.shortcuts import render, redirect, get_object_or_404
@@ -331,45 +330,123 @@ class AdminArticleCategoryListView(LoginRequiredMixin, ListView):
     model = ArticleCategory
     template_name = 'userprofile_app/articles/article_categories_list.html'
 
-    def get_queryset(self):
-        return ArticleCategory.objects.filter(is_delete=False)
+def article_category_create_view(request, pk=None):
+    obj = get_object_or_404(ArticleCategory, pk=pk) if pk else None
+    if request.method == "POST":
+        form = ArticleCategoryForm(request.POST, request.FILES)
+        if form.is_valid():  # اعتبارسنجی فرم انجام می‌شود
+            data = form.cleaned_data
+            if obj:
+                article_category = obj
+            else:
+                article_category = ArticleCategory()
 
+            # مقداردهی فیلدها
+            article_category.title = data['title']
+            article_category.url_title = data['url_title']
+            article_category.parent = data.get('parent')
+            article_category.is_active = data.get('is_active', False)
+            article_category.is_delete = data.get('is_delete', False)
 
-class AdminArticleCategoryCreateView(LoginRequiredMixin, CreateView):
-    model = ArticleCategory
-    form_class = ArticleCategoryForm
-    template_name = 'userprofile_app/articles/article_category_form.html'
-    success_url = reverse_lazy('userprofile_app:article_categories_list')
+            if data.get('image'):
+                article_category.image = data['image']
 
+            article_category.save()
+            return redirect('userprofile_app:article_categories_list')  # آدرس صفحه موفقیت
 
-class AdminArticleCategoryReadView(LoginRequiredMixin, DetailView):
-    model = ArticleCategory
-    template_name = 'userprofile_app/articles/article_category_form.html'
-    context_object_name = 'object'
+    else:
+        # GET request → پر کردن فرم با مقادیر اولیه برای ویرایش یا فرم خالی
+        initial = {}
+        if obj:
+            initial = {
+                'title': obj.title,
+                'url_title': obj.url_title,
+                'parent': obj.parent,
+                'is_active': obj.is_active,
+                'is_delete': obj.is_delete
+            }
+        form = ArticleCategoryForm(initial=initial)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = ArticleCategoryReadOnlyForm(instance=self.get_object())
-        return context
+        # همه دسته‌بندی‌ها برای select والد
 
+    all_categories = ArticleCategory.objects.all()
 
-class AdminArticleCategoryUpdateView(LoginRequiredMixin, UpdateView):
-    model = ArticleCategory
-    form_class = ArticleCategoryForm
-    template_name = 'userprofile_app/articles/article_category_form.html'
-    success_url = reverse_lazy('userprofile_app:article_categories_list')
+    return render(request, 'userprofile_app/articles/article_category_form.html', {
+        'form': form,
+        'object': obj,
+        'all_categories': all_categories,
+        'read_only':False
+    })
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['all_categories'] = ArticleCategory.objects.filter(is_delete=False)
-        return context
+def article_category_update_view(request, pk):
+    # بارگذاری شیء موجود
+    article_category = get_object_or_404(ArticleCategory, pk=pk)
 
+    if request.method == "POST":
+        form = ArticleCategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            data = form.cleaned_data
 
-class AdminArticleCategoryDeleteView(LoginRequiredMixin, DeleteView):
-    model = ArticleCategory
-    template_name = 'userprofile_app/articles/article_category_confirm_delete.html'
-    success_url = reverse_lazy('userprofile_app:article_categories_list')
+            # به‌روزرسانی فیلدها
+            article_category.title = data['title']
+            article_category.url_title = data['url_title']
+            article_category.parent = data.get('parent')
+            article_category.is_active = data.get('is_active', False)
+            article_category.is_delete = data.get('is_delete', False)
 
+            if data.get('image'):
+                article_category.image = data['image']
+
+            article_category.save()
+            return redirect('userprofile_app:article_categories_list')
+
+    else:
+        # پر کردن فرم با مقادیر فعلی شیء
+        initial = {
+            'title': article_category.title,
+            'url_title': article_category.url_title,
+            'parent': article_category.parent,
+            'is_active': article_category.is_active,
+            'is_delete': article_category.is_delete
+        }
+        form = ArticleCategoryForm(initial=initial)
+
+    all_categories = ArticleCategory.objects.all()
+
+    return render(request, 'userprofile_app/articles/article_category_form.html', {
+        'form': form,
+        'object': article_category,
+        'all_categories': all_categories,
+        'read_only': False
+    })
+
+def article_category_read_view(request, pk):
+    article_category = get_object_or_404(ArticleCategory, pk=pk)
+    initial = {
+        'title': article_category.title,
+        'url_title': article_category.url_title,
+        'parent': article_category.parent,
+        'is_active': article_category.is_active,
+        'is_delete': article_category.is_delete
+    }
+
+    # فرم با مقادیر اولیه
+    form = ArticleCategoryForm(initial=initial)
+
+    # اگر read_only باشد، همه فیلدها غیرفعال می‌شوند
+    read_only = True
+    if read_only:
+        for field in form.fields.values():
+            field.widget.attrs['disabled'] = True
+
+    all_categories = ArticleCategory.objects.all()
+
+    return render(request, 'userprofile_app/articles/article_category_form.html', {
+        'form': form,
+        'object': article_category,
+        'all_categories': all_categories,
+        'read_only': read_only
+    })
 
 # endregion
 # region Article Tag

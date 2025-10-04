@@ -97,7 +97,7 @@
                             <td>
                                 <div class="card-action-wrap d-flex">
                                     <!-- view -->
-                                    <a href="#"
+                                    <a href="{% url 'userprofile_app:article_category_read' pk=articlecategory.id %}"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
                                        data-toggle="tooltip" title="مشاهده">
                                         <i class="la la-eye"></i>
@@ -111,11 +111,47 @@
                                     </a>
 
                                     <!-- delete -->
-                                    <a href="{% url 'userprofile_app:article_category_delete' pk=articlecategory.id %}"
+                                    <a href="#"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-danger"
                                        data-toggle="tooltip" title="حذف">
                                         <i class="la la-trash"></i>
                                     </a>
+                                    <a href="javascript:void(0)" data-toggle="modal" data-target="#deleteModal-{{ articlecategory.id }}"
+                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-danger"
+                                       data-toggle="tooltip" title="حذف">
+                                        <i class="la la-trash"></i>
+                                    </a>
+                                    <div class="modal fade modal-container" id="deleteModal-{{ articlecategory.id }}" tabindex="-1" role="dialog"
+                                         aria-labelledby="deleteModalTitle-{{ articlecategory.id }}"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-body text-center">
+                                                    <span class="la la-exclamation-circle fs-60 text-warning"></span>
+                                                    <h4 class="modal-title fs-19 font-weight-semi-bold pt-2 pb-1"
+                                                        id="deleteModalTitle-{{ articlecategory.id }}">مقاله شما حذف خواهد شد!
+                                                    </h4>
+                                                    <p>آیا مطمئن هستید که می خواهید مقاله خود را حذف کنید؟</p>
+                                                    <div class="btn-box pt-4">
+
+                                                        <form
+                                                                action="{% url 'userprofile_app:article_delete' pk=articlecategory.id %}"
+                                                                method="post">
+                                                            {% csrf_token %}
+                                                            <button type="button" class="btn font-weight-medium mr-3"
+                                                                    data-dismiss="modal">لغو
+                                                            </button>
+                                                            <input type="hidden" name="id" value="{{ articlecategory.id }}">
+                                                            <button type="submit"
+                                                                    class="btn theme-btn theme-btn-sm lh-30">
+                                                                حذف
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>

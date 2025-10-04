@@ -141,20 +141,20 @@
                                     </a>
 
                                     <!-- delete -->
-                                    <a href="javascript:void(0)" data-toggle="modal" data-target="#deleteModal"
+                                    <a href="javascript:void(0)" data-toggle="modal" data-target="#deleteModal-{{ article.id }}"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-danger"
                                        data-toggle="tooltip" title="حذف">
                                         <i class="la la-trash"></i>
                                     </a>
-                                    <div class="modal fade modal-container" id="deleteModal" tabindex="-1" role="dialog"
-                                         aria-labelledby="deleteModalTitle"
+                                    <div class="modal fade modal-container" id="deleteModal-{{ article.id }}" tabindex="-1" role="dialog"
+                                         aria-labelledby="deleteModalTitle-{{ article.id }}"
                                          aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-body text-center">
                                                     <span class="la la-exclamation-circle fs-60 text-warning"></span>
                                                     <h4 class="modal-title fs-19 font-weight-semi-bold pt-2 pb-1"
-                                                        id="deleteModalTitle">مقاله شما حذف خواهد شد!
+                                                        id="deleteModalTitle-{{ article.id }}">مقاله شما حذف خواهد شد!
                                                     </h4>
                                                     <p>آیا مطمئن هستید که می خواهید مقاله خود را حذف کنید؟</p>
                                                     <div class="btn-box pt-4">

@@ -17,9 +17,9 @@ urlpatterns = [
     # endregion
     # region Article Category management
     path('article-categories/', views.AdminArticleCategoryListView.as_view(), name='article_categories_list'),
-    path('article-categories/create/', views.AdminArticleCategoryCreateView.as_view(), name='article_category_create'),
-    path('profile/articles/categories/<int:pk>/', views.AdminArticleCategoryReadView.as_view(), name='article_category_read'),
-    path('article-categories/<int:pk>/edit/', views.AdminArticleCategoryUpdateView.as_view(), name='article_category_edit'),
+    path('article-categories/create/', views.article_category_create_view, name='article_category_create'),
+    path('article-categories/<int:pk>/read', views.article_category_read_view, name='article_category_read'),
+    path('article-categories/<int:pk>/edit/', views.article_category_update_view, name='article_category_edit'),
     path('article-categories/<int:pk>/delete/', views.AdminArticleCategoryDeleteView.as_view(), name='article_category_delete'),
     # endregion
     # region Article Tag management
