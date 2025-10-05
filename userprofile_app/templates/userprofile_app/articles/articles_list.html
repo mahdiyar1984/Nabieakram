@@ -78,24 +78,33 @@
                     <tbody>
                     {% for article in article_list %}
                         <tr>
-
+                            <!-- title -->
                             <th scope="row">
                                 <a href="{% url 'blog_app:blog_detail' pk=article.id %}"
                                    class="text-black">{{ article.title }}</a>
                             </th>
+
+                            <!-- author -->
                             <td>{{ article.author.get_full_name }}</td>
+
+                            <!-- categories -->
                             <td>
                                 {% for categories in article.selected_categories.all %}
                                     <span>{{ categories.title }}{% if not forloop.last %}, {% endif %}</span>
                                 {% endfor %}
                             </td>
+
+                            <!-- tags -->
                             <td>
                                 {% for tags in article.selected_tags.all %}
                                     <span>{{ tags.title }}{% if not forloop.last %}, {% endif %}</span>
                                 {% endfor %}
                             </td>
+
+                            <!-- create_date -->
                             <td>{{ article.create_date|to_shamsi }}</td>
 
+                            <!-- is_active -->
                             <td class="text-center">
                                 {% if article.is_active %}
                                     <span style="color:green;">&#10004;</span>
@@ -103,6 +112,8 @@
                                     <span style="color:red;">&#10008;</span>
                                 {% endif %}
                             </td>
+
+                            <!-- is_delete -->
                             <td class="text-center">
                                 {% if article.is_delete %}
                                     <span style="color:green;">&#10004;</span>
@@ -111,6 +122,7 @@
                                 {% endif %}
                             </td>
 
+                            <!-- status -->
                             <td>
                                 {% if article.status == 'draft' %}
                                     <span class="badge bg-secondary text-white p-1"
@@ -124,8 +136,10 @@
                                 {% endif %}
                             </td>
 
+                            <!-- actions -->
                             <td>
                                 <div class="card-action-wrap d-flex">
+
                                     <!-- view -->
                                     <a href="{% url 'userprofile_app:article_detail' pk=article.id %}"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
@@ -146,6 +160,8 @@
                                        data-toggle="tooltip" title="حذف">
                                         <i class="la la-trash"></i>
                                     </a>
+
+                                    <!-- modal: delete -->
                                     <div class="modal fade modal-container" id="deleteModal-{{ article.id }}" tabindex="-1" role="dialog"
                                          aria-labelledby="deleteModalTitle-{{ article.id }}"
                                          aria-hidden="true">
@@ -177,8 +193,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- confirm -->
                                     <form action="{% url 'userprofile_app:article_change_status' article.pk %}"
                                           method="post" style="display:inline;">
                                         {% csrf_token %}
@@ -206,6 +220,7 @@
                                             </button>
                                         {% endif %}
                                     </form>
+
                                 </div>
                             </td>
                         </tr>

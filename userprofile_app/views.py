@@ -1,13 +1,12 @@
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, TemplateView
 from blog_app.models import Article, ArticleCategory, ArticleTag, ArticleComment
 from main_app.models import FooterLink, ContactUs, SiteSetting, Slider
 from media_app.models import Lecture, LectureCategory, LectureTag, LectureComment, GalleryImage, GalleryCategory
 from .forms import ArticleForm, GroupForm, ArticleCategoryForm, ArticleTagForm, LectureForm, LectureTagForm, \
     LectureCategoryForm, GalleryImageForm, \
-    GalleryCategoryForm, FooterLinkForm, ContactUsForm, SliderForm, SiteSettingForm, ArticleReadOnlyForm
+    GalleryCategoryForm, FooterLinkForm, ContactUsForm, SliderForm, SiteSettingForm
 from django.contrib import messages
 from django.http import HttpRequest
 from django.shortcuts import render, redirect, get_object_or_404
@@ -20,11 +19,9 @@ from .forms import UserCreateForm, UserUpdateForm
 from django.contrib.auth.models import Group, Permission
 from django.apps import apps
 
-
 class AdminRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_superuser
-
 
 # region dashboard
 class UserPanelDashboardPage(LoginRequiredMixin, View):
@@ -209,20 +206,18 @@ class AdminArticleListView(LoginRequiredMixin, ListView):
     template_name = 'userprofile_app/articles/articles_list.html'
     paginate_by = 10
 
-
 class AdminArticleReadView(LoginRequiredMixin, DetailView):
     model = Article
+    form_class = ArticleForm
     template_name = "userprofile_app/articles/article_form.html"
-    context_object_name = "object"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = ArticleReadOnlyForm(instance=self.get_object())
-        context['read_only'] = True
+        context['form'] = ArticleForm(instance=self.get_object(), read_only=True)
+        context['read_only'] = getattr(context.get('form'), 'read_only', True)
         context['tags'] = ArticleTag.objects.all()
         context['categories'] = ArticleCategory.objects.all()
         return context
-
 
 class AdminArticleCreateView(LoginRequiredMixin, CreateView):
     model = Article
@@ -240,25 +235,26 @@ class AdminArticleCreateView(LoginRequiredMixin, CreateView):
         self.object = form.save(commit=False)
         self.object.author = self.request.user
         self.object.status = 'draft'
-        if self.request.FILES.get('image'):
-            self.object.image = self.request.FILES['image']
+
+        # استفاده از فرم برای فایل
+        if form.cleaned_data.get('image'):
+            self.object.image = form.cleaned_data['image']
+
         self.object.save()
 
-        # ذخیره ManyToMany
-        self.object.selected_categories.set(self.request.POST.getlist('selected_categories'))
-        self.object.selected_tags.set(self.request.POST.getlist('selected_tags'))
+        # ذخیره ManyToMany از فرم (اعتبارسنجی شده)
+        if 'selected_categories' in form.cleaned_data:
+            self.object.selected_categories.set(form.cleaned_data['selected_categories'])
+        if 'selected_tags' in form.cleaned_data:
+            self.object.selected_tags.set(form.cleaned_data['selected_tags'])
 
-        return redirect(self.get_success_url())
-
+        return super().form_valid(form)
 
 class AdminArticleUpdateView(LoginRequiredMixin, UpdateView):
     model = Article
     form_class = ArticleForm
     template_name = 'userprofile_app/articles/article_form.html'
     success_url = reverse_lazy('userprofile_app:articles_list')
-
-    def get_queryset(self):
-        return Article.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -268,6 +264,7 @@ class AdminArticleUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
+        self.object.author = self.request.user
 
         # آپلود تصویر جدید
         if self.request.FILES.get('image'):
@@ -280,11 +277,10 @@ class AdminArticleUpdateView(LoginRequiredMixin, UpdateView):
         self.object.save()
 
         # ذخیره ManyToMany
-        self.object.selected_categories.set(self.request.POST.getlist('selected_categories'))
-        self.object.selected_tags.set(self.request.POST.getlist('selected_tags'))
+        self.object.selected_categories.set(form.cleaned_data['selected_categories'])
+        self.object.selected_tags.set(form.cleaned_data['selected_tags'])
 
-        return redirect(self.get_success_url())
-
+        return super().form_valid(form)
 
 class AdminArticleDeleteView(LoginRequiredMixin, View):
     success_url = reverse_lazy('userprofile_app:articles_list')
@@ -382,7 +378,6 @@ def article_category_create_view(request, pk=None):
         'read_only': False
     })
 
-
 def article_category_update_view(request, pk):
     # بارگذاری شیء موجود
     article_category = get_object_or_404(ArticleCategory, pk=pk)
@@ -425,7 +420,6 @@ def article_category_update_view(request, pk):
         'read_only': False
     })
 
-
 def article_category_read_view(request, pk):
     article_category = get_object_or_404(ArticleCategory, pk=pk)
     initial = {
@@ -453,7 +447,6 @@ def article_category_read_view(request, pk):
         'all_categories': all_categories,
         'read_only': read_only
     })
-
 
 def article_category_delete_view(request, pk):
     if request.method == 'POST':

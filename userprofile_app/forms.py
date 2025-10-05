@@ -5,7 +5,6 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from account_app.models import User
 from django.contrib.auth.models import Group, Permission
 
-
 # region group management
 
 class GroupForm(forms.ModelForm):
@@ -54,29 +53,58 @@ class UserUpdateForm(UserChangeForm):
 
 # region Article Management
 class ArticleForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        read_only = kwargs.pop('read_only', False)
+        super().__init__(*args, **kwargs)
+
+        if read_only:
+            for field in self.fields.values():
+                field.disabled = True
+
+    selected_tags = forms.ModelMultipleChoiceField(
+        queryset=ArticleTag.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+    selected_categories = forms.ModelMultipleChoiceField(
+        queryset=ArticleCategory.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
     class Meta:
         model = Article
         fields = ['title', 'slug', 'image', 'short_description', 'text', 'selected_categories', 'selected_tags',
                   'status', 'is_active', 'is_delete']
+        widgets = {
+            # text input ها
+            'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'slug': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
 
-class ArticleReadOnlyForm(ArticleForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for name, field in self.fields.items():
-            # غیرقابل ویرایش در سطح فرم
-            field.disabled = True
+            # textarea ها
+            'short_description': forms.Textarea(attrs={
+                'class': 'form-control form--control user-text-editor pl-3',
+                'rows': 4
+            }),
+            'text': forms.Textarea(attrs={
+                'class': 'form-control form--control user-text-editor pl-3',
+                'rows': 15
+            }),
 
-            # اضافه کردن کلاس فرم (اگر خواستی)
-            classes = field.widget.attrs.get('class', '')
-            classes = (classes + ' form-control form--control pl-3').strip()
-            field.widget.attrs['class'] = classes
+            # status با select مثل template
+            'status': forms.Select(choices=[('draft', 'پیش‌نویس'), ('published', 'منتشر شده')],
+                                   attrs={'class': 'form-control form--control pl-3'}),
 
-            # برای textarea از readonly استفاده کن چون بعضی مرورگرها readonly بهتر عمل می‌کنه
-            if isinstance(field.widget, Textarea):
-                field.widget.attrs['readonly'] = 'readonly'
-            else:
-                # select, file input, inputهای دیگر
-                field.widget.attrs['disabled'] = 'disabled'
+            # boolean ها با checkbox (اگر لازم شد می‌تونید widget = CheckboxInput)
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'image': forms.ClearableFileInput(attrs={
+                'class': 'multi file-upload-input with-preview MultiFile-applied',
+                'id': 'MultiFile2',
+            })
+
+        }
+
 
 class ArticleCategoryForm(forms.Form):
     title = forms.CharField(max_length=200,
@@ -123,11 +151,14 @@ class ArticleCategoryForm(forms.Form):
             raise forms.ValidationError('یک دسته بندی نمی‌تواند همزمان فعال و حذف شده باشد')
         return cleaned_data
 
+
 class ArticleTagForm(forms.ModelForm):
     pass
 
+
 class ArticleCommentForm(forms.ModelForm):
     pass
+
 
 # endregion
 

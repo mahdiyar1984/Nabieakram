@@ -1,5 +1,6 @@
 {% extends 'shared/dashboard.html' %}
 {% load shamsi_tags %}
+{% load static %}
 
 {% block title %}پروفایل - ایجاد مقاله{% endblock %}
 
@@ -34,9 +35,8 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-
+            <!-- new article -->
             <div class="section-block mb-5"></div>
             <div class="dashboard-heading mb-5">
                 <h3 class="fs-22 font-weight-semi-bold">مقاله جدید</h3>
@@ -56,9 +56,7 @@
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="label-text">عنوان مقاله</label>
-                                    <input class="form-control form--control pl-3" type="text" name="title"
-                                           value="{{ form.instance.title|default:'' }}"
-                                           {% if read_only %}disabled{% endif %}>
+                                    {{ form.title }}
                                 </div>
                             </div>
 
@@ -66,9 +64,7 @@
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="label-text">اسلاگ</label>
-                                    <input class="form-control form--control pl-3" type="text" name="slug"
-                                           value="{{ form.instance.slug|default:'' }}"
-                                           {% if read_only %}disabled{% endif %}>
+                                    {{ form.slug }}
                                 </div>
                             </div>
 
@@ -76,16 +72,7 @@
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="label-text">دسته بندی مقاله</label>
-                                    <select name="selected_categories" multiple class="form-control"
-                                            {% if read_only %}disabled{% endif %}>
-                                        {% for category in categories %}
-                                            <option value="{{ category.id }}"
-                                                    {% if category in form.instance.selected_categories.all %}
-                                                    selected
-                                                    {% endif %}>
-                                                {{ category.title }}
-                                            </option>
-                                        {% endfor %}
+                                    {{ form.selected_categories }}
                                     </select>
                                 </div>
                             </div>
@@ -94,17 +81,7 @@
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="label-text">تگ های مقاله</label>
-                                    <select name="selected_tags" multiple class="form-control"
-                                            {% if read_only %}disabled{% endif %}>
-                                        {% for tag in tags %}
-                                            <option value="{{ tag.id }}"
-                                                    {% if tag in form.instance.selected_tags.all %}
-                                                    selected
-                                                    {% endif %}>
-                                                {{ tag.title }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
+                                    {{ form.selected_tags }}
                                 </div>
                             </div>
 
@@ -113,49 +90,24 @@
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="label-text">وضعیت</label>
-                                    <input class="form-control form--control pl-3" type="text" name="status"
-                                           value="{{ form.instance.status|default:'' }}"
-                                           {% if read_only %}disabled{% endif %}>
+                                    {{ form.status }}
                                 </div>
                             </div>
-
-                            <!-- is_active -->
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label class="label-text">فعال</label>
-                                    <input class="form-control form--control pl-3" type="text" name="is_active"
-                                           value="{{ form.instance.is_active|yesno:'بله,خیر' }}"
-                                           {% if read_only %}disabled{% endif %}>
-                                </div>
-                            </div>
-
-                            <!-- is_delete -->
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label class="label-text">حذف شده</label>
-                                    <input class="form-control form--control pl-3" type="text" name="is_delete"
-                                           value="{{ form.instance.is_delete|yesno:'بله,خیر' }}"
-                                           {% if read_only %}disabled{% endif %}>
-                                </div>
-                            </div>
-
                             <!-- author -->
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="label-text">نویسنده</label>
-                                    <input class="form-control form--control pl-3" type="text" name="author"
-                                           value="{{ form.instance.author.get_full_name|default:'' }}"
-                                           {% if read_only %}disabled{% endif %}>
+                                    <input class="form-control form--control pl-3" type="text"
+                                           value="{{ form.instance.author.get_full_name|default:'' }}" disabled>
                                 </div>
                             </div>
+
 
                             <!-- short_description -->
                             <div class="input-box col-lg-12">
                                 <label class="label-text">شرح کوتاه از مقاله</label>
                                 <div class="form-group">
-                        <textarea rows="4" class="form-control form--control user-text-editor pl-3"
-                                  name="short_description"
-                                  {% if read_only %}disabled{% endif %}>{{ form.instance.short_description|default:'' }}</textarea>
+                                    {{ form.short_description }}
                                 </div>
                             </div>
 
@@ -163,14 +115,12 @@
                             <div class="input-box col-lg-12">
                                 <label class="label-text">متن مقاله</label>
                                 <div class="form-group">
-                        <textarea rows="15" class="form-control form--control user-text-editor pl-3"
-                                  name="text"
-                                  {% if read_only %}disabled{% endif %}>{{ form.instance.text|default:'' }}</textarea>
+                                    {{ form.text }}
                                 </div>
                             </div>
 
                             <!-- image -->
-                            <div class="col-lg-12">
+                            <div class="col-lg-12 mt-5">
                                 <div class="form-group mb-0">
                                     <label class="label-text">تصویر مقاله</label>
                                     <div class="input-box col-lg-12 mb-5">
@@ -188,10 +138,7 @@
                                                 <div class="media-body">
                                                     <div class="file-upload-wrap file-upload-wrap-2">
                                                         <div class="MultiFile-wrap" id="MultiFile2">
-                                                            <input type="file"
-                                                                   name="image"
-                                                                   class="multi file-upload-input with-preview MultiFile-applied"
-                                                                   id="MultiFile2">
+                                                            {{ form.image }}
                                                             <div class="MultiFile-list" id="MultiFile2_list"></div>
                                                         </div>
                                                         <span class="file-upload-text"><i class="la la-photo mr-2"></i>یک عکس آپلود کنید</span>
@@ -200,6 +147,22 @@
                                             {% endif %}
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- is_active -->
+                            <div class="col-lg-3" style="margin-top: 40px;">
+                                <div class="form-group">
+                                    <label class="label-text mr-5">فعال</label>
+                                    {{ form.is_active }}
+                                </div>
+                            </div>
+
+                            <!-- is_delete -->
+                            <div class="col-lg-3" style="margin-top: 40px;">
+                                <div class="form-group">
+                                    <label class="label-text mr-5">حذف شده</label>
+                                    {{ form.is_delete }}
                                 </div>
                             </div>
 
