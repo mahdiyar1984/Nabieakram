@@ -153,7 +153,21 @@ class ArticleCategoryForm(forms.Form):
 
 
 class ArticleTagForm(forms.ModelForm):
-    pass
+    def __init__(self, *args, **kwargs):
+        read_only = kwargs.pop('read_only', False)
+        super().__init__(*args, **kwargs)
+
+        if read_only:
+            for field in self.fields.values():
+                field.disabled = True
+    class Meta:
+        model = ArticleTag
+        fields = "__all__"
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
 
 
 class ArticleCommentForm(forms.ModelForm):

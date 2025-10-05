@@ -1,5 +1,7 @@
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import QuerySet
 from django.views.generic import DetailView, TemplateView
 from blog_app.models import Article, ArticleCategory, ArticleTag, ArticleComment
 from main_app.models import FooterLink, ContactUs, SiteSetting, Slider
@@ -19,9 +21,11 @@ from .forms import UserCreateForm, UserUpdateForm
 from django.contrib.auth.models import Group, Permission
 from django.apps import apps
 
+
 class AdminRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_superuser
+
 
 # region dashboard
 class UserPanelDashboardPage(LoginRequiredMixin, View):
@@ -206,6 +210,7 @@ class AdminArticleListView(LoginRequiredMixin, ListView):
     template_name = 'userprofile_app/articles/articles_list.html'
     paginate_by = 10
 
+
 class AdminArticleReadView(LoginRequiredMixin, DetailView):
     model = Article
     form_class = ArticleForm
@@ -218,6 +223,7 @@ class AdminArticleReadView(LoginRequiredMixin, DetailView):
         context['tags'] = ArticleTag.objects.all()
         context['categories'] = ArticleCategory.objects.all()
         return context
+
 
 class AdminArticleCreateView(LoginRequiredMixin, CreateView):
     model = Article
@@ -250,6 +256,7 @@ class AdminArticleCreateView(LoginRequiredMixin, CreateView):
 
         return super().form_valid(form)
 
+
 class AdminArticleUpdateView(LoginRequiredMixin, UpdateView):
     model = Article
     form_class = ArticleForm
@@ -281,6 +288,7 @@ class AdminArticleUpdateView(LoginRequiredMixin, UpdateView):
         self.object.selected_tags.set(form.cleaned_data['selected_tags'])
 
         return super().form_valid(form)
+
 
 class AdminArticleDeleteView(LoginRequiredMixin, View):
     success_url = reverse_lazy('userprofile_app:articles_list')
@@ -378,6 +386,7 @@ def article_category_create_view(request, pk=None):
         'read_only': False
     })
 
+
 def article_category_update_view(request, pk):
     # بارگذاری شیء موجود
     article_category = get_object_or_404(ArticleCategory, pk=pk)
@@ -420,6 +429,7 @@ def article_category_update_view(request, pk):
         'read_only': False
     })
 
+
 def article_category_read_view(request, pk):
     article_category = get_object_or_404(ArticleCategory, pk=pk)
     initial = {
@@ -448,6 +458,7 @@ def article_category_read_view(request, pk):
         'read_only': read_only
     })
 
+
 def article_category_delete_view(request, pk):
     if request.method == 'POST':
         article_category = get_object_or_404(ArticleCategory, pk=pk)
@@ -458,32 +469,73 @@ def article_category_delete_view(request, pk):
 
 # endregion
 # region Article Tag
-class AdminArticleTagListView(LoginRequiredMixin, ListView):
-    model = ArticleTag
-    template_name = 'userprofile_app/articles/article_tags_list.html'
-
-    def get_queryset(self):
-        return ArticleTag.objects.filter(is_delete=False)
-
-
-class AdminArticleTagCreateView(LoginRequiredMixin, CreateView):
-    model = ArticleTag
-    form_class = ArticleTagForm
-    template_name = 'userprofile_app/articles/article_tag_form.html'
-    success_url = reverse_lazy('userprofile_app:article_tag_list')
+class AdminArticleTagListView(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest):
+        article_tags: QuerySet[ArticleTag] = ArticleTag.objects.all().order_by('id')
+        paginator = Paginator(article_tags, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context = {
+            'page_obj': page_obj,
+        }
+        return render(request, 'userprofile_app/articles/article_tags_list.html', context)
 
 
-class AdminArticleTagUpdateView(LoginRequiredMixin, UpdateView):
-    model = ArticleTag
-    form_class = ArticleTagForm
-    template_name = 'userprofile_app/articles/article_tag_form.html'
-    success_url = reverse_lazy('userprofile_app:article_tag_list')
+class AdminArticleTagReadView(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, pk):
+        article_tag: ArticleTag = get_object_or_404(ArticleTag, pk=pk)
+        article_tag_form = ArticleTagForm(instance=article_tag, read_only=True)
+        context = {
+            'article_tag_form': article_tag_form,
+        }
+        return render(request, 'userprofile_app/articles/article_tag_form.html', context)
 
 
-class AdminArticleTagDeleteView(LoginRequiredMixin, DeleteView):
-    model = ArticleTag
-    template_name = 'userprofile_app/articles/article_tag_confirm_delete.html'
-    success_url = reverse_lazy('userprofile_app:article_tag_list')
+class AdminArticleTagCreateView(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest):
+        article_tag_form = ArticleTagForm()
+        context = {
+            'article_tag_form': article_tag_form,
+        }
+        return render(request, 'userprofile_app/articles/article_tag_form.html', context)
+
+    def post(self, request: HttpRequest):
+        article_tag_form = ArticleTagForm(request.POST)
+        if article_tag_form.is_valid():
+            article_tag_form.save()
+            messages.success(request, "تگ با موفقیت ایجاد شد ✅")
+            return redirect('userprofile_app:article_tags_list')
+        else:
+            messages.error(request, "خطا در ثبت فرم ❌ لطفاً فیلدها را بررسی کنید.")
+
+
+class AdminArticleTagUpdateView(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, pk):
+        article_tag: ArticleTag = get_object_or_404(ArticleTag, pk=pk)
+        article_tag_form = ArticleTagForm(instance=article_tag)
+        context = {
+            'article_tag_form': article_tag_form,
+        }
+        return render(request, 'userprofile_app/articles/article_tag_form.html', context)
+
+    def post(self, request: HttpRequest, pk):
+        article_tag: ArticleTag = get_object_or_404(ArticleTag, pk=pk)
+        article_tag_form = ArticleTagForm(request.POST, instance=article_tag)
+        if article_tag_form.is_valid():
+            article_tag_form.save()
+            messages.success(request, "تگ با موفقیت ایجاد شد ✅")
+            return redirect('userprofile_app:article_tags_list')
+        else:
+            messages.error(request, "خطا در ثبت فرم ❌ لطفاً فیلدها را بررسی کنید.")
+
+
+class AdminArticleTagDeleteView(LoginRequiredMixin, View):
+    def post(self, request: HttpRequest, pk):
+        article_tag: ArticleTag = get_object_or_404(ArticleTag, pk=pk)
+        article_tag.is_delete = True
+        article_tag.save()
+        return redirect('userprofile_app:article_tags_list')
+
 
 
 # endregion

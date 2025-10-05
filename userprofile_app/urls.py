@@ -11,6 +11,7 @@ urlpatterns = [
     # region Article management
     path('articles/', views.AdminArticleListView.as_view(), name='articles_list'),
     path('articles/create/', views.AdminArticleCreateView.as_view(), name='article_create'),
+    path('articles/<int:pk>/read/', views.AdminArticleReadView.as_view(), name='article_detail'),
     path('articles/<int:pk>/edit/', views.AdminArticleUpdateView.as_view(), name='article_edit'),
     path('articles/<int:pk>/delete/', views.AdminArticleDeleteView.as_view(), name='article_delete'),
     path("articles/<int:pk>/status/", views.AdminArticleChangeStatusView.as_view(), name="article_change_status"),
@@ -24,7 +25,7 @@ urlpatterns = [
     # endregion
     # region Article Tag management
     path('article-tags/', views.AdminArticleTagListView.as_view(), name='article_tags_list'),
-    path("articles/<int:pk>/", views.AdminArticleReadView.as_view(), name="article_detail"),
+    path("article-tags/<int:pk>/read/", views.AdminArticleTagReadView.as_view(), name="article_tag_detail"),
     path('article-tags/create/', views.AdminArticleTagCreateView.as_view(), name='article_tag_create'),
     path('article-tags/<int:pk>/edit/', views.AdminArticleTagUpdateView.as_view(), name='article_tag_edit'),
     path('article-tags/<int:pk>/delete/', views.AdminArticleTagDeleteView.as_view(), name='article_tag_delete'),

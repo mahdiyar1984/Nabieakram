@@ -38,7 +38,8 @@
                 </div>
 
                 <!-- create new article tag -->
-                <a href="{% url 'userprofile_app:article_tag_create' %}" class="btn btn-info d-inline-flex align-items-center new-article-btn"
+                <a href="{% url 'userprofile_app:article_tag_create' %}"
+                   class="btn btn-info d-inline-flex align-items-center new-article-btn"
                    style="background-color: #e3f2fd; color: #1976d2; border-color: #b3e5fc; font-weight: bold;">
                     <i class="la la-plus mr-2"></i><span style="font-weight: bold;">ایجاد تگ جدید</span>
                 </a>
@@ -53,9 +54,18 @@
                 <h3 class="fs-22 font-weight-semi-bold">
                     لیست تگ های مقالات
                     <span class="badge badge-primary pr-3 pl-3 pt-2 pb-2"
-                          style="font-size: 14px; vertical-align: middle; margin-right: 8px;">{{ articletag_list.count }}</span>
+                          style="font-size: 14px; vertical-align: middle; margin-right: 8px;">{{ page_obj.count }}</span>
                 </h3>
             </div>
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
             <!-- article_category table -->
             <div class="table-responsive pb-4">
@@ -70,20 +80,20 @@
                     </thead>
 
                     <tbody>
-                    {% for articletag in articletag_list %}
+                    {% for article_tag in page_obj %}
                         <tr>
-                            <td>{{ articletag.title }}</td>
+                            <td>{{ article_tag.title }}</td>
                             <td class="text-center">
-                                {% if articletag.is_active %}
+                                {% if article_tag.is_active %}
                                     <span style="color:green;">&#10004;</span>
                                 {% else %}
                                     <span style="color:red;">&#10008;</span>
                                 {% endif %}
                             </td>
 
-                            <!-- ستون Superuser -->
+                            <!-- ستون is_delete -->
                             <td class="text-center">
-                                {% if articletag.is_delete %}
+                                {% if article_tag.is_delete %}
                                     <span style="color:green;">&#10004;</span>
                                 {% else %}
                                     <span style="color:red;">&#10008;</span>
@@ -93,25 +103,58 @@
                             <td>
                                 <div class="card-action-wrap d-flex">
                                     <!-- view -->
-                                    <a href="#"
+                                    <a href="{% url 'userprofile_app:article_tag_detail' pk=article_tag.id %}"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
                                        data-toggle="tooltip" title="مشاهده">
                                         <i class="la la-eye"></i>
                                     </a>
 
                                     <!-- update -->
-                                    <a href="{% url 'userprofile_app:article_tag_edit' pk=articletag.id %}"
+                                    <a href="{% url 'userprofile_app:article_tag_edit' pk=article_tag.id %}"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-warning"
                                        data-toggle="tooltip" title="ویرایش">
                                         <i class="la la-edit"></i>
                                     </a>
 
                                     <!-- delete -->
-                                    <a href="{% url 'userprofile_app:article_tag_delete' pk=articletag.id %}"
+                                    <a href="javascript:void(0)" data-toggle="modal"
+                                       data-target="#deleteModal-{{ article_tag.id }}"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-danger"
                                        data-toggle="tooltip" title="حذف">
                                         <i class="la la-trash"></i>
                                     </a>
+                                    <div class="modal fade modal-container" id="deleteModal-{{ article_tag.id }}"
+                                         tabindex="-1" role="dialog"
+                                         aria-labelledby="deleteModalTitle-{{ article_tag.id }}"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-body text-center">
+                                                    <span class="la la-exclamation-circle fs-60 text-warning"></span>
+                                                    <h4 class="modal-title fs-19 font-weight-semi-bold pt-2 pb-1"
+                                                        id="deleteModalTitle-{{ article_tag.id }}">دسته بندی شما حذف
+                                                        خواهد شد!
+                                                    </h4>
+                                                    <p>آیا مطمئن هستید که می خواهید دسته بندی خود را حذف کنید؟</p>
+                                                    <div class="btn-box pt-4">
+
+                                                        <form
+                                                                action="{% url 'userprofile_app:article_tag_delete' pk=article_tag.id %}"
+                                                                method="post">
+                                                            {% csrf_token %}
+                                                            <button type="button" class="btn font-weight-medium mr-3"
+                                                                    data-dismiss="modal">لغو
+                                                            </button>
+                                                            <button type="submit"
+                                                                    class="btn theme-btn theme-btn-sm lh-30">
+                                                                حذف
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -122,28 +165,40 @@
 
 
             <!-- pagination -->
-            <div class="text-center py-3">
-                <nav aria-label="مثال ناوبری صفحه" class="pagination-box">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="قبلی">
-                                <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
-                                <span class="sr-only">قبلی</span>
-                            </a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="بعد">
-                                <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
-                                <span class="sr-only">بعد</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <p class="fs-14 pt-2">نمایش 1-5 از 16 نتیجه</p>
-            </div>
+            {% if page_obj.paginator.count > page_obj.paginator.per_page %}
+                <div class="text-center pt-3">
+                    <nav aria-label="مثال ناوبری صفحه" class="pagination-box">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}"
+                                       aria-label="قبلی">
+                                        <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
+                                        <span class="sr-only">قبلی</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% for i in page_obj.paginator.page_range %}
+                                {% if page_obj.number == i %}
+                                    <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="بعد">
+                                        <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
+                                        <span class="sr-only">بعد</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    <p class="fs-14 pt-2">نمایش 1-10 از 56 نتیجه</p>
+                </div>
+            {% endif %}
 
         </div>
     </div>
