@@ -1,3 +1,4 @@
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -10,7 +11,7 @@ from .forms import ArticleForm, GroupForm, ArticleCategoryForm, ArticleTagForm, 
     LectureCategoryForm, GalleryImageForm, \
     GalleryCategoryForm, FooterLinkForm, ContactUsForm, SliderForm, SiteSettingForm
 from django.contrib import messages
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.urls import reverse_lazy
@@ -472,7 +473,7 @@ def article_category_delete_view(request, pk):
 class AdminArticleTagListView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest):
         article_tags: QuerySet[ArticleTag] = ArticleTag.objects.all().order_by('id')
-        paginator = Paginator(article_tags, 10)
+        paginator = Paginator(article_tags, 5)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         context = {
@@ -537,29 +538,68 @@ class AdminArticleTagDeleteView(LoginRequiredMixin, View):
         return redirect('userprofile_app:article_tags_list')
 
 
-
 # endregion
 # region Article Comment
-class AdminArticleCommentListView(LoginRequiredMixin, ListView):
-    model = ArticleComment
-    template_name = 'userprofile_app/articles/article_comments_list.html'
 
-    def get_queryset(self):
-        return ArticleTag.objects.filter(is_delete=False)
+@staff_member_required
+def admin_article_comment_list(request: HttpRequest):
+    article_comments: QuerySet[ArticleComment] = (
+        ArticleComment.objects
+        .select_related('article', 'user')
+        .prefetch_related('articlecomment_set__user')
+        .filter(parent__isnull=True)
+        .order_by('-create_date')
+    )
+    paginator = Paginator(article_comments, 5)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'page_obj': page_obj
+    }
+    return render(request, template_name='userprofile_app/articles/article_comments_list.html', context=context)
+
+@staff_member_required
+def admin_article_comment_read(request: HttpRequest, pk):
+    comment: ArticleComment = ArticleComment.objects.get(pk=pk)
+    context = {
+        'comment': comment,
+        'read_only':True
+    }
+    return render(request,'userprofile_app/articles/article_comment_form.html',context)
 
 
-class AdminArticleCommentCreateView(LoginRequiredMixin, CreateView):
-    model = ArticleTag
-    form_class = ArticleTagForm
-    template_name = 'userprofile_app/articles/article_comment_form.html'
-    success_url = reverse_lazy('userprofile_app:article_comment_list')
 
 
-class AdminArticleCommentUpdateView(LoginRequiredMixin, UpdateView):
-    model = ArticleTag
-    form_class = ArticleTagForm
-    template_name = 'userprofile_app/articles/article_comment_form.html'
-    success_url = reverse_lazy('userprofile_app:article_comment_list')
+@staff_member_required
+def admin_article_comment_update(request: HttpRequest,pk):
+    comment: ArticleComment = ArticleComment.objects.get(pk=pk)
+    if request.method == 'POST':
+        comment.text = request.POST.get('text', comment.text)
+        comment.is_active = 'is_active' in request.POST
+        comment.is_delete = 'is_delete' in request.POST
+        comment.save()
+        reply_text = request.POST.get('reply_text')
+        if reply_text:
+            first_reply = comment.articlecomment_set.first()
+            if first_reply:
+                first_reply.text = reply_text
+                first_reply.save()
+            else:
+                ArticleComment.objects.create(
+                    article=comment.article,
+                    user=request.user,
+                    parent=comment,
+                    text=reply_text
+                )
+
+        return redirect('userprofile_app:article_comments_list')
+
+    context = {'comment': comment}
+    return render(request, 'userprofile_app/articles/article_comment_form.html', context)
+
+
+
+
 
 
 class AdminArticleCommentDeleteView(LoginRequiredMixin, DeleteView):

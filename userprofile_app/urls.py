@@ -31,11 +31,10 @@ urlpatterns = [
     path('article-tags/<int:pk>/delete/', views.AdminArticleTagDeleteView.as_view(), name='article_tag_delete'),
     # endregion
     # region Article Comment management
-    path('article-comments/', views.AdminArticleCommentListView.as_view(), name='article_comments_list'),
-    path('article-comments/create/', views.AdminArticleCommentCreateView.as_view(), name='article_comment_create'),
-    path('article-comments/<int:pk>/edit/', views.AdminArticleCommentUpdateView.as_view(), name='article_comment_edit'),
-    path('article-comments/<int:pk>/delete/', views.AdminArticleCommentDeleteView.as_view(),
-         name='article_comment_delete'),
+    path('article-comments/', views.admin_article_comment_list, name='article_comments_list'),
+    path('article-comments/<int:pk>/edit/', views.admin_article_comment_read, name='article_comment_detail'),
+    path('article-comments/<int:pk>/edit/', views.admin_article_comment_update, name='article_comment_edit'),
+    path('article-comments/<int:pk>/delete/', views.AdminArticleCommentDeleteView.as_view(), name='article_comment_delete'),
     # endregion
 
     # region Lecture management

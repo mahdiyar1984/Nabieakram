@@ -1,0 +1,131 @@
+{% extends 'shared/dashboard.html' %}
+{% load shamsi_tags %}
+{% load static %}
+
+{% block title %}پروفایل - کامنت{% endblock %}
+
+{% block content %}
+
+    <div class="dashboard-content-wrap">
+        <div class="dashboard-menu-toggler btn theme-btn theme-btn-sm lh-28 theme-btn-transparent mb-4 ml-3"><i
+                class="la la-bars mr-1"></i> منو
+        </div>
+
+        <!-- main content -->
+        <div class="container-fluid">
+
+            <!-- breadcrumb -->
+            <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between mb-5">
+                <div class="media media-card align-items-center">
+                    <div class="media-img media--img media-img-md rounded-full">
+                        <img class="rounded-full" src="{{ request.user.avatar.url }}" alt="تصویر کوچک دانش آموز">
+                    </div>
+                    <div class="media-body">
+                        <h2 class="section__title fs-30">{{ request.user.get_full_name }}</h2>
+                        <div class="rating-wrap d-flex align-items-center pt-2">
+                            <div class="review-stars">
+                                <span class="rating-number">4.4</span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star-o"></span>
+                            </div>
+                            <span class="rating-total pl-1">(20230)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- new article -->
+            <div class="section-block mb-5"></div>
+            <div class="dashboard-heading mb-5">
+                <h3 class="fs-22 font-weight-semi-bold">ویرایش و پاسخ به نظر</h3>
+            </div>
+
+            <form action=""
+                  method="post"
+                  class="MultiFile-intercepted"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="card card-item">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <!-- article -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">عنوان مقاله</label>
+                                    <input type="text" name="article" value="{{ comment.article.title }}"
+                                           class="form-control form--control pl-3" maxlength="300"
+                                           disabled
+                                           id="id_title">
+                                </div>
+                            </div>
+
+                            <!-- user -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">نویسنده</label>
+                                    <input class="form-control form--control pl-3" name="user" type="text" value="{{ comment.user }}" disabled>
+                                </div>
+                            </div>
+
+                            <!-- text -->
+                            <div class="input-box col-lg-12">
+                                <label class="label-text">نظر</label>
+                                <div class="form-group">
+                                    <textarea name="text" cols="40" rows="4" class="form-control form--control user-text-editor pl-3" required=""
+                                              id="id_short_description" {% if read_only %}disabled{% endif %}>{{ comment.text }}</textarea>
+                                </div>
+                            </div>
+
+                            <!-- reply_text -->
+                            <div class="input-box col-lg-12">
+                                <label class="label-text">پاسخ به نظر</label>
+                                <div class="form-group">
+                                   <textarea name="reply_text" cols="40" rows="4" class="form-control form--control user-text-editor pl-3" required=""
+                                              id="id_short_description">{{ comment.articlecomment_set.all.first.text|default_if_none:'' }}</textarea>
+                                </div>
+                            </div>
+
+                            <!-- create_date -->
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label class="label-text mr-5">تاریخ نظر</label>
+                                    <input class="form-control form--control pl-3" name="create_date" type="text" value="{{ comment.create_date|to_shamsi }}" disabled>
+                                </div>
+                            </div>
+
+                            <!-- is_active -->
+                            <div class="col-lg-3" style="margin-top: 40px;">
+                                <div class="form-group">
+                                    <label class="label-text mr-5">فعال / غیرفعال</label>
+                                    <input type="checkbox" name="is_active" value="{{ comment.is_active }}" class="form-check-input" id="id_is_active" checked="">
+                                </div>
+                            </div>
+
+                            <!-- is_delete -->
+                            <div class="col-lg-3" style="margin-top: 40px;">
+                                <div class="form-group">
+                                    <label class="label-text mr-5">حذف شده / نشده</label>
+                                    <input type="checkbox" name="is_delete" value="{{ comment.is_delete }}" class="form-check-input" id="id_is_active">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                {% if not read_only %}
+                    <div class="course-submit-btn-box pb-4">
+                        <button class="btn theme-btn" type="submit">ذخیره</button>
+                    </div>
+                {% endif %}
+            </form>
+
+        </div>
+    </div>
+
+
+{% endblock %}

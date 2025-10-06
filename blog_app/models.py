@@ -92,7 +92,7 @@ class ArticleComment(models.Model):
     is_delete = models.BooleanField(default=False, verbose_name='حذف شده / نشده')
 
     def __str__(self):
-        return f"{self.article.title} - {self.text[:30]}"
+        return f"{self.article.title}"
 
     class Meta:
         verbose_name = 'نظر مقاله'
