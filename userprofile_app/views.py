@@ -401,8 +401,9 @@ def article_category_update_view(request, pk):
             article_category.title = data['title']
             article_category.url_title = data['url_title']
             article_category.parent = data.get('parent')
-            article_category.is_active = data.get('is_active', False)
-            article_category.is_delete = data.get('is_delete', False)
+            article_category.is_active = 'is_active' in request.POST
+            article_category.is_delete = 'is_delete' in request.POST
+
 
             if data.get('image'):
                 article_category.image = data['image']
@@ -558,20 +559,19 @@ def admin_article_comment_list(request: HttpRequest):
     }
     return render(request, template_name='userprofile_app/articles/article_comments_list.html', context=context)
 
+
 @staff_member_required
 def admin_article_comment_read(request: HttpRequest, pk):
     comment: ArticleComment = ArticleComment.objects.get(pk=pk)
     context = {
         'comment': comment,
-        'read_only':True
+        'read_only': True
     }
-    return render(request,'userprofile_app/articles/article_comment_form.html',context)
-
-
+    return render(request, 'userprofile_app/articles/article_comment_form.html', context)
 
 
 @staff_member_required
-def admin_article_comment_update(request: HttpRequest,pk):
+def admin_article_comment_update(request: HttpRequest, pk):
     comment: ArticleComment = ArticleComment.objects.get(pk=pk)
     if request.method == 'POST':
         comment.text = request.POST.get('text', comment.text)
@@ -594,18 +594,17 @@ def admin_article_comment_update(request: HttpRequest,pk):
 
         return redirect('userprofile_app:article_comments_list')
 
-    context = {'comment': comment}
+    context = {'comment': comment, 'read_only': False}
     return render(request, 'userprofile_app/articles/article_comment_form.html', context)
 
 
+def admin_article_comment_delete(request: HttpRequest, pk):
+    comment: ArticleComment = ArticleComment.objects.get(pk=pk)
+    comment.is_delete = True
+    comment.save()
+    return redirect('userprofile_app:article_comments_list')
 
 
-
-
-class AdminArticleCommentDeleteView(LoginRequiredMixin, DeleteView):
-    model = ArticleTag
-    template_name = 'userprofile_app/articles/article_comment_confirm_delete.html'
-    success_url = reverse_lazy('userprofile_app:article_comment_list')
 
 
 # endregion

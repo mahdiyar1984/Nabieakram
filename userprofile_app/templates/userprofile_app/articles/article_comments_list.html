@@ -118,7 +118,7 @@
 
                             <!-- is_active -->
                             <td class="text-center">
-                                {% if article_comment.is_active %}
+                                {% if comment.is_active %}
                                     <span style="color:green;">&#10004;</span>
                                 {% else %}
                                     <span style="color:red;">&#10008;</span>
@@ -174,13 +174,12 @@
                                                     <div class="btn-box pt-4">
 
                                                         <form
-                                                                action="{% url 'userprofile_app:article_delete' pk=comment.id %}"
+                                                                action="{% url 'userprofile_app:article_comment_delete' pk=comment.id %}"
                                                                 method="post">
                                                             {% csrf_token %}
                                                             <button type="button" class="btn font-weight-medium mr-3"
                                                                     data-dismiss="modal">لغو
                                                             </button>
-                                                            <input type="hidden" name="id" value="{{ comment.id }}">
                                                             <button type="submit"
                                                                     class="btn theme-btn theme-btn-sm lh-30">
                                                                 حذف

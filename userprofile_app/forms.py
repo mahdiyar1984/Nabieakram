@@ -142,15 +142,6 @@ class ArticleCategoryForm(forms.Form):
             raise forms.ValidationError('عنوان url نباید شامل فاصله باشد')
         return url_title
 
-    def clean(self):
-        cleaned_data = super().clean()
-        is_delete = cleaned_data.get('is_delete')
-        is_active = cleaned_data.get('is_active')
-
-        if is_delete and is_active:
-            raise forms.ValidationError('یک دسته بندی نمی‌تواند همزمان فعال و حذف شده باشد')
-        return cleaned_data
-
 
 class ArticleTagForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -168,10 +159,6 @@ class ArticleTagForm(forms.ModelForm):
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
-
-
-class ArticleCommentForm(forms.ModelForm):
-    pass
 
 
 # endregion
