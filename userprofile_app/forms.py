@@ -5,6 +5,9 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from account_app.models import User
 from django.contrib.auth.models import Group, Permission
 
+from media_app.models import Lecture, LectureTag, LectureCategory
+
+
 # region group management
 
 class GroupForm(forms.ModelForm):
@@ -151,6 +154,7 @@ class ArticleTagForm(forms.ModelForm):
         if read_only:
             for field in self.fields.values():
                 field.disabled = True
+
     class Meta:
         model = ArticleTag
         fields = "__all__"
@@ -165,7 +169,62 @@ class ArticleTagForm(forms.ModelForm):
 
 # region Lecture Management
 class LectureForm(forms.ModelForm):
-    pass
+    def __init__(self, *args, **kwargs):
+        read_only = kwargs.pop('read_only', False)
+        super().__init__(*args, **kwargs)
+
+        if read_only:
+            for field in self.fields.values():
+                field.disabled = True
+
+    selected_tags = forms.ModelMultipleChoiceField(
+        queryset=LectureTag.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+    selected_categories = forms.ModelMultipleChoiceField(
+        queryset=LectureCategory.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    class Meta:
+        model = Lecture
+        fields = '__all__'
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+
+            'slug': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+
+            'short_description': forms.Textarea(attrs={
+                'class': 'form-control form--control user-text-editor pl-3', 'rows': 4}),
+
+            'text': forms.Textarea(attrs={'class': 'form-control form--control user-text-editor pl-3', 'rows': 15}),
+
+            'status': forms.Select(choices=[('draft', 'پیش‌نویس'), ('published', 'منتشر شده')],
+                                   attrs={'class': 'form-control form--control pl-3'}),
+            'user': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+
+            'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+
+            'image': forms.ClearableFileInput(attrs={
+                'class': 'multi file-upload-input with-preview MultiFile-applied', 'id': 'MultiFile2', }),
+
+            'video': forms.ClearableFileInput(attrs={
+                'class': 'multi file-upload-input with-preview MultiFile-applied', 'id': 'MultiFile2', }),
+
+            'video_url': forms.Textarea(attrs={
+                'class': 'form-control form--control user-text-editor pl-3', 'rows': 4}),
+
+            'audio': forms.ClearableFileInput(attrs={
+                'class': 'multi file-upload-input with-preview MultiFile-applied', 'id': 'MultiFile2', }),
+
+            'audio_url': forms.Textarea(attrs={
+                'class': 'form-control form--control user-text-editor pl-3', 'rows': 4}),
+
+        }
 
 
 class LectureCategoryForm(forms.ModelForm):

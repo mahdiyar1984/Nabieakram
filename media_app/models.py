@@ -70,6 +70,13 @@ class LectureTag(BaseModel):
         return self.title
 class Lecture(BaseModel):
     objects = models.Manager()
+
+    STATUS_CHOICES = [
+        ('draft', 'پیش‌نویس'),
+        ('pending', 'در انتظار تأیید'),
+        ('published', 'منتشر شده'),
+        ('rejected', 'رد شده'),
+    ]
     author = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -95,6 +102,7 @@ class Lecture(BaseModel):
     audio_url = models.URLField(blank=True, null=True, verbose_name="لینک صوت خارجی")
     short_description = models.CharField(max_length=300, null=True, blank=True, verbose_name='توضیحات کوتاه')
     text = models.TextField(verbose_name='متن سخنرانی')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', verbose_name='وضعیت انتشار')
 
     def __str__(self):
         return self.title
@@ -102,6 +110,11 @@ class Lecture(BaseModel):
     class Meta:
         verbose_name = 'سخنرانی'
         verbose_name_plural = 'سخنرانی ها'
+        permissions = [
+            ("can_publish_article", "Can publish article"),
+            ("can_reject_article", "Can reject article"),
+        ]
+
 class LectureClip(BaseModel):
     objects = models.Manager()
     lecture = models.ForeignKey(

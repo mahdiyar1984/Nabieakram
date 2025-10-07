@@ -6,7 +6,7 @@ from django.db.models import QuerySet
 from django.views.generic import DetailView, TemplateView
 from blog_app.models import Article, ArticleCategory, ArticleTag, ArticleComment
 from main_app.models import FooterLink, ContactUs, SiteSetting, Slider
-from media_app.models import Lecture, LectureCategory, LectureTag, LectureComment, GalleryImage, GalleryCategory
+from media_app.models import Lecture, LectureCategory, LectureTag, LectureComment, GalleryImage, GalleryCategory, BaseModel
 from .forms import ArticleForm, GroupForm, ArticleCategoryForm, ArticleTagForm, LectureForm, LectureTagForm, \
     LectureCategoryForm, GalleryImageForm, \
     GalleryCategoryForm, FooterLinkForm, ContactUsForm, SliderForm, SiteSettingForm
@@ -404,7 +404,6 @@ def article_category_update_view(request, pk):
             article_category.is_active = 'is_active' in request.POST
             article_category.is_delete = 'is_delete' in request.POST
 
-
             if data.get('image'):
                 article_category.image = data['image']
 
@@ -605,8 +604,6 @@ def admin_article_comment_delete(request: HttpRequest, pk):
     return redirect('userprofile_app:article_comments_list')
 
 
-
-
 # endregion
 
 # region Lecture
@@ -614,12 +611,41 @@ class AdminLectureListView(LoginRequiredMixin, ListView):
     model = Lecture
     template_name = 'userprofile_app/lectures/lectures_list.html'
 
-    def get_queryset(self):
-        return Article.objects.filter(author=self.request.user, is_delete=False)
+
+class AdminLectureReadView(LoginRequiredMixin, DetailView):
+    pass
 
 
 class AdminLectureCreateView(LoginRequiredMixin, CreateView):
-    pass
+    model = Lecture(BaseModel)
+    form_class = LectureForm
+    template_name = 'userprofile_app/lectures/lecture_form.html'
+    success_url = reverse_lazy('userprofile_app:lectures_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = LectureCategory.objects.all()
+        context['tags'] = LectureTag.objects.all()
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.author = self.request.user
+        self.object.status = 'draft'
+
+        # استفاده از فرم برای فایل
+        if form.cleaned_data.get('image'):
+            self.object.image = form.cleaned_data['image']
+
+        self.object.save()
+
+        # ذخیره ManyToMany از فرم (اعتبارسنجی شده)
+        if 'selected_categories' in form.cleaned_data:
+            self.object.selected_categories.set(form.cleaned_data['selected_categories'])
+        if 'selected_tags' in form.cleaned_data:
+            self.object.selected_tags.set(form.cleaned_data['selected_tags'])
+
+        return super().form_valid(form)
 
 
 class AdminLectureUpdateView(LoginRequiredMixin, UpdateView):
@@ -639,6 +665,10 @@ class AdminLectureDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return Article.objects.filter(author=self.request.user, is_delete=False)
+
+
+class AdminlectureChangeStatusView(LoginRequiredMixin, View):
+    pass
 
 
 # endregion

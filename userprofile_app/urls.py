@@ -40,8 +40,11 @@ urlpatterns = [
     # region Lecture management
     path('lectures/', views.AdminLectureListView.as_view(), name='lectures_list'),
     path('lecturess/create/', views.AdminLectureCreateView.as_view(), name='lecture_create'),
+    path('lecturess/<int:pk>/read/', views.AdminLectureReadView.as_view(), name='lecture_detail'),
     path('lecturess/<int:pk>/edit/', views.AdminLectureUpdateView.as_view(), name='lecture_edit'),
     path('lecturess/<int:pk>/delete/', views.AdminLectureDeleteView.as_view(), name='lecture_delete'),
+    path("lecturess/<int:pk>/status/", views.AdminlectureChangeStatusView.as_view(), name="lecture_change_status"),
+
     # endregion
     # region Lecture Category management
     path('lecture-categories/', views.AdminLectureCategoryListView.as_view(), name='lecture_categories_list'),

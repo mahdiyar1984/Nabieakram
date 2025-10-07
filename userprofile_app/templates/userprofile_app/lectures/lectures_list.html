@@ -1,0 +1,270 @@
+{% extends 'shared/dashboard.html' %}
+{% load shamsi_tags %}
+
+{% block title %}پروفایل - سخنرانی ها{% endblock %}
+
+{% block content %}
+
+    <div class="dashboard-content-wrap">
+
+        <div class="dashboard-menu-toggler btn theme-btn theme-btn-sm lh-28 theme-btn-transparent mb-4 ml-3"><i
+                class="la la-bars mr-1"></i> منو
+        </div>
+
+        <!-- main content -->
+        <div class="container-fluid">
+
+            <!-- breadcrumb -->
+            <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between mb-5">
+                <!-- user avatar -->
+                <div class="media media-card align-items-center">
+                    <div class="media-img media--img media-img-md rounded-full">
+                        <img class="rounded-full" src="{{ request.user.avatar.url }}" alt="تصویر کوچک">
+                    </div>
+                    <div class="media-body">
+                        <h2 class="section__title fs-30">{{ request.user.get_full_name }}</h2>
+                        <div class="rating-wrap d-flex align-items-center pt-2">
+                            <div class="review-stars">
+                                <span class="rating-number">4.4</span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star-o"></span>
+                            </div>
+                            <span class="rating-total pl-1">(20230)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- create new article -->
+                <a href="{% url 'userprofile_app:article_create' %}"
+                   class="btn btn-info d-inline-flex align-items-center new-article-btn"
+                   style="background-color: #e3f2fd; color: #1976d2; border-color: #b3e5fc; font-weight: bold;">
+                    <i class="la la-plus mr-2"></i><span style="font-weight: bold;">ایجاد مقاله جدید</span>
+                </a>
+
+            </div>
+
+            <!-- article section -->
+            <div class="section-block mb-5"></div>
+            <div class="dashboard-heading mb-5">
+
+                <!-- articles count -->
+                <h3 class="fs-22 font-weight-semi-bold">
+                    لیست سخنرانی ها
+                    <span class="badge badge-primary pr-3 pl-3 pt-2 pb-2"
+                          style="font-size: 14px; vertical-align: middle; margin-right: 8px;">{{ lecture_list.count }}</span>
+                </h3>
+            </div>
+
+            <!-- article table -->
+            <div class="table-responsive pb-4">
+                <table class="table generic-table align-middle">
+                    <thead>
+                    <tr>
+                        <th scope="col">عنوان سخنرانی</th>
+                        <th scope="col">سخنران</th>
+                        <th scope="col">دسته بندی</th>
+                        <th scope="col">تگ ها</th>
+                        <th scope="col">تاریخ انتشار</th>
+                        <th scope="col">اکتیو</th>
+                        <th scope="col">حذف</th>
+                        <th scope="col">وضعیت</th>
+                        <th scope="col">اقدام</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for lecture in lecture_list %}
+                        <tr>
+                            <!-- title -->
+                            <th scope="row">
+                                <a href="{% url 'blog_app:blog_detail' pk=lecture.id %}"
+                                   class="text-black">{{ lecture.title }}</a>
+                            </th>
+
+                            <!-- author -->
+                            <td>{{ lecture.author.get_full_name }}</td>
+
+                            <!-- categories -->
+                            <td>
+                                {% for category in lecture.selected_categories.all %}
+                                    <span>{{ category.title }}{% if not forloop.last %}, {% endif %}</span>
+                                {% endfor %}
+                            </td>
+
+                            <!-- tags -->
+                            <td>
+                                {% for tag in lecture.selected_tags.all %}
+                                    <span>{{ tag.title }}{% if not forloop.last %}, {% endif %}</span>
+                                {% endfor %}
+                            </td>
+
+                            <!-- create_date -->
+                            <td>{{ lecture.created_date|to_shamsi }}</td>
+
+                            <!-- is_active -->
+                            <td class="text-center">
+                                {% if lecture.is_active %}
+                                    <span style="color:green;">&#10004;</span>
+                                {% else %}
+                                    <span style="color:red;">&#10008;</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- is_delete -->
+                            <td class="text-center">
+                                {% if lecture.is_delete %}
+                                    <span style="color:green;">&#10004;</span>
+                                {% else %}
+                                    <span style="color:red;">&#10008;</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- status -->
+                            <td>
+                                {% if lecture.status == 'draft' %}
+                                    <span class="badge bg-secondary text-white p-1" style="display: block; width: 100%;">{{ lecture.get_status_display }}</span>
+                                {% elif lecture.status == 'pending' %}
+                                    <span class="badge bg-warning text-white p-1" style="display: block; width: 100%;">{{ lecture.get_status_display }}</span>
+                                {% elif lecture.status == 'published' %}
+                                    <span class="badge bg-success text-white p-1" style="display: block; width: 100%;">{{ lecture.get_status_display }}</span>
+                                {% elif lecture.status == 'rejected' %}
+                                    <span class="badge bg-danger text-white p-1" style="display: block; width: 100%;">{{ lecture.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- actions -->
+                            <td>
+                                <div class="card-action-wrap d-flex">
+
+                                    <!-- view -->
+                                    <a href="{% url 'userprofile_app:lecture_detail' pk=lecture.id %}"
+                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
+                                       data-toggle="tooltip" title="مشاهده">
+                                        <i class="la la-eye"></i>
+                                    </a>
+
+                                    <!-- update -->
+                                    <a href="{% url 'userprofile_app:article_edit' pk=lecture.id %}"
+                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-warning"
+                                       data-toggle="tooltip" title="ویرایش">
+                                        <i class="la la-edit"></i>
+                                    </a>
+
+                                    <!-- delete -->
+                                    <a href="javascript:void(0)" data-toggle="modal" data-target="#deleteModal-{{ lecture.id }}"
+                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-danger"
+                                       data-toggle="tooltip" title="حذف">
+                                        <i class="la la-trash"></i>
+                                    </a>
+
+                                    <!-- modal: delete -->
+                                    <div class="modal fade modal-container" id="deleteModal-{{ lecture.id }}" tabindex="-1" role="dialog"
+                                         aria-labelledby="deleteModalTitle-{{ lecture.id }}"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-body text-center">
+                                                    <span class="la la-exclamation-circle fs-60 text-warning"></span>
+                                                    <h4 class="modal-title fs-19 font-weight-semi-bold pt-2 pb-1"
+                                                        id="deleteModalTitle-{{ lecture.id }}">مقاله شما حذف خواهد شد!
+                                                    </h4>
+                                                    <p>آیا مطمئن هستید که می خواهید این سخنرانی را حذف کنید؟</p>
+                                                    <div class="btn-box pt-4">
+
+                                                        <form
+                                                                action="{% url 'userprofile_app:lecture_delete' pk=lecture.id %}"
+                                                                method="post">
+                                                            {% csrf_token %}
+                                                            <button type="button" class="btn font-weight-medium mr-3"
+                                                                    data-dismiss="modal">لغو
+                                                            </button>
+                                                            <input type="hidden" name="id" value="{{ lecture.id }}">
+                                                            <button type="submit"
+                                                                    class="btn theme-btn theme-btn-sm lh-30">
+                                                                حذف
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <form action="{% url 'userprofile_app:lecture_change_status' lecture.pk %}"
+                                          method="post" style="display:inline;">
+                                        {% csrf_token %}
+                                        {% if lecture.status == 'draft' and lecture.author == request.user %}
+                                            <button type="submit" name="action" value="submit_for_review"
+                                                    class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-primary border-0"
+                                                    data-toggle="tooltip" title="ارسال برای بررسی">
+                                                <i class="la la-upload"></i>
+                                            </button>
+                                        {% endif %}
+
+                                        {% if lecture.status == 'pending' and perms.blog_app.can_publish_article %}
+                                            <button type="submit" name="action" value="publish"
+                                                    class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success border-0"
+                                                    data-toggle="tooltip" title="انتشار">
+                                                <i class="la la-check"></i>
+                                            </button>
+                                        {% endif %}
+
+                                        {% if lecture.status == 'pending' and perms.blog_app.can_reject_article %}
+                                            <button type="submit" name="action" value="reject"
+                                                    class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-danger border-0"
+                                                    data-toggle="tooltip" title="رد کردن">
+                                                <i class="la la-times"></i>
+                                            </button>
+                                        {% endif %}
+                                    </form>
+
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+
+            <!-- pagination -->
+            {% if page_obj.paginator.count > page_obj.paginator.per_page %}
+                <div class="text-center pt-3">
+                    <nav aria-label="مثال ناوبری صفحه" class="pagination-box">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}"
+                                       aria-label="قبلی">
+                                        <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
+                                        <span class="sr-only">قبلی</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% for i in page_obj.paginator.page_range %}
+                                {% if page_obj.number == i %}
+                                    <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="بعد">
+                                        <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
+                                        <span class="sr-only">بعد</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    <p class="fs-14 pt-2">نمایش 1-10 از 56 نتیجه</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
