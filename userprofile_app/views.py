@@ -610,14 +610,25 @@ def admin_article_comment_delete(request: HttpRequest, pk):
 class AdminLectureListView(LoginRequiredMixin, ListView):
     model = Lecture
     template_name = 'userprofile_app/lectures/lectures_list.html'
+    paginate_by = 5
 
 
 class AdminLectureReadView(LoginRequiredMixin, DetailView):
-    pass
+    model = Lecture
+    form_class = LectureForm
+    template_name = "userprofile_app/lectures/lecture_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = LectureForm(instance=self.get_object(), read_only=True)
+        context['read_only'] = getattr(context.get('form'), 'read_only', True)
+        context['categories'] = LectureCategory.objects.all()
+        context['tags'] = LectureTag.objects.all()
+        return context
 
 
 class AdminLectureCreateView(LoginRequiredMixin, CreateView):
-    model = Lecture(BaseModel)
+    model = Lecture
     form_class = LectureForm
     template_name = 'userprofile_app/lectures/lecture_form.html'
     success_url = reverse_lazy('userprofile_app:lectures_list')
@@ -631,31 +642,29 @@ class AdminLectureCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.author = self.request.user
-        self.object.status = 'draft'
-
-        # استفاده از فرم برای فایل
-        if form.cleaned_data.get('image'):
-            self.object.image = form.cleaned_data['image']
-
         self.object.save()
-
-        # ذخیره ManyToMany از فرم (اعتبارسنجی شده)
-        if 'selected_categories' in form.cleaned_data:
-            self.object.selected_categories.set(form.cleaned_data['selected_categories'])
-        if 'selected_tags' in form.cleaned_data:
-            self.object.selected_tags.set(form.cleaned_data['selected_tags'])
-
-        return super().form_valid(form)
+        form.save_m2m()
+        return redirect(self.get_success_url())
 
 
 class AdminLectureUpdateView(LoginRequiredMixin, UpdateView):
     model = Lecture
     form_class = LectureForm
-    template_name = 'userprofile_app/articles/article_form.html'
-    success_url = reverse_lazy('userprofile_app:articles_list')
+    template_name = 'userprofile_app/lectures/lecture_form.html'
+    success_url = reverse_lazy('userprofile_app:lectures_list')
 
-    def get_queryset(self):
-        return Article.objects.filter(author=self.request.user, is_delete=False)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = LectureCategory.objects.all()
+        context['tags'] = LectureTag.objects.all()
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.author = self.request.user
+        self.object.save()
+        form.save_m2m()
+        return redirect(self.get_success_url())
 
 
 class AdminLectureDeleteView(LoginRequiredMixin, DeleteView):

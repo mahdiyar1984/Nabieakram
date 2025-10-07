@@ -190,40 +190,31 @@ class LectureForm(forms.ModelForm):
 
     class Meta:
         model = Lecture
-        fields = '__all__'
+        fields  = [
+            'title', 'slug', 'short_description', 'text', 'status',
+            'image', 'video', 'audio', 'video_url', 'audio_url',
+            'selected_categories', 'selected_tags', 'is_active', 'is_delete'
+        ]
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
-
             'slug': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
-
             'short_description': forms.Textarea(attrs={
                 'class': 'form-control form--control user-text-editor pl-3', 'rows': 4}),
-
-            'text': forms.Textarea(attrs={'class': 'form-control form--control user-text-editor pl-3', 'rows': 15}),
-
-            'status': forms.Select(choices=[('draft', 'پیش‌نویس'), ('published', 'منتشر شده')],
-                                   attrs={'class': 'form-control form--control pl-3'}),
-            'user': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
-
+            'text': forms.Textarea(attrs={
+                'class': 'form-control form--control user-text-editor pl-3', 'rows': 15}),
+            'status': forms.Select(choices=[
+                ('draft', 'پیش‌نویس'),
+                ('pending', 'در انتظار تأیید'),
+                ('published', 'منتشر شده'),
+                ('rejected', 'رد شده'),
+            ], attrs={'class': 'form-control form--control pl-3'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-
             'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-
-            'image': forms.ClearableFileInput(attrs={
-                'class': 'multi file-upload-input with-preview MultiFile-applied', 'id': 'MultiFile2', }),
-
-            'video': forms.ClearableFileInput(attrs={
-                'class': 'multi file-upload-input with-preview MultiFile-applied', 'id': 'MultiFile2', }),
-
-            'video_url': forms.Textarea(attrs={
-                'class': 'form-control form--control user-text-editor pl-3', 'rows': 4}),
-
-            'audio': forms.ClearableFileInput(attrs={
-                'class': 'multi file-upload-input with-preview MultiFile-applied', 'id': 'MultiFile2', }),
-
-            'audio_url': forms.Textarea(attrs={
-                'class': 'form-control form--control user-text-editor pl-3', 'rows': 4}),
-
+            'image': forms.ClearableFileInput(attrs={'class': 'file-upload-input'}),
+            'video': forms.ClearableFileInput(attrs={'class': 'file-upload-input'}),
+            'audio': forms.ClearableFileInput(attrs={'class': 'file-upload-input'}),
+            'video_url': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'audio_url': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
         }
 
 

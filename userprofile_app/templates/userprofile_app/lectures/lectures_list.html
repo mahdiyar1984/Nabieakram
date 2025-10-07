@@ -38,10 +38,10 @@
                 </div>
 
                 <!-- create new article -->
-                <a href="{% url 'userprofile_app:article_create' %}"
+                <a href="{% url 'userprofile_app:lecture_create' %}"
                    class="btn btn-info d-inline-flex align-items-center new-article-btn"
                    style="background-color: #e3f2fd; color: #1976d2; border-color: #b3e5fc; font-weight: bold;">
-                    <i class="la la-plus mr-2"></i><span style="font-weight: bold;">ایجاد مقاله جدید</span>
+                    <i class="la la-plus mr-2"></i><span style="font-weight: bold;">ایجاد سخنرانی جدید</span>
                 </a>
 
             </div>
@@ -147,7 +147,7 @@
                                     </a>
 
                                     <!-- update -->
-                                    <a href="{% url 'userprofile_app:article_edit' pk=lecture.id %}"
+                                    <a href="{% url 'userprofile_app:lecture_edit' pk=lecture.id %}"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-warning"
                                        data-toggle="tooltip" title="ویرایش">
                                         <i class="la la-edit"></i>
