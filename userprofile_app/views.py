@@ -1,3 +1,5 @@
+from typing import Union
+
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -11,7 +13,7 @@ from .forms import ArticleForm, GroupForm, ArticleCategoryForm, ArticleTagForm, 
     LectureCategoryForm, GalleryImageForm, \
     GalleryCategoryForm, FooterLinkForm, ContactUsForm, SliderForm, SiteSettingForm
 from django.contrib import messages
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.urls import reverse_lazy
@@ -26,6 +28,9 @@ from django.apps import apps
 class AdminRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_superuser
+
+class AuthenticatedHttpRequest(HttpRequest):
+    user: Union[User, None]
 
 
 # region dashboard
@@ -281,6 +286,8 @@ class AdminArticleUpdateView(LoginRequiredMixin, UpdateView):
         # وضعیت پیش‌فرض
         if self.object.status in ['rejected', 'draft', 'pending']:
             self.object.status = 'draft'
+
+        self.object.status = "draft"
 
         self.object.save()
 
@@ -570,7 +577,7 @@ def admin_article_comment_read(request: HttpRequest, pk):
 
 
 @staff_member_required
-def admin_article_comment_update(request: HttpRequest, pk):
+def admin_article_comment_update(request: AuthenticatedHttpRequest, pk):
     comment: ArticleComment = ArticleComment.objects.get(pk=pk)
     if request.method == 'POST':
         comment.text = request.POST.get('text', comment.text)
@@ -662,22 +669,65 @@ class AdminLectureUpdateView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.author = self.request.user
+
+        if self.request.FILES.get('image'):
+            self.object.image = self.request.FILES['image']
+
+        if self.request.FILES.get('video'):
+            self.object.image = self.request.FILES['video']
+
+        if self.request.FILES.get('audio'):
+            self.object.image = self.request.FILES['audio']
+
+        if self.object.status in ['rejected', 'draft', 'pending']:
+            self.object.status = 'draft'
+
+        self.object.status = "draft"
+
         self.object.save()
-        form.save_m2m()
-        return redirect(self.get_success_url())
+
+        # ذخیره ManyToMany
+        self.object.selected_categories.set(form.cleaned_data['selected_categories'])
+        self.object.selected_tags.set(form.cleaned_data['selected_tags'])
+
+        return super().form_valid(form)
 
 
 class AdminLectureDeleteView(LoginRequiredMixin, DeleteView):
-    model = Lecture
-    template_name = 'userprofile_app/lectures/lecture_category_confirm_delete.html'
-    success_url = reverse_lazy('userprofile_app:articles_list')
+    success_url = reverse_lazy('userprofile_app:lectures_list')
 
-    def get_queryset(self):
-        return Article.objects.filter(author=self.request.user, is_delete=False)
+    def post(self, request, pk, *args, **kwargs):
+        lecture = get_object_or_404(Lecture, pk=pk, author=request.user)
+        lecture.is_delete = True
+        lecture.save()
+        return redirect(self.success_url)
 
 
-class AdminlectureChangeStatusView(LoginRequiredMixin, View):
-    pass
+class AdminLectureChangeStatusView(LoginRequiredMixin, View):
+    def post(self, request, pk, *args, **kwargs):
+        lecture = get_object_or_404(Lecture, pk=pk)
+        action = request.POST.get("action")
+
+        if action == "submit_for_review" and lecture.author == request.user:
+            lecture.status = "pending"
+            lecture.save()
+            messages.success(request, "سخنرانی برای بررسی ارسال شد.")
+            return redirect("userprofile_app:lectures_list")
+
+        if action == "publish" and request.user.has_perm("blog_app.can_publish_lecture"):
+            lecture.status = "published"
+            lecture.save()
+            messages.success(request, "سخنرانی منتشر شد.")
+            return redirect("userprofile_app:lectures_list")
+
+        if action == "reject" and request.user.has_perm("blog_app.can_reject_lecture"):
+            lecture.status = "rejected"
+            lecture.save()
+            messages.warning(request, "سخنرانی رد شد.")
+            return redirect("userprofile_app:lectures_list")
+
+        messages.error(request, "شما اجازه این کار را ندارید.")
+        return redirect("userprofile_app:lectures_list")
 
 
 # endregion
@@ -685,9 +735,18 @@ class AdminlectureChangeStatusView(LoginRequiredMixin, View):
 class AdminLectureCategoryListView(LoginRequiredMixin, ListView):
     model = LectureCategory
     template_name = 'userprofile_app/lectures/lecture_categories_list.html'
+    paginate_by = 10
 
-    def get_queryset(self):
-        return LectureCategory.objects.filter(is_delete=False)
+class AdminLectureCategoryReadView(LoginRequiredMixin, DetailView):
+    model = LectureCategory
+    form_class = LectureCategoryForm
+    template_name = "userprofile_app/lectures/lecture_category_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = LectureCategoryForm(instance=self.get_object(), read_only=True)
+        context['read_only'] = getattr(context.get('form'), 'read_only', True)
+        return context
 
 
 class AdminLectureCategoryCreateView(LoginRequiredMixin, CreateView):
@@ -696,6 +755,11 @@ class AdminLectureCategoryCreateView(LoginRequiredMixin, CreateView):
     template_name = 'userprofile_app/lectures/lecture_category_form.html'
     success_url = reverse_lazy('userprofile_app:lecture_categories_list')
 
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.save()
+        return super().form_valid(form)
+
 
 class AdminLectureCategoryUpdateView(LoginRequiredMixin, UpdateView):
     model = LectureCategory
@@ -703,11 +767,20 @@ class AdminLectureCategoryUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'userprofile_app/lectures/lecture_category_form.html'
     success_url = reverse_lazy('userprofile_app:lecture_categories_list')
 
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.save()
+        return super().form_valid(form)
+
 
 class AdminLectureCategoryDeleteView(LoginRequiredMixin, DeleteView):
-    model = LectureCategory
-    template_name = 'userprofile_app/lectures/lecture_category_confirm_delete.html'
     success_url = reverse_lazy('userprofile_app:lecture_categories_list')
+
+    def post(self, request, pk, *args, **kwargs):
+        lecture_category = get_object_or_404(LectureCategory, pk=pk)
+        lecture_category.is_delete = True
+        lecture_category.save()
+        return redirect(self.success_url)
 
 
 # endregion

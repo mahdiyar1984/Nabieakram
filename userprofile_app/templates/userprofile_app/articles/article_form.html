@@ -135,16 +135,19 @@
                                                 {% endif %}
                                             </div>
                                             {% if not read_only %}
-                                                <div class="media-body">
-                                                    <div class="file-upload-wrap file-upload-wrap-2">
-                                                        <div class="MultiFile-wrap" id="MultiFile2">
-                                                            {{ form.image }}
-                                                            <div class="MultiFile-list" id="MultiFile2_list"></div>
-                                                        </div>
-                                                        <span class="file-upload-text"><i class="la la-photo mr-2"></i>یک عکس آپلود کنید</span>
+                                            <div class="media-body mt-3">
+                                                <div class="file-upload-wrap file-upload-wrap-2">
+                                                    <div class="MultiFile-wrap" id="MultiFile2">
+                                                        <input type="file" name="{{ form.image.name }}"
+                                                               id="customFileInput" class="file-upload-input">
+                                                        <div class="MultiFile-list" id="MultiFile2_list"></div>
+                                                    </div>
+                                                    <div class="file-upload-text">
+                                                        <i class="la la-photo mr-2"></i> آپلود تصویر
                                                     </div>
                                                 </div>
-                                            {% endif %}
+                                            </div>
+                                        {% endif %}
                                         </div>
                                     </div>
                                 </div>

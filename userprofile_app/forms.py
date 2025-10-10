@@ -102,9 +102,9 @@ class ArticleForm(forms.ModelForm):
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'image': forms.ClearableFileInput(attrs={
-                'class': 'multi file-upload-input with-preview MultiFile-applied',
-                'id': 'MultiFile2',
-            })
+                'class': 'file-upload-input',
+                'id': 'customFileInput'
+            }),
 
         }
 
@@ -190,7 +190,7 @@ class LectureForm(forms.ModelForm):
 
     class Meta:
         model = Lecture
-        fields  = [
+        fields = [
             'title', 'slug', 'short_description', 'text', 'status',
             'image', 'video', 'audio', 'video_url', 'audio_url',
             'selected_categories', 'selected_tags', 'is_active', 'is_delete'
@@ -210,16 +210,43 @@ class LectureForm(forms.ModelForm):
             ], attrs={'class': 'form-control form--control pl-3'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'image': forms.ClearableFileInput(attrs={'class': 'file-upload-input'}),
-            'video': forms.ClearableFileInput(attrs={'class': 'file-upload-input'}),
-            'audio': forms.ClearableFileInput(attrs={'class': 'file-upload-input'}),
+            'image': forms.ClearableFileInput(attrs={
+                'class': 'file-upload-input',
+                'id': 'customFileInput'
+            }),
+
+            'video': forms.ClearableFileInput(attrs={
+                'class': 'file-upload-input',
+                'id': 'customFileInput'
+            }),
+            'audio': forms.ClearableFileInput(attrs={
+                'class': 'file-upload-input',
+                'id': 'customFileInput'
+            }),
             'video_url': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
             'audio_url': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
         }
 
 
 class LectureCategoryForm(forms.ModelForm):
-    pass
+    def __init__(self, *args, **kwargs):
+        read_only = kwargs.pop('read_only', False)
+        super().__init__(*args, **kwargs)
+
+        if read_only:
+            for field in self.fields.values():
+                field.disabled = True
+
+    class Meta:
+        model = LectureCategory
+        fields = ['title', 'slug', 'parent', 'is_active', 'is_delete']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'slug': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'parent':forms.Select(attrs={'class': 'form-control form--control pl-3'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
 
 
 class LectureTagForm(forms.ModelForm):

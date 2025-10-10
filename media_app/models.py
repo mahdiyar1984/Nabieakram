@@ -111,8 +111,8 @@ class Lecture(BaseModel):
         verbose_name = 'سخنرانی'
         verbose_name_plural = 'سخنرانی ها'
         permissions = [
-            ("can_publish_article", "Can publish article"),
-            ("can_reject_article", "Can reject article"),
+            ("can_publish_lecture", "Can publish lecture"),
+            ("can_reject_lecture", "Can reject lecture"),
         ]
 
 class LectureClip(BaseModel):

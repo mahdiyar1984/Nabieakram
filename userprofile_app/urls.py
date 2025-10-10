@@ -43,16 +43,15 @@ urlpatterns = [
     path('lecturess/<int:pk>/read/', views.AdminLectureReadView.as_view(), name='lecture_detail'),
     path('lecturess/<int:pk>/edit/', views.AdminLectureUpdateView.as_view(), name='lecture_edit'),
     path('lecturess/<int:pk>/delete/', views.AdminLectureDeleteView.as_view(), name='lecture_delete'),
-    path("lecturess/<int:pk>/status/", views.AdminlectureChangeStatusView.as_view(), name="lecture_change_status"),
+    path("lecturess/<int:pk>/status/", views.AdminLectureChangeStatusView.as_view(), name="lecture_change_status"),
 
     # endregion
     # region Lecture Category management
     path('lecture-categories/', views.AdminLectureCategoryListView.as_view(), name='lecture_categories_list'),
+    path('lecture-categories/<int:pk>/read/', views.AdminLectureCategoryReadView.as_view(), name='lecture_category_detail'),
     path('lecture-categories/create/', views.AdminLectureCategoryCreateView.as_view(), name='lecture_category_create'),
-    path('lecture-categories/<int:pk>/edit/', views.AdminLectureCategoryUpdateView.as_view(),
-         name='lecture_category_edit'),
-    path('lecture-categories/<int:pk>/delete/', views.AdminLectureCategoryDeleteView.as_view(),
-         name='lecture_category_delete'),
+    path('lecture-categories/<int:pk>/edit/', views.AdminLectureCategoryUpdateView.as_view(), name='lecture_category_edit'),
+    path('lecture-categories/<int:pk>/delete/', views.AdminLectureCategoryDeleteView.as_view(), name='lecture_category_delete'),
     # endregion
     # region Lecture Tag management
     path('lecture-tags/', views.AdminLectureTagListView.as_view(), name='lecture_tags_list'),

@@ -36,12 +36,15 @@
                     </div>
                 </div>
             </div>
-            <!-- new article -->
+
+            <!-- new lecture -->
             <div class="section-block mb-5"></div>
             <div class="dashboard-heading mb-5">
                 <h3 class="fs-22 font-weight-semi-bold">سخنرانی جدید</h3>
             </div>
 
+
+            <!-- form lecture -->
             <form action=""
                   method="post"
                   class="MultiFile-intercepted"
@@ -116,20 +119,21 @@
                                                          alt="تصویر پیش‌فرض">
                                                 {% endif %}
                                             </div>
-                                            {% if not read_only %}
-                                                <div class="media-body">
-                                                    <div class="file-upload-wrap file-upload-wrap-2">
-                                                        <div class="MultiFile-wrap" id="MultiFile2">
-                                                            {{ form.image }}
-                                                            <div class="MultiFile-list" id="MultiFile2_list"></div>
-                                                        </div>
-                                                        <div class="file-upload-text"><i class="la la-photo mr-2"></i>یک
-                                                            عکس آپلود کنید
-                                                        </div>
+                                        </div>
+                                        {% if not read_only %}
+                                            <div class="media-body mt-3">
+                                                <div class="file-upload-wrap file-upload-wrap-2">
+                                                    <div class="MultiFile-wrap" id="MultiFile2">
+                                                        <input type="file" name="{{ form.image.name }}"
+                                                               id="customFileInput" class="file-upload-input">
+                                                        <div class="MultiFile-list" id="MultiFile2_list"></div>
+                                                    </div>
+                                                    <div class="file-upload-text">
+                                                        <i class="la la-photo mr-2"></i> آپلود تصویر
                                                     </div>
                                                 </div>
-                                            {% endif %}
-                                        </div>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -140,29 +144,32 @@
                                     <label class="label-text">فیلم سخنرانی</label>
                                     <div class="input-box col-lg-12 mb-5">
                                         <div class="media media-card align-items-center">
-                                            <div class="media-img media-img-lg mr-4 bg-gray">
+                                            <div class="video-play-btn">
                                                 {% if form.instance.video %}
-                                                    <img class="mr-3" src="{{ form.instance.video.url }}"
-                                                         alt="فیلم سخنرانی">
+                                                    <video width="265" height="200" controls>
+                                                        <source src="{{ form.instance.video.url }}" type="video/mp4">
+                                                    </video>
                                                 {% else %}
                                                     <img class="mr-3" src="/static/images/team11.jpg"
                                                          alt="تصویر پیش‌فرض">
                                                 {% endif %}
                                             </div>
-                                            {% if not read_only %}
-                                                <div class="media-body">
-                                                    <div class="file-upload-wrap file-upload-wrap-2">
-                                                        <div class="MultiFile-wrap" id="MultiFile2">
-                                                            {{ form.video.url }}
-                                                            <div class="MultiFile-list" id="MultiFile2_list"></div>
-                                                        </div>
-                                                        <div class="file-upload-text"><i class="la la-viadeo mr-2"></i>یک
-                                                            فیلم آپلود کنید
-                                                        </div>
+
+                                        </div>
+                                        {% if not read_only %}
+                                            <div class="media-body mt-3">
+                                                <div class="file-upload-wrap file-upload-wrap-2">
+                                                    <div class="MultiFile-wrap" id="MultiFile2">
+                                                        <input type="file" name="{{ form.video.name }}"
+                                                               id="customFileInput" class="file-upload-input">
+                                                        <div class="MultiFile-list" id="MultiFile2_list"></div>
+                                                    </div>
+                                                    <div class="file-upload-text">
+                                                        <i class="la la-photo mr-2"></i>آپلود ویدیو
                                                     </div>
                                                 </div>
-                                            {% endif %}
-                                        </div>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -173,30 +180,35 @@
                                     <label class="label-text">صوت سخنرانی</label>
                                     <div class="input-box col-lg-12 mb-5">
                                         <div class="media media-card align-items-center">
-                                            <div class="media-img media-img-lg mr-4 bg-gray">
+                                            <div class="">
                                                 {% if form.instance.audio %}
-                                                    <img class="mr-3" src="{{ form.instance.audio.url }}"
-                                                         alt="صوت سخنرانی">
+                                                    <img class="mr-3" src="/static/images/audio-images.png"
+                                                         alt="تصویر پیش‌فرض"
+                                                         style="width:300px; height: 140px; text-align: center; margin-bottom: 10px">
+                                                    <audio controls>
+                                                        <source src="{{ form.instance.audio.url }}" type="audio/mpeg">
+                                                    </audio>
                                                 {% else %}
                                                     <img class="mr-3" src="/static/images/team11.jpg"
                                                          alt="تصویر پیش‌فرض">
                                                 {% endif %}
                                             </div>
-                                            {% if not read_only %}
-                                                <div class="media-body">
-                                                    <div class="file-upload-wrap file-upload-wrap-2">
-                                                        <div class="MultiFile-wrap" id="MultiFile2">
-                                                            {{ form.audio.url }}
-                                                            <div class="MultiFile-list" id="MultiFile2_list"></div>
-                                                        </div>
-                                                        <div class="file-upload-text"><i
-                                                                class="la la-file-audio mr-2"></i>یک
-                                                            صوت آپلود کنید
-                                                        </div>
+
+                                        </div>
+                                        {% if not read_only %}
+                                            <div class="media-body mt-3">
+                                                <div class="file-upload-wrap file-upload-wrap-2">
+                                                    <div class="MultiFile-wrap" id="MultiFile2">
+                                                        <input type="file" name="{{ form.audio.name }}"
+                                                               id="customFileInput" class="file-upload-input">
+                                                        <div class="MultiFile-list" id="MultiFile2_list"></div>
+                                                    </div>
+                                                    <div class="file-upload-text">
+                                                        <i class="la la-photo mr-2"></i>آپلود صوت
                                                     </div>
                                                 </div>
-                                            {% endif %}
-                                        </div>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
