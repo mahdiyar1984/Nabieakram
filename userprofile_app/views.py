@@ -8,10 +8,10 @@ from django.db.models import QuerySet
 from django.views.generic import DetailView, TemplateView
 from blog_app.models import Article, ArticleCategory, ArticleTag, ArticleComment
 from main_app.models import FooterLink, ContactUs, SiteSetting, Slider
-from media_app.models import Lecture, LectureCategory, LectureTag, LectureComment, GalleryImage, GalleryCategory, BaseModel
+from media_app.models import Lecture, LectureCategory, LectureTag, LectureComment, GalleryImage, GalleryCategory, BaseModel, LectureClip
 from .forms import ArticleForm, GroupForm, ArticleCategoryForm, ArticleTagForm, LectureForm, LectureTagForm, \
     LectureCategoryForm, GalleryImageForm, \
-    GalleryCategoryForm, FooterLinkForm, ContactUsForm, SliderForm, SiteSettingForm
+    GalleryCategoryForm, FooterLinkForm, ContactUsForm, SliderForm, SiteSettingForm, LectureClipForm
 from django.contrib import messages
 from django.http import HttpRequest
 from django.shortcuts import render, redirect, get_object_or_404
@@ -788,9 +788,18 @@ class AdminLectureCategoryDeleteView(LoginRequiredMixin, DeleteView):
 class AdminLectureTagListView(LoginRequiredMixin, ListView):
     model = LectureTag
     template_name = 'userprofile_app/lectures/lecture_tags_list.html'
+    paginate_by = 10
 
-    def get_queryset(self):
-        return LectureTag.objects.filter(is_delete=False)
+class AdminLectureTagReadView(LoginRequiredMixin, DetailView):
+    model = LectureTag
+    form_class = LectureTagForm
+    template_name = "userprofile_app/lectures/lecture_tag_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = LectureTagForm(instance=self.get_object(), read_only=True)
+        context['read_only'] = getattr(context.get('form'), 'read_only', True)
+        return context
 
 
 class AdminLectureTagCreateView(LoginRequiredMixin, CreateView):
@@ -799,6 +808,11 @@ class AdminLectureTagCreateView(LoginRequiredMixin, CreateView):
     template_name = 'userprofile_app/lectures/lecture_tag_form.html'
     success_url = reverse_lazy('userprofile_app:lecture_tags_list')
 
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.save()
+        return super().form_valid(form)
+
 
 class AdminLectureTagUpdateView(LoginRequiredMixin, UpdateView):
     model = LectureTag
@@ -806,42 +820,143 @@ class AdminLectureTagUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'userprofile_app/lectures/lecture_tag_form.html'
     success_url = reverse_lazy('userprofile_app:lecture_tags_list')
 
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.save()
+        return super().form_valid(form)
+
 
 class AdminLectureTagDeleteView(LoginRequiredMixin, DeleteView):
-    model = LectureTag
-    template_name = 'userprofile_app/lectures/lecture_tag_confirm_delete.html'
     success_url = reverse_lazy('userprofile_app:lecture_tags_list')
+
+    def post(self, request, pk, *args, **kwargs):
+        lecture_tag = get_object_or_404(LectureTag, pk=pk)
+        lecture_tag.is_delete = True
+        lecture_tag.save()
+        return redirect(self.success_url)
 
 
 # endregion
-# region Lecture Comment
-class AdminLectureCommentListView(LoginRequiredMixin, ListView):
-    model = LectureComment
-    template_name = 'userprofile_app/lectures/lecture_comments_list.html'
+# region Lecutre Comment
 
-    def get_queryset(self):
-        return LectureTag.objects.filter(is_delete=False)
-
-
-class AdminLectureCommentCreateView(LoginRequiredMixin, CreateView):
-    model = LectureTag
-    form_class = LectureTagForm
-    template_name = 'userprofile_app/lectures/lecture_comment_form.html'
-    success_url = reverse_lazy('userprofile_app:lecture_comment_list')
-
-
-class AdminLectureCommentUpdateView(LoginRequiredMixin, UpdateView):
-    model = LectureTag
-    form_class = LectureTagForm
-    template_name = 'userprofile_app/lectures/lecture_comment_form.html'
-    success_url = reverse_lazy('userprofile_app:lecture_comment_list')
+@staff_member_required
+def admin_lecture_comment_list(request: HttpRequest):
+    lecture_comments: QuerySet[LectureComment] = (
+        LectureComment.objects
+        .select_related('lecture', 'user')
+        .prefetch_related('lecturecomment_set__user')
+        .filter(parent__isnull=True)
+        .order_by('-created_date')
+    )
+    paginator = Paginator(lecture_comments, 5)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'page_obj': page_obj
+    }
+    return render(request, template_name='userprofile_app/lectures/lecture_comments_list.html', context=context)
 
 
-class AdminLectureCommentDeleteView(LoginRequiredMixin, DeleteView):
-    model = LectureTag
-    template_name = 'userprofile_app/lectures/lecture_comment_confirm_delete.html'
-    success_url = reverse_lazy('userprofile_app:lecture_comment_list')
+@staff_member_required
+def admin_lecture_comment_read(request: HttpRequest, pk):
+    comment: LectureComment = LectureComment.objects.get(pk=pk)
+    context = {
+        'comment': comment,
+        'read_only': True
+    }
+    return render(request, 'userprofile_app/lectures/lecture_comment_form.html', context)
 
+
+@staff_member_required
+def admin_lecture_comment_update(request: AuthenticatedHttpRequest, pk):
+    comment: LectureComment = LectureComment.objects.get(pk=pk)
+    if request.method == 'POST':
+        comment.text = request.POST.get('text', comment.text)
+        comment.save()
+        reply_text = request.POST.get('reply_text')
+        if reply_text:
+            first_reply = comment.lecturecomment_set.first()
+            if first_reply:
+                first_reply.text = reply_text
+                first_reply.save()
+            else:
+                LectureComment.objects.create(
+                    article=comment.lecture,
+                    user=request.user,
+                    parent=comment,
+                    text=reply_text
+                )
+
+        return redirect('userprofile_app:lecture_comments_list')
+
+    context = {'comment': comment, 'read_only': False}
+    return render(request, 'userprofile_app/lectures/lecture_comment_form.html', context)
+
+
+def admin_lecture_comment_delete(request: HttpRequest, pk):
+    comment: LectureComment = LectureComment.objects.get(pk=pk)
+    comment.is_delete = True
+    comment.save()
+    return redirect('userprofile_app:lecture_comments_list')
+
+
+# endregion
+# region Lecture Clip
+class AdminLectureClipListView(LoginRequiredMixin, ListView):
+    model = LectureClip
+    template_name = 'userprofile_app/lectures/lecture_clips_list.html'
+    paginate_by = 5
+
+
+class AdminLectureClipReadView(LoginRequiredMixin, DetailView):
+    model = LectureClip
+    form_class = LectureClipForm
+    template_name = "userprofile_app/lectures/lecture_clip_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = LectureClipForm(instance=self.get_object(), read_only=True)
+        context['read_only'] = getattr(context.get('form'), 'read_only', True)
+        return context
+
+
+class AdminLectureClipCreateView(LoginRequiredMixin, CreateView):
+    model = LectureClip
+    form_class = LectureClipForm
+    template_name = 'userprofile_app/lectures/lecture_clip_form.html'
+    success_url = reverse_lazy('userprofile_app:lecture_clips_list')
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.save()
+        form.save_m2m()
+        return redirect(self.get_success_url())
+
+
+class AdminLectureClipUpdateView(LoginRequiredMixin, UpdateView):
+    model = LectureClip
+    form_class = LectureClipForm
+    template_name = 'userprofile_app/lectures/lecture_clip_form.html'
+    success_url = reverse_lazy('userprofile_app:lecture_clips_list')
+
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.author = self.request.user
+        if self.request.FILES.get('video'):
+            self.object.image = self.request.FILES['video']
+        self.object.save()
+        return super().form_valid(form)
+
+
+class AdminLectureClipDeleteView(LoginRequiredMixin, DeleteView):
+    success_url = reverse_lazy('userprofile_app:lecture_clips_list')
+
+    def post(self, request, pk, *args, **kwargs):
+        lecture_clip = get_object_or_404(LectureClip, pk=pk)
+        lecture_clip.is_delete = True
+        lecture_clip.save()
+        return redirect(self.success_url)
 
 # endregion
 

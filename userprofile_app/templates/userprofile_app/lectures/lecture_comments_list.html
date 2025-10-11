@@ -1,0 +1,183 @@
+{% extends 'shared/dashboard.html' %}
+{% load shamsi_tags %}
+
+{% block title %}پروفایل - لیست نظرات{% endblock %}
+
+{% block content %}
+
+    <div class="dashboard-content-wrap">
+
+        <div class="dashboard-menu-toggler btn theme-btn theme-btn-sm lh-28 theme-btn-transparent mb-4 ml-3"><i
+                class="la la-bars mr-1"></i> منو
+        </div>
+
+        <!-- main content -->
+        <div class="container-fluid">
+
+            <!-- breadcrumb -->
+            <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between mb-5">
+                <!-- user avatar -->
+                <div class="media media-card align-items-center">
+                    <div class="media-img media--img media-img-md rounded-full">
+                        <img class="rounded-full" src="{{ request.user.avatar.url }}" alt="تصویر کوچک">
+                    </div>
+                    <div class="media-body">
+                        <h2 class="section__title fs-30">{{ request.user.get_full_name }}</h2>
+                        <div class="rating-wrap d-flex align-items-center pt-2">
+                            <div class="review-stars">
+                                <span class="rating-number">4.4</span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star-o"></span>
+                            </div>
+                            <span class="rating-total pl-1">(20230)</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- lecture comment section -->
+            <div class="section-block mb-5"></div>
+            <div class="dashboard-heading mb-5">
+
+                <!-- lecture comments count -->
+                <h3 class="fs-22 font-weight-semi-bold">
+                    لیست نظرات
+                    <span class="badge badge-primary pr-3 pl-3 pt-2 pb-2"
+                          style="font-size: 14px; vertical-align: middle; margin-right: 8px;">{{ page_obj.paginator.count }}</span>
+                </h3>
+            </div>
+
+            <!-- lecture comment table -->
+            <div class="table-responsive pb-4">
+                <table class="table generic-table align-middle">
+                    <thead>
+                    <tr>
+                        <th scope="col">سخرانی</th>
+                        <th scope="col">نظر</th>
+                        <th scope="col">تاریخ نظر</th>
+                        <th scope="col">پاسخ</th>
+                        <th scope="col">تاریخ پاسخ</th>
+                        <th scope="col">اقدام</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for comment in page_obj %}
+                        <tr>
+                            <!-- lecture -->
+                            <th scope="row">
+                                <a href="{% url 'blog_app:blog_detail' pk=comment.lecture.id %}"
+                                   class="text-black">{{ comment.lecture.title }}</a>
+                            </th>
+
+
+                            <!-- comment text -->
+                            <td style="width: 350px;">
+                                {{ comment.text }}
+                                <br>
+                                <span style="color: indianred">
+                                    ({{ comment.user.get_full_name }})
+                                </span>
+                            </td>
+
+                            <!-- create_date comment -->
+                            <td>{{ comment.created_date|to_shamsi }}</td>
+
+                            <!-- response comment -->
+                            <td style="width: 350px;">
+                                {% if comment.lecturecomment_set.all %}
+                                    {% for reply in comment.lecturecomment_set.all %}
+                                        {{ reply.text }}
+                                        <br>
+                                        <span style="color: indianred">
+                                            ({{ reply.user.get_full_name }})
+                                        </span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span style="color: gray;">—</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- create_date response -->
+                            <td>
+                                {% if comment.lecturecomment_set.all %}
+                                    {% for reply in comment.lecturecomment_set.all %}
+                                        {{ reply.created_date|to_shamsi }}
+                                        <br>
+                                    {% endfor %}
+                                {% else %}
+                                    <span style="color: gray;">—</span>
+                                {% endif %}
+
+                            </td>
+
+                            <!-- actions -->
+                            <td>
+                                <div class="card-action-wrap d-flex">
+
+                                    <!-- view -->
+                                    <a href="{% url 'userprofile_app:lecture_comment_detail' pk=comment.id %}"
+                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
+                                       data-toggle="tooltip" title="مشاهده">
+                                        <i class="la la-eye"></i>
+                                    </a>
+
+                                    <!-- update -->
+                                    <a href="{% url 'userprofile_app:lecture_comment_edit' pk=comment.id %}"
+                                       class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-warning"
+                                       data-toggle="tooltip" title="ویرایش">
+                                        <i class="la la-edit"></i>
+                                    </a>
+
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+
+            <!-- pagination -->
+            {% if page_obj.paginator.count > page_obj.paginator.per_page %}
+                <div class="text-center pt-3">
+                    <nav aria-label="مثال ناوبری صفحه" class="pagination-box">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}"
+                                       aria-label="قبلی">
+                                        <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
+                                        <span class="sr-only">قبلی</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% for i in page_obj.paginator.page_range %}
+                                {% if page_obj.number == i %}
+                                    <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="بعد">
+                                        <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
+                                        <span class="sr-only">بعد</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    <p class="fs-14 pt-2">نمایش 1-10 از 56 نتیجه</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

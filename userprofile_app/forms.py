@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from account_app.models import User
 from django.contrib.auth.models import Group, Permission
 
-from media_app.models import Lecture, LectureTag, LectureCategory
+from media_app.models import Lecture, LectureTag, LectureCategory, LectureClip
 
 
 # region group management
@@ -250,16 +250,56 @@ class LectureCategoryForm(forms.ModelForm):
 
 
 class LectureTagForm(forms.ModelForm):
-    pass
+    def __init__(self, *args, **kwargs):
+        read_only = kwargs.pop('read_only', False)
+        super().__init__(*args, **kwargs)
 
+        if read_only:
+            for field in self.fields.values():
+                field.disabled = True
 
-class LectureCommentForm(forms.ModelForm):
-    pass
+    class Meta:
+        model = LectureTag
+        fields = ['title', 'slug', 'is_active', 'is_delete']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'slug': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
 
+class LectureClipForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        read_only = kwargs.pop('read_only', False)
+        super().__init__(*args, **kwargs)
+
+        if read_only:
+            for field in self.fields.values():
+                field.disabled = True
+
+    class Meta:
+        model = LectureClip
+        fields = [
+            'title','lecture', 'slug', 'short_description', 'video', 'video_url', 'is_active', 'is_delete']
+
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'lecture': forms.Select(attrs={'class': 'form-control form--control pl-3','disabled':''}),
+            'slug': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'short_description': forms.Textarea(attrs={
+                'class': 'form-control form--control user-text-editor pl-3', 'rows': 4}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'video': forms.ClearableFileInput(attrs={
+                'class': 'file-upload-input',
+                'id': 'customFileInput'
+            }),
+            'video_url': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+        }
 
 # endregion
 
-# region Lecture Management
+# region Gallery Management
 class GalleryImageForm(forms.ModelForm):
     pass
 

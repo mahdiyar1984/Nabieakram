@@ -1,7 +1,7 @@
 {% extends 'shared/dashboard.html' %}
 {% load shamsi_tags %}
 
-{% block title %}پروفایل - سخنرانی ها{% endblock %}
+{% block title %}پروفایل - کلیپ ها{% endblock %}
 
 {% block content %}
 
@@ -37,59 +37,69 @@
                     </div>
                 </div>
 
-                <!-- create new article_tag -->
-                <a href="{% url 'userprofile_app:lecture_tag_create' %}"
+                <!-- create new clip -->
+                <a href="{% url 'userprofile_app:lecture_clip_create' %}"
                    class="btn btn-info d-inline-flex align-items-center new-article-btn"
                    style="background-color: #e3f2fd; color: #1976d2; border-color: #b3e5fc; font-weight: bold;">
-                    <i class="la la-plus mr-2"></i><span style="font-weight: bold;">ایجاد تگ جدید</span>
+                    <i class="la la-plus mr-2"></i><span style="font-weight: bold;">ایجاد کلیپ جدید</span>
                 </a>
 
             </div>
 
-            <!-- lecture section -->
+            <!-- clip section -->
             <div class="section-block mb-5"></div>
             <div class="dashboard-heading mb-5">
 
-                <!-- lecture_tag count -->
+                <!-- clips count -->
                 <h3 class="fs-22 font-weight-semi-bold">
-                    لیست دسته بندی ها
+                    لیست کلیپ ها
                     <span class="badge badge-primary pr-3 pl-3 pt-2 pb-2"
-                          style="font-size: 14px; vertical-align: middle; margin-right: 8px;">{{ lecturetag_list.count }}</span>
+                          style="font-size: 14px; vertical-align: middle; margin-right: 8px;">{{ lectureclip_list.count }}</span>
                 </h3>
             </div>
 
-            <!-- lecture_tag table -->
+            <!-- clip table -->
             <div class="table-responsive pb-4">
                 <table class="table generic-table align-middle">
                     <thead>
                     <tr>
-                        <th scope="col">عنوان تگ</th>
+                        <th scope="col">عنوان کلیپ</th>
                         <th scope="col">اسلاگ</th>
+                        <th scope="col">سخنرانی</th>
                         <th scope="col">تاریخ انتشار</th>
-                        <th scope="col" class="text-center">اکتیو</th>
-                        <th scope="col" class="text-center">حذف</th>
+                        <th scope="col">اکتیو</th>
+                        <th scope="col">حذف</th>
                         <th scope="col">اقدام</th>
                     </tr>
                     </thead>
 
                     <tbody>
-                    {% for lecture_tag in lecturetag_list %}
-
+                    {% for lecture_clip in lectureclip_list %}
                         <tr>
-                            <!-- tag -->
+                            <!-- title -->
                             <th scope="row">
-                                <a href="{% url 'userprofile_app:lecture_tag_detail' pk=lecture_tag.id %}"
-                                   class="text-black">{{ lecture_tag.title }}</a>
+                                <a href="{% url 'userprofile_app:lecture_detail' pk=lecture_clip.id %}"
+                                   class="text-black">{{ lecture_clip.title }}</a>
                             </th>
 
-                            <td>{{ lecture_tag.slug }}</td>
+                            <!-- slug -->
+                            <th scope="row">
+                                <a href="#"
+                                   class="text-black">{{ lecture_clip.slug }}</a>
+                            </th>
 
-                            <!-- create_date -->
-                            <td>{{ lecture_tag.created_date|to_shamsi }}</td>
+                            <!-- lecture -->
+                            <th scope="row">
+                                <a href="#"
+                                   class="text-black">{{ lecture_clip.lecture.title }}</a>
+                            </th>
+
+                            <!-- created_date -->
+                            <td>{{ lecture_clip.created_date|to_shamsi }}</td>
 
                             <!-- is_active -->
-                            <td class="text-center">
-                                {% if lecture_tag.is_active %}
+                            <td>
+                                {% if lecture_clip.is_active %}
                                     <span style="color:green;">&#10004;</span>
                                 {% else %}
                                     <span style="color:red;">&#10008;</span>
@@ -97,8 +107,8 @@
                             </td>
 
                             <!-- is_delete -->
-                            <td class="text-center">
-                                {% if lecture_tag.is_delete %}
+                            <td>
+                                {% if lecture_clip.is_delete %}
                                     <span style="color:green;">&#10004;</span>
                                 {% else %}
                                     <span style="color:red;">&#10008;</span>
@@ -110,52 +120,48 @@
                                 <div class="card-action-wrap d-flex">
 
                                     <!-- view -->
-                                    <a href="{% url 'userprofile_app:lecture_tag_detail' pk=lecture_tag.id %}"
+                                    <a href="{% url 'userprofile_app:lecture_clip_detail' pk=lecture_clip.id %}"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-success"
                                        data-toggle="tooltip" title="مشاهده">
                                         <i class="la la-eye"></i>
                                     </a>
 
                                     <!-- update -->
-                                    <a href="{% url 'userprofile_app:lecture_tag_edit' pk=lecture_tag.id %}"
+                                    <a href="{% url 'userprofile_app:lecture_clip_edit' pk=lecture_clip.id %}"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-warning"
                                        data-toggle="tooltip" title="ویرایش">
                                         <i class="la la-edit"></i>
                                     </a>
 
                                     <!-- delete -->
-                                    <a href="javascript:void(0)" data-toggle="modal"
-                                       data-target="#deleteModal-{{ lecture_tag.id }}"
+                                    <a href="javascript:void(0)" data-toggle="modal" data-target="#deleteModal-{{ lecture_clip.id }}"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-danger"
                                        data-toggle="tooltip" title="حذف">
                                         <i class="la la-trash"></i>
                                     </a>
 
                                     <!-- modal: delete -->
-                                    <div class="modal fade modal-container" id="deleteModal-{{ lecture_tag.id }}"
-                                         tabindex="-1" role="dialog"
-                                         aria-labelledby="deleteModalTitle-{{ lecture_tag.id }}"
+                                    <div class="modal fade modal-container" id="deleteModal-{{ lecture_clip.id }}" tabindex="-1" role="dialog"
+                                         aria-labelledby="deleteModalTitle-{{ lecture_clip.id }}"
                                          aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-body text-center">
                                                     <span class="la la-exclamation-circle fs-60 text-warning"></span>
                                                     <h4 class="modal-title fs-19 font-weight-semi-bold pt-2 pb-1"
-                                                        id="deleteModalTitle-{{ lecture_tag.id }}">تگ شما
-                                                        حذف خواهد شد!
+                                                        id="deleteModalTitle-{{ lecture_clip.id }}">کلیپ شما حذف خواهد شد!
                                                     </h4>
-                                                    <p>آیا مطمئن هستید که می خواهید این تگ را حذف کنید؟</p>
+                                                    <p>آیا مطمئن هستید که می خواهید این کلیپ را حذف کنید؟</p>
                                                     <div class="btn-box pt-4">
 
                                                         <form
-                                                                action="{% url 'userprofile_app:lecture_tag_delete' pk=lecture_tag.id %}"
+                                                                action="{% url 'userprofile_app:lecture_clip_delete' pk=lecture_clip.id %}"
                                                                 method="post">
                                                             {% csrf_token %}
                                                             <button type="button" class="btn font-weight-medium mr-3"
                                                                     data-dismiss="modal">لغو
                                                             </button>
-                                                            <input type="hidden" name="id"
-                                                                   value="{{ lecture_tag.id }}">
+                                                            <input type="hidden" name="id" value="{{ lecture_clip.id }}">
                                                             <button type="submit"
                                                                     class="btn theme-btn theme-btn-sm lh-30">
                                                                 حذف
@@ -168,6 +174,7 @@
                                     </div>
                                 </div>
                             </td>
+
                         </tr>
                     {% endfor %}
                     </tbody>

@@ -55,16 +55,24 @@ urlpatterns = [
     # endregion
     # region Lecture Tag management
     path('lecture-tags/', views.AdminLectureTagListView.as_view(), name='lecture_tags_list'),
+    path('lecture-tags/<int:pk>/read/', views.AdminLectureTagReadView.as_view(), name='lecture_tag_detail'),
+
     path('lecture-tags/create/', views.AdminLectureTagCreateView.as_view(), name='lecture_tag_create'),
     path('lecture-tags/<int:pk>/edit/', views.AdminLectureTagUpdateView.as_view(), name='lecture_tag_edit'),
     path('lecture-tags/<int:pk>/delete/', views.AdminLectureTagDeleteView.as_view(), name='lecture_tag_delete'),
     # endregion
     # region Lecture Comment management
-    path('lecture-comments/', views.AdminLectureCommentListView.as_view(), name='lecture_comments_list'),
-    path('lecture-comments/create/', views.AdminLectureCommentCreateView.as_view(), name='lecture_comment_create'),
-    path('lecture-comments/<int:pk>/edit/', views.AdminLectureCommentUpdateView.as_view(), name='lecture_comment_edit'),
-    path('lecture-comments/<int:pk>/delete/', views.AdminLectureCommentDeleteView.as_view(),
-         name='lecture_comment_delete'),
+    path('lecture-comments/', views.admin_lecture_comment_list, name='lecture_comments_list'),
+    path('lecture-comments/<int:pk>/read/', views.admin_lecture_comment_read, name='lecture_comment_detail'),
+    path('lecture-comments/<int:pk>/edit/', views.admin_lecture_comment_update, name='lecture_comment_edit'),
+    path('lecture-comments/<int:pk>/delete/', views.admin_lecture_comment_delete, name='lecture_comment_delete'),
+    # endregion
+    # region Lecture Clip management
+    path('lecture-clips/', views.AdminLectureClipListView.as_view(), name='lecture_clips_list'),
+    path('lectures-clips/create/', views.AdminLectureClipCreateView.as_view(), name='lecture_clip_create'),
+    path('lectures-clips/<int:pk>/read/', views.AdminLectureClipReadView.as_view(), name='lecture_clip_detail'),
+    path('lectures-clips/<int:pk>/edit/', views.AdminLectureClipUpdateView.as_view(), name='lecture_clip_edit'),
+    path('lectures-clips/<int:pk>/delete/', views.AdminLectureClipDeleteView.as_view(), name='lecture_clip_delete'),
     # endregion
 
     # region Gallery management

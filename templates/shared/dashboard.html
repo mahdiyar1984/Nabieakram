@@ -121,6 +121,10 @@
                     <a href="{% url 'userprofile_app:lecture_comments_list' %}"
                        class="dropdown-item {% if request.resolver_match.url_name == 'lecture_comments_list' %}active bg-secondary text-white{% endif %}"
                        style="padding: 6px 25px; color: #6c757d;">نظرات</a>
+
+                    <a href="{% url 'userprofile_app:lecture_clips_list' %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'lecture_comments_list' %}active bg-secondary text-white{% endif %}"
+                       style="padding: 6px 25px; color: #6c757d;">کلیپ ها</a>
                 </div>
             </li>
 
