@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from account_app.models import User
 from django.contrib.auth.models import Group, Permission
 
-from media_app.models import Lecture, LectureTag, LectureCategory, LectureClip
+from media_app.models import Lecture, LectureTag, LectureCategory, LectureClip, GalleryCategory
 
 
 # region group management
@@ -284,7 +284,7 @@ class LectureClipForm(forms.ModelForm):
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
-            'lecture': forms.Select(attrs={'class': 'form-control form--control pl-3','disabled':''}),
+            'lecture': forms.Select(attrs={'class': 'form-control form--control pl-3'}),
             'slug': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
             'short_description': forms.Textarea(attrs={
                 'class': 'form-control form--control user-text-editor pl-3', 'rows': 4}),
@@ -305,7 +305,23 @@ class GalleryImageForm(forms.ModelForm):
 
 
 class GalleryCategoryForm(forms.ModelForm):
-    pass
+    def __init__(self, *args, **kwargs):
+        read_only = kwargs.pop('read_only', False)
+        super().__init__(*args, **kwargs)
+
+        if read_only:
+            for field in self.fields.values():
+                field.disabled = True
+
+    class Meta:
+        model = GalleryCategory
+        fields = ['name', 'slug', 'is_active', 'is_delete']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'slug': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
 
 
 # endregion

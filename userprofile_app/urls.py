@@ -48,10 +48,13 @@ urlpatterns = [
     # endregion
     # region Lecture Category management
     path('lecture-categories/', views.AdminLectureCategoryListView.as_view(), name='lecture_categories_list'),
-    path('lecture-categories/<int:pk>/read/', views.AdminLectureCategoryReadView.as_view(), name='lecture_category_detail'),
+    path('lecture-categories/<int:pk>/read/', views.AdminLectureCategoryReadView.as_view(),
+         name='lecture_category_detail'),
     path('lecture-categories/create/', views.AdminLectureCategoryCreateView.as_view(), name='lecture_category_create'),
-    path('lecture-categories/<int:pk>/edit/', views.AdminLectureCategoryUpdateView.as_view(), name='lecture_category_edit'),
-    path('lecture-categories/<int:pk>/delete/', views.AdminLectureCategoryDeleteView.as_view(), name='lecture_category_delete'),
+    path('lecture-categories/<int:pk>/edit/', views.AdminLectureCategoryUpdateView.as_view(),
+         name='lecture_category_edit'),
+    path('lecture-categories/<int:pk>/delete/', views.AdminLectureCategoryDeleteView.as_view(),
+         name='lecture_category_delete'),
     # endregion
     # region Lecture Tag management
     path('lecture-tags/', views.AdminLectureTagListView.as_view(), name='lecture_tags_list'),
@@ -77,17 +80,17 @@ urlpatterns = [
 
     # region Gallery management
     path('galleries/', views.AdminGalleryImageListView.as_view(), name='galleries_list'),
+    # path('galleries/<int:pk>/read/', views.AdminGalleryImageReadView.as_view(), name='gallery_detail'),
     path('galleries/create/', views.AdminGalleryImageCreateView.as_view(), name='gallery_create'),
     path('galleries/<int:pk>/edit/', views.AdminGalleryImageUpdateView.as_view(), name='gallery_edit'),
     path('galleries/<int:pk>/delete/', views.AdminGalleryImageDeleteView.as_view(), name='gallery_delete'),
     # endregion
     # region Gallery Category management
     path('gallery-categories/', views.AdminGalleryCategoryListView.as_view(), name='gallery_categories_list'),
+    path('gallery-categories/<int:pk>/read/', views.AdminGalleryCategoryReadView.as_view(), name='gallery_category_detail'),
     path('gallery-categories/create/', views.AdminGalleryCategoryCreateView.as_view(), name='gallery_category_create'),
-    path('gallery-categories/<int:pk>/edit/', views.AdminGalleryCategoryUpdateView.as_view(),
-         name='gallery_category_edit'),
-    path('gallery-categories/<int:pk>/delete/', views.AdminGalleryCategoryDeleteView.as_view(),
-         name='gallery_category_delete'),
+    path('gallery-categories/<int:pk>/edit/', views.AdminGalleryCategoryUpdateView.as_view(), name='gallery_category_edit'),
+    path('gallery-categories/<int:pk>/delete/', views.AdminGalleryCategoryDeleteView.as_view(), name='gallery_category_delete'),
     # endregion
 
     # region FooterLink management

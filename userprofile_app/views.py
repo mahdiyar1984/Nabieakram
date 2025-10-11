@@ -927,9 +927,7 @@ class AdminLectureClipCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('userprofile_app:lecture_clips_list')
 
     def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.save()
-        form.save_m2m()
+        self.object = form.save()
         return redirect(self.get_success_url())
 
 
@@ -942,9 +940,8 @@ class AdminLectureClipUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.author = self.request.user
         if self.request.FILES.get('video'):
-            self.object.image = self.request.FILES['video']
+            self.object.video = self.request.FILES['video']
         self.object.save()
         return super().form_valid(form)
 
@@ -997,9 +994,18 @@ class AdminGalleryImageDeleteView(LoginRequiredMixin, DeleteView):
 class AdminGalleryCategoryListView(LoginRequiredMixin, ListView):
     model = GalleryCategory
     template_name = 'userprofile_app/galleries/gallery_categories_list.html'
+    paginate_by = 10
 
-    def get_queryset(self):
-        return LectureCategory.objects.filter(is_delete=False)
+class AdminGalleryCategoryReadView(LoginRequiredMixin, DetailView):
+    model = GalleryCategory
+    form_class = GalleryCategoryForm
+    template_name = "userprofile_app/galleries/gallery_category_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = GalleryCategoryForm(instance=self.get_object(), read_only=True)
+        context['read_only'] = getattr(context.get('form'), 'read_only', True)
+        return context
 
 
 class AdminGalleryCategoryCreateView(LoginRequiredMixin, CreateView):
@@ -1008,6 +1014,10 @@ class AdminGalleryCategoryCreateView(LoginRequiredMixin, CreateView):
     template_name = 'userprofile_app/galleries/gallery_category_form.html'
     success_url = reverse_lazy('userprofile_app:gallery_categories_list')
 
+    def form_valid(self, form):
+        self.object = form.save()
+        return super().form_valid(form)
+
 
 class AdminGalleryCategoryUpdateView(LoginRequiredMixin, UpdateView):
     model = GalleryCategory
@@ -1015,11 +1025,19 @@ class AdminGalleryCategoryUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'userprofile_app/galleries/gallery_category_form.html'
     success_url = reverse_lazy('userprofile_app:gallery_categories_list')
 
+    def form_valid(self, form):
+        self.object = form.save()
+        return super().form_valid(form)
+
 
 class AdminGalleryCategoryDeleteView(LoginRequiredMixin, DeleteView):
-    model = GalleryCategory
-    template_name = 'userprofile_app/galleries/gallery_category_confirm_delete.html'
     success_url = reverse_lazy('userprofile_app:gallery_categories_list')
+
+    def post(self, request, pk, *args, **kwargs):
+        gallery_category = get_object_or_404(GalleryCategory, pk=pk)
+        gallery_category.is_delete = True
+        gallery_category.save()
+        return redirect(self.success_url)
 
 
 # endregion

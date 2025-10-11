@@ -101,7 +101,7 @@
                 </a>
 
                 <!-- زیرمنو -->
-                <div class="dropdown-menu {% if request.resolver_match.url_name in 'lectures_list lecture_categories_list lecture_tags_list lecture_comments_list' %}show{% endif %}"
+                <div class="dropdown-menu {% if request.resolver_match.url_name in 'lectures_list lecture_categories_list lecture_tags_list lecture_comments_list lecture_clips_list' %}show{% endif %}"
                      aria-labelledby="userProfileDropdown"
                      style="box-shadow: none; border: none; margin-top: 2px;
                      right: 0; left: 0; min-width: unset; width: 100%; padding: 0.25rem 0.75rem 0.25rem 28px;">
@@ -123,7 +123,7 @@
                        style="padding: 6px 25px; color: #6c757d;">نظرات</a>
 
                     <a href="{% url 'userprofile_app:lecture_clips_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'lecture_comments_list' %}active bg-secondary text-white{% endif %}"
+                       class="dropdown-item {% if request.resolver_match.url_name == 'lecture_clips_list' %}active bg-secondary text-white{% endif %}"
                        style="padding: 6px 25px; color: #6c757d;">کلیپ ها</a>
                 </div>
             </li>

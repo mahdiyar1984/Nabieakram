@@ -114,7 +114,6 @@ class Lecture(BaseModel):
             ("can_publish_lecture", "Can publish lecture"),
             ("can_reject_lecture", "Can reject lecture"),
         ]
-
 class LectureClip(BaseModel):
     objects = models.Manager()
     lecture = models.ForeignKey(
