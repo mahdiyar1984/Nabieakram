@@ -6,6 +6,9 @@ from config_app import settings
 class FooterLinkBox(models.Model):
     objects = models.Manager()
     title = models.CharField(max_length=200, verbose_name='عنوان')
+    is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
+    create_date = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='تاریخ ثبت')
+
 
     class Meta:
         verbose_name = 'دسته بندی لینک های فوتر'
@@ -20,8 +23,8 @@ class FooterLink(models.Model):
     order = models.PositiveIntegerField(default=0, verbose_name="ترتیب نمایش")
     title = models.CharField(max_length=200, verbose_name='عنوان')
     url = models.URLField(max_length=500, verbose_name='لینک')
-
-
+    is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
+    create_date = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='تاریخ ثبت')
 
     class Meta:
         verbose_name = 'لینک فوتر'
@@ -38,10 +41,10 @@ class Slider(models.Model):
     url_title = models.CharField(max_length=200, verbose_name='عنوان لینک', null=True, blank=True)
     description = models.TextField(verbose_name='توضیحات اسلایدر', null=True, blank=True)
     image = models.ImageField(upload_to='sliders/images', verbose_name='تصویر اسلایدر')
-    is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
     order = models.PositiveIntegerField(default=0, verbose_name="ترتیب نمایش")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="تاریخ آخرین بروزرسانی")
+    is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
 
     class Meta:
         verbose_name = "اسلایدر"

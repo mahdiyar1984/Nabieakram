@@ -64,6 +64,7 @@
                     <thead>
                     <tr>
                         <th scope="col">عنوان دسته بندی</th>
+                        <th scope="col">تاریخ ایجاد</th>
                         <th scope="col">والد</th>
                         <th scope="col">لینک در url</th>
                         <th scope="col" class="text-center">اکتیو</th>
@@ -76,6 +77,7 @@
                     {% for articlecategory in articlecategory_list %}
                         <tr>
                             <td>{{ articlecategory.title }}</td>
+                            <td>{{ articlecategory.create_date|to_shamsi }}</td>
                             <td>{{ articlecategory.parent.title }}</td>
                             <td>{{ articlecategory.url_title }}</td>
                             <td class="text-center">
@@ -160,7 +162,7 @@
             </div>
 
 
-             <!-- pagination -->
+            <!-- pagination -->
             {% if page_obj.paginator.count > page_obj.paginator.per_page %}
                 <div class="text-center pt-3">
                     <nav aria-label="مثال ناوبری صفحه" class="pagination-box">

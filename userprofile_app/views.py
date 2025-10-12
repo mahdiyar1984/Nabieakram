@@ -7,11 +7,11 @@ from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.views.generic import DetailView, TemplateView
 from blog_app.models import Article, ArticleCategory, ArticleTag, ArticleComment
-from main_app.models import FooterLink, ContactUs, SiteSetting, Slider
+from main_app.models import FooterLink, ContactUs, SiteSetting, Slider, FooterLinkBox
 from media_app.models import Lecture, LectureCategory, LectureTag, LectureComment, GalleryImage, GalleryCategory, BaseModel, LectureClip
 from .forms import ArticleForm, GroupForm, ArticleCategoryForm, ArticleTagForm, LectureForm, LectureTagForm, \
     LectureCategoryForm, GalleryImageForm, \
-    GalleryCategoryForm, FooterLinkForm, ContactUsForm, SliderForm, SiteSettingForm, LectureClipForm
+    GalleryCategoryForm, FooterLinkForm, ContactUsForm, SliderForm, SiteSettingForm, LectureClipForm, FooterLinkBoxForm
 from django.contrib import messages
 from django.http import HttpRequest
 from django.shortcuts import render, redirect, get_object_or_404
@@ -961,13 +961,30 @@ class AdminLectureClipDeleteView(LoginRequiredMixin, DeleteView):
 class AdminGalleryImageListView(LoginRequiredMixin, ListView):
     model = GalleryImage
     template_name = 'userprofile_app/galleries/galleries_list.html'
+    paginate_by = 5
 
-    def get_queryset(self):
-        return GalleryImage.objects.filter(is_delete=False)
+
+class AdminGalleryImageReadView(LoginRequiredMixin, DetailView):
+    model = GalleryImage
+    form_class = GalleryImageForm
+    template_name = "userprofile_app/galleries/gallery_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = GalleryImageForm(instance=self.get_object(), read_only=True)
+        context['read_only'] = getattr(context.get('form'), 'read_only', True)
+        return context
 
 
 class AdminGalleryImageCreateView(LoginRequiredMixin, CreateView):
-    pass
+    model = GalleryImage
+    form_class = GalleryImageForm
+    template_name = 'userprofile_app/galleries/gallery_form.html'
+    success_url = reverse_lazy('userprofile_app:galleries_list')
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return redirect(self.get_success_url())
 
 
 class AdminGalleryImageUpdateView(LoginRequiredMixin, UpdateView):
@@ -976,18 +993,20 @@ class AdminGalleryImageUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'userprofile_app/galleries/gallery_form.html'
     success_url = reverse_lazy('userprofile_app:galleries_list')
 
-    def get_queryset(self):
-        return GalleryImage.objects.filter(is_delete=False)
-
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        if self.request.FILES.get('image'):
+            self.object.image = self.request.FILES['image']
+        return super().form_valid(form)
 
 class AdminGalleryImageDeleteView(LoginRequiredMixin, DeleteView):
-    model = GalleryImage
-    template_name = 'userprofile_app/galleries/gallery_category_confirm_delete.html'
     success_url = reverse_lazy('userprofile_app:galleries_list')
 
-    def get_queryset(self):
-        return GalleryImage.objects.filter(is_delete=False)
-
+    def post(self, request, pk, *args, **kwargs):
+        lecture = get_object_or_404(GalleryImage, pk=pk)
+        lecture.is_delete = True
+        lecture.save()
+        return redirect(self.success_url)
 
 # endregion
 # region Gallery Category
@@ -1046,10 +1065,32 @@ class AdminGalleryCategoryDeleteView(LoginRequiredMixin, DeleteView):
 class AdminFooterLinkListView(LoginRequiredMixin, ListView):
     model = FooterLink
     template_name = 'userprofile_app/footer_links/footer_links_list.html'
+    paginate_by = 5
+
+
+class AdminFooterLinkReadView(LoginRequiredMixin, DetailView):
+    model = FooterLink
+    form_class = LectureForm
+    template_name = "userprofile_app/footer_links/footer_link_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = FooterLinkForm(instance=self.get_object(), read_only=True)
+        context['read_only'] = getattr(context.get('form'), 'read_only', True)
+        context['footer_link_box'] = FooterLinkBox.objects.all()
+        return context
 
 
 class AdminFooterLinkCreateView(LoginRequiredMixin, CreateView):
-    pass
+    model = FooterLink
+    form_class = FooterLinkForm
+    template_name = 'userprofile_app/footer_links/footer_link_form.html'
+    success_url = reverse_lazy('userprofile_app:footer_links_list')
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.save()
+        return redirect(self.get_success_url())
 
 
 class AdminFooterLinkUpdateView(LoginRequiredMixin, UpdateView):
@@ -1058,41 +1099,72 @@ class AdminFooterLinkUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'userprofile_app/footer_links/footer_link_form.html'
     success_url = reverse_lazy('userprofile_app:footer_links_list')
 
-    def get_queryset(self):
-        return GalleryImage.objects.filter(is_delete=False)
+    def form_valid(self, form):
+        self.object = form.save()
+        return super().form_valid(form)
 
 
 class AdminFooterLinkDeleteView(LoginRequiredMixin, DeleteView):
-    model = FooterLink
-    template_name = 'userprofile_app/footer_links/footer_link_confirm_delete.html'
     success_url = reverse_lazy('userprofile_app:footer_links_list')
+
+    def post(self, request, pk, *args, **kwargs):
+        footer_link = get_object_or_404(FooterLink, pk=pk)
+        footer_link.is_active = False
+        footer_link.save()
+        return redirect(self.success_url)
 
 
 # endregion
 # region Footer Link Box
 class AdminFooterLinkBoxListView(LoginRequiredMixin, ListView):
-    model = GalleryCategory
+    model = FooterLinkBox
     template_name = 'userprofile_app/footer_links/footer_link_boxes_list.html'
+    paginate_by = 5
+
+class AdminFooterLinkBoxReadView(LoginRequiredMixin, DetailView):
+    model = FooterLinkBox
+    form_class = FooterLinkBoxForm
+    template_name = "userprofile_app/footer_links/footer_link_box_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = LectureCategoryForm(instance=self.get_object(), read_only=True)
+        context['read_only'] = getattr(context.get('form'), 'read_only', True)
+        return context
 
 
 class AdminFooterLinkBoxCreateView(LoginRequiredMixin, CreateView):
-    model = GalleryCategory
-    form_class = GalleryCategoryForm
+    model = FooterLinkBox
+    form_class = FooterLinkBoxForm
     template_name = 'userprofile_app/footer_links/footer_link_box_form.html'
     success_url = reverse_lazy('userprofile_app:footer_link_boxes_list')
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.save()
+        return super().form_valid(form)
 
 
 class AdminFooterLinkBoxUpdateView(LoginRequiredMixin, UpdateView):
-    model = GalleryCategory
-    form_class = GalleryCategoryForm
+    model = FooterLinkBox
+    form_class = FooterLinkBoxForm
     template_name = 'userprofile_app/footer_links/footer_link_box_form.html'
     success_url = reverse_lazy('userprofile_app:footer_link_boxes_list')
 
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.save()
+        return super().form_valid(form)
+
 
 class AdminFooterLinkBoxDeleteView(LoginRequiredMixin, DeleteView):
-    model = GalleryCategory
-    template_name = 'userprofile_app/footer_links/footer_link_box_confirm_delete.html'
     success_url = reverse_lazy('userprofile_app:footer_link_boxes_list')
+
+    def post(self, request, pk, *args, **kwargs):
+        footer_link_box = get_object_or_404(FooterLinkBox, pk=pk)
+        footer_link_box.is_active = False
+        footer_link_box.save()
+        return redirect(self.success_url)
 
 
 # endregion
@@ -1112,10 +1184,34 @@ class AdminContactUsUpdateView(LoginRequiredMixin, UpdateView):
 
 # endregion
 
-# region slider
+# region Slider
 class AdminSliderListView(LoginRequiredMixin, ListView):
-    model = ContactUs
+    model = Slider
     template_name = 'userprofile_app/sliders/sliders_list.html'
+    paginate_by = 5
+
+
+class AdminSliderReadView(LoginRequiredMixin, DetailView):
+    model = Slider
+    form_class = SliderForm
+    template_name = "userprofile_app/sliders/slider_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = SliderForm(instance=self.get_object(), read_only=True)
+        context['read_only'] = getattr(context.get('form'), 'read_only', True)
+        return context
+
+
+class AdminSliderCreateView(LoginRequiredMixin, CreateView):
+    model = Slider
+    form_class = SliderForm
+    template_name = 'userprofile_app/sliders/slider_form.html'
+    success_url = reverse_lazy('userprofile_app:sliders_list')
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return redirect(self.get_success_url())
 
 
 class AdminSliderUpdateView(LoginRequiredMixin, UpdateView):
@@ -1124,6 +1220,20 @@ class AdminSliderUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'userprofile_app/sliders/slider_form.html'
     success_url = reverse_lazy('userprofile_app:sliders_list')
 
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        if self.request.FILES.get('image'):
+            self.object.image = self.request.FILES['image']
+        return super().form_valid(form)
+
+class AdminSliderDeleteView(LoginRequiredMixin, DeleteView):
+    success_url = reverse_lazy('userprofile_app:sliders_list')
+
+    def post(self, request, pk, *args, **kwargs):
+        slider = get_object_or_404(Slider, pk=pk)
+        slider.is_active = False
+        slider.save()
+        return redirect(self.success_url)
 
 # endregion
 

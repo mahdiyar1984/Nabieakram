@@ -5,7 +5,8 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from account_app.models import User
 from django.contrib.auth.models import Group, Permission
 
-from media_app.models import Lecture, LectureTag, LectureCategory, LectureClip, GalleryCategory
+from main_app.models import FooterLinkBox, FooterLink, Slider
+from media_app.models import Lecture, LectureTag, LectureCategory, LectureClip, GalleryCategory, GalleryImage
 
 
 # region group management
@@ -301,7 +302,24 @@ class LectureClipForm(forms.ModelForm):
 
 # region Gallery Management
 class GalleryImageForm(forms.ModelForm):
-    pass
+    def __init__(self, *args, **kwargs):
+        read_only = kwargs.pop('read_only', False)
+        super().__init__(*args, **kwargs)
+
+        if read_only:
+            for field in self.fields.values():
+                field.disabled = True
+
+    class Meta:
+        model = GalleryImage
+        fields = ['title', 'category', 'is_active', 'is_delete','image']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'category': forms.Select(attrs={'class': 'form-control form--control pl-3'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'file-upload-input', 'id': 'customFileInput'}),
+        }
 
 
 class GalleryCategoryForm(forms.ModelForm):
@@ -328,16 +346,48 @@ class GalleryCategoryForm(forms.ModelForm):
 
 # region Footer Link Management
 class FooterLinkForm(forms.ModelForm):
-    pass
+    def __init__(self, *args, **kwargs):
+        read_only = kwargs.pop('read_only', False)
+        super().__init__(*args, **kwargs)
+
+        if read_only:
+            for field in self.fields.values():
+                field.disabled = True
+
+    class Meta:
+        model = FooterLink
+        fields = ['title', 'footer_link_box', 'order', 'url', 'is_active']
+
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'footer_link_box': forms.Select(attrs={'class': 'form-control form--control'}),
+            'order': forms.NumberInput(attrs={'class': 'form-control form--control pl-3'}),
+            'url': forms.URLInput(attrs={'class': 'form-control form--control pl-3'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
 
 
 class FooterLinkBoxForm(forms.ModelForm):
-    pass
+    def __init__(self, *args, **kwargs):
+        read_only = kwargs.pop('read_only', False)
+        super().__init__(*args, **kwargs)
+
+        if read_only:
+            for field in self.fields.values():
+                field.disabled = True
+
+    class Meta:
+        model = FooterLinkBox
+        fields = ['title','is_active']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
 
 
 # endregion
 
-# region Lecture Management
+# region Contact Us Management
 class ContactUsForm(forms.ModelForm):
     pass
 
@@ -346,7 +396,29 @@ class ContactUsForm(forms.ModelForm):
 
 # region Slider Management
 class SliderForm(forms.ModelForm):
-    pass
+    def __init__(self, *args, **kwargs):
+        read_only = kwargs.pop('read_only', False)
+        super().__init__(*args, **kwargs)
+
+        if read_only:
+            for field in self.fields.values():
+                field.disabled = True
+
+    class Meta:
+        model = Slider
+        fields = ['title','url_title','url','description','image','order','is_active']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'url_title': forms.URLInput(attrs={'class': 'form-control form--control pl-3'}),
+            'url': forms.URLInput(attrs={'class': 'form-control form--control pl-3'}),
+            'short_description': forms.Textarea(attrs={
+                'class': 'form-control form--control user-text-editor pl-3',
+                'rows': 4
+            }),
+            'order': forms.NumberInput(attrs={'class': 'form-control form--control pl-3'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'file-upload-input', 'id': 'customFileInput'}),
+        }
 
 
 # endregion

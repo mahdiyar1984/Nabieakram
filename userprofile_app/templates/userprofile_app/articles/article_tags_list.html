@@ -73,6 +73,7 @@
                     <thead>
                     <tr>
                         <th scope="col">عنوان تگ</th>
+                        <th scope="col">تاریخ ایجاد</th>
                         <th scope="col" class="text-center">اکتیو</th>
                         <th scope="col" class="text-center">حذف شده</th>
                         <th scope="col">اقدام</th>
@@ -83,6 +84,7 @@
                     {% for article_tag in page_obj %}
                         <tr>
                             <td>{{ article_tag.title }}</td>
+                            <td>{{ article_tag.create_date|to_shamsi }}</td>
                             <td class="text-center">
                                 {% if article_tag.is_active %}
                                     <span style="color:green;">&#10004;</span>

@@ -37,7 +37,7 @@ urlpatterns = [
     path('article-comments/<int:pk>/delete/', views.admin_article_comment_delete, name='article_comment_delete'),
     # endregion
 
-    # region Lecture management
+    # region Lecture
     path('lectures/', views.AdminLectureListView.as_view(), name='lectures_list'),
     path('lecturess/create/', views.AdminLectureCreateView.as_view(), name='lecture_create'),
     path('lecturess/<int:pk>/read/', views.AdminLectureReadView.as_view(), name='lecture_detail'),
@@ -46,7 +46,7 @@ urlpatterns = [
     path("lecturess/<int:pk>/status/", views.AdminLectureChangeStatusView.as_view(), name="lecture_change_status"),
 
     # endregion
-    # region Lecture Category management
+    # region Lecture Category
     path('lecture-categories/', views.AdminLectureCategoryListView.as_view(), name='lecture_categories_list'),
     path('lecture-categories/<int:pk>/read/', views.AdminLectureCategoryReadView.as_view(),
          name='lecture_category_detail'),
@@ -56,7 +56,7 @@ urlpatterns = [
     path('lecture-categories/<int:pk>/delete/', views.AdminLectureCategoryDeleteView.as_view(),
          name='lecture_category_delete'),
     # endregion
-    # region Lecture Tag management
+    # region Lecture Tag
     path('lecture-tags/', views.AdminLectureTagListView.as_view(), name='lecture_tags_list'),
     path('lecture-tags/<int:pk>/read/', views.AdminLectureTagReadView.as_view(), name='lecture_tag_detail'),
 
@@ -64,13 +64,13 @@ urlpatterns = [
     path('lecture-tags/<int:pk>/edit/', views.AdminLectureTagUpdateView.as_view(), name='lecture_tag_edit'),
     path('lecture-tags/<int:pk>/delete/', views.AdminLectureTagDeleteView.as_view(), name='lecture_tag_delete'),
     # endregion
-    # region Lecture Comment management
+    # region Lecture Comment
     path('lecture-comments/', views.admin_lecture_comment_list, name='lecture_comments_list'),
     path('lecture-comments/<int:pk>/read/', views.admin_lecture_comment_read, name='lecture_comment_detail'),
     path('lecture-comments/<int:pk>/edit/', views.admin_lecture_comment_update, name='lecture_comment_edit'),
     path('lecture-comments/<int:pk>/delete/', views.admin_lecture_comment_delete, name='lecture_comment_delete'),
     # endregion
-    # region Lecture Clip management
+    # region Lecture Clip
     path('lecture-clips/', views.AdminLectureClipListView.as_view(), name='lecture_clips_list'),
     path('lectures-clips/create/', views.AdminLectureClipCreateView.as_view(), name='lecture_clip_create'),
     path('lectures-clips/<int:pk>/read/', views.AdminLectureClipReadView.as_view(), name='lecture_clip_detail'),
@@ -78,14 +78,14 @@ urlpatterns = [
     path('lectures-clips/<int:pk>/delete/', views.AdminLectureClipDeleteView.as_view(), name='lecture_clip_delete'),
     # endregion
 
-    # region Gallery management
+    # region Gallery
     path('galleries/', views.AdminGalleryImageListView.as_view(), name='galleries_list'),
-    # path('galleries/<int:pk>/read/', views.AdminGalleryImageReadView.as_view(), name='gallery_detail'),
+    path('galleries/<int:pk>/read/', views.AdminGalleryImageReadView.as_view(), name='gallery_detail'),
     path('galleries/create/', views.AdminGalleryImageCreateView.as_view(), name='gallery_create'),
     path('galleries/<int:pk>/edit/', views.AdminGalleryImageUpdateView.as_view(), name='gallery_edit'),
     path('galleries/<int:pk>/delete/', views.AdminGalleryImageDeleteView.as_view(), name='gallery_delete'),
     # endregion
-    # region Gallery Category management
+    # region Gallery Category
     path('gallery-categories/', views.AdminGalleryCategoryListView.as_view(), name='gallery_categories_list'),
     path('gallery-categories/<int:pk>/read/', views.AdminGalleryCategoryReadView.as_view(), name='gallery_category_detail'),
     path('gallery-categories/create/', views.AdminGalleryCategoryCreateView.as_view(), name='gallery_category_create'),
@@ -93,43 +93,48 @@ urlpatterns = [
     path('gallery-categories/<int:pk>/delete/', views.AdminGalleryCategoryDeleteView.as_view(), name='gallery_category_delete'),
     # endregion
 
-    # region FooterLink management
+    # region FooterLink
     path('footer-links/', views.AdminFooterLinkListView.as_view(), name='footer_links_list'),
+    path('footer-links/<int:pk>/read/', views.AdminFooterLinkReadView.as_view(), name='footer_link_detail'),
     path('footer-links/create/', views.AdminFooterLinkCreateView.as_view(), name='footer_link_create'),
     path('footer-links/<int:pk>/edit/', views.AdminFooterLinkUpdateView.as_view(), name='footer_link_edit'),
     path('footer-links/<int:pk>/delete/', views.AdminFooterLinkDeleteView.as_view(), name='footer_link_delete'),
     # endregion
-    # region FooterLinkBox management
+    # region FooterLinkBox
     path('footer-link-boxes/', views.AdminFooterLinkBoxListView.as_view(), name='footer_link_boxes_list'),
+    path('footer-link-boxes/<int:pk>/read/', views.AdminFooterLinkBoxReadView.as_view(), name='footer_link_box_detail'),
     path('footer-link-boxes/create/', views.AdminFooterLinkBoxCreateView.as_view(), name='footer_link_box_create'),
     path('footer-link-boxes/<int:pk>/edit/', views.AdminFooterLinkBoxUpdateView.as_view(), name='footer_link_box_edit'),
     path('footer-link-boxes/<int:pk>/delete/', views.AdminFooterLinkBoxDeleteView.as_view(),
          name='footer_link_box_delete'),
     # endregion
 
-    # region Contact Us management
+    # region Contact Us
     path('contact-us/', views.AdminContactUsListView.as_view(), name='contact_us_list'),
     path('contact-us/<int:pk>/edit/', views.AdminContactUsUpdateView.as_view(), name='contact_us_edit'),
     # endregion
 
-    # region Slider management
+    # region Slider
     path('sliders/', views.AdminSliderListView.as_view(), name='sliders_list'),
+    path('sliders/<int:pk>/read/', views.AdminSliderReadView.as_view(), name='slider_detail'),
+    path('sliders/create/', views.AdminSliderCreateView.as_view(), name='slider_create'),
     path('sliders/<int:pk>/edit/', views.AdminSliderUpdateView.as_view(), name='slider_edit'),
+    path('sliders/<int:pk>/delete/', views.AdminSliderDeleteView.as_view(), name='slider_delete'),
     # endregion
 
-    # region SiteSetting management
+    # region SiteSetting
     path('Site-Settings/', views.AdminSiteSettingListView.as_view(), name='site_Settings_list'),
     path('Site-Setting/<int:pk>/edit/', views.AdminSiteSettingUpdateView.as_view(), name='Site_Setting_edit'),
     # endregion
 
-    # region User management
+    # region User
     path('users/', views.UserListView.as_view(), name='user_list'),
     path('users/create/', views.UserCreateView.as_view(), name='user_create'),
     path('users/<int:pk>/edit/', views.UserUpdateView.as_view(), name='user_edit'),
     path('users/<int:pk>/delete/', views.UserDeleteView.as_view(), name='user_delete'),
     # endregion
 
-    # region Group management
+    # region Group
     path('groups/', views.GroupPermissionMatrixView.as_view(), name='group_list'),
     path('groups/create/', views.GroupCreateView.as_view(), name='group_create'),
     path('groups/<int:pk>/edit/', views.GroupUpdateView.as_view(), name='group_edit'),

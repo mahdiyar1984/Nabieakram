@@ -14,6 +14,7 @@ class ArticleCategory(models.Model):
     image = models.ImageField(upload_to='blog_app/article_category/images', null=True, blank=True, verbose_name='تصویر دسته بندی')
     is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
     is_delete = models.BooleanField(default=False, verbose_name='حذف شده / نشده')
+    create_date = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='تاریخ ثبت')
 
     def __str__(self):
         return self.title
@@ -28,6 +29,8 @@ class ArticleTag(models.Model):
     title = models.CharField(max_length=300, db_index=True, verbose_name="عنوان تگ")
     is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
     is_delete = models.BooleanField(default=False, verbose_name='حذف شده / نشده')
+    create_date = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='تاریخ ثبت')
+
 
     class Meta:
         verbose_name = 'تگ مقاله'

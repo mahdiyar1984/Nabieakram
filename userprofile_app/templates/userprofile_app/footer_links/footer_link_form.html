@@ -1,0 +1,115 @@
+{% extends 'shared/dashboard.html' %}
+{% load shamsi_tags %}
+{% load static %}
+
+{% block title %}پروفایل - ایجاد سخنرانی{% endblock %}
+
+{% block content %}
+
+    <div class="dashboard-content-wrap">
+        <div class="dashboard-menu-toggler btn theme-btn theme-btn-sm lh-28 theme-btn-transparent mb-4 ml-3"><i
+                class="la la-bars mr-1"></i> منو
+        </div>
+
+        <!-- main content -->
+        <div class="container-fluid">
+
+            <!-- breadcrumb -->
+            <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between mb-5">
+                <div class="media media-card align-items-center">
+                    <div class="media-img media--img media-img-md rounded-full">
+                        <img class="rounded-full" src="{{ request.user.avatar.url }}" alt="تصویر کوچک دانش آموز">
+                    </div>
+                    <div class="media-body">
+                        <h2 class="section__title fs-30">{{ request.user.get_full_name }}</h2>
+                        <div class="rating-wrap d-flex align-items-center pt-2">
+                            <div class="review-stars">
+                                <span class="rating-number">4.4</span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star-o"></span>
+                            </div>
+                            <span class="rating-total pl-1">(20230)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- new lecture -->
+            <div class="section-block mb-5"></div>
+            <div class="dashboard-heading mb-5">
+                <h3 class="fs-22 font-weight-semi-bold">لینک جدید جدید</h3>
+            </div>
+
+
+            <!-- form lecture -->
+            <form action=""
+                  method="post"
+                  class="MultiFile-intercepted"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="card card-item">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <!-- title -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">عنوان لینک</label>
+                                    {{ form.title }}
+                                </div>
+                            </div>
+
+                            <!-- footer_link_box -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">دسته بندی</label>
+                                    {{ form.footer_link_box }}
+                                </div>
+                            </div>
+
+                            <!-- url -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">url</label>
+                                    {{ form.url }}
+                                </div>
+                            </div>
+
+
+
+                            <!-- order -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">ترتیب</label>
+                                    {{ form.order }}
+                                </div>
+                            </div>
+
+                            <!-- is_active -->
+                            <div class="col-lg-2" style="margin-top: 40px;">
+                                <div class="form-group">
+                                    <label class="label-text mr-5">فعال / غیرفعال</label>
+                                    {{ form.is_active }}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                {% if not read_only %}
+                    <div class="course-submit-btn-box pb-4">
+                        <button class="btn theme-btn" type="submit">ذخیره</button>
+                    </div>
+                {% endif %}
+            </form>
+
+        </div>
+    </div>
+
+
+{% endblock %}
