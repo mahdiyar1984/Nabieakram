@@ -1,6 +1,8 @@
 from django.db import models
 from account_app.models import User
 from config_app import settings
+from django.utils import timezone
+
 
 
 class FooterLinkBox(models.Model):
@@ -55,25 +57,49 @@ class Slider(models.Model):
         return self.title if self.title else f"اسلاید {self.id}"
 
 class ContactUs(models.Model):
-    objects = models.Manager()
-
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="contact_messages", verbose_name="کاربر")
-    full_name = models.CharField(max_length=100, verbose_name="نام")
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="کاربر",
+    )
+    full_name = models.CharField(max_length=100, verbose_name="نام کامل")
     subject = models.CharField(max_length=300, verbose_name="عنوان")
     email = models.EmailField(max_length=300, verbose_name="ایمیل")
-    message = models.TextField(verbose_name="متن تماس با ما")
-    created_at = models.DateTimeField(verbose_name='تاریخ ایجاد', auto_now_add=True)
-    response = models.TextField(verbose_name='متن پاسخ تماس با ما', null=True, blank=True)
-    response_date = models.DateTimeField(null=True, blank=True)
-    is_read_by_admin = models.BooleanField(verbose_name='خوانده شده توسط ادمین', default=False)
+    message = models.TextField(verbose_name="متن پیام")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ارسال")
 
-    def __str__(self):
-        return self.subject
+    # پاسخ ادمین
+    response = models.TextField(verbose_name="متن پاسخ", null=True, blank=True)
+    response_date = models.DateTimeField(null=True, blank=True, verbose_name="تاریخ پاسخ")
+
+    # وضعیت خوانده شدن
+    is_read_by_admin = models.BooleanField(default=False, verbose_name="خوانده شده توسط ادمین")
+
+    # وضعیت پاسخ‌دهی
+    is_replied = models.BooleanField(default=False, verbose_name="پاسخ داده شده")
 
     class Meta:
-        verbose_name = 'تماس با ما'
-        verbose_name_plural = 'لیست تماس با ما'
+        verbose_name = "پیام تماس با ما"
+        verbose_name_plural = "پیام‌های تماس با ما"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.full_name} - {self.subject}"
+
+    def mark_as_read(self):
+        """تغییر وضعیت به خوانده‌شده"""
+        if not self.is_read_by_admin:
+            self.is_read_by_admin = True
+            self.save(update_fields=['is_read_by_admin'])
+
+    def reply(self, response_text):
+        """ذخیره پاسخ و ثبت زمان پاسخ‌دهی"""
+        self.response = response_text
+        self.response_date = timezone.now()
+        self.is_replied = True
+        self.save(update_fields=['response', 'response_date', 'is_replied'])
 
 class SiteSetting(models.Model):
     objects = models.Manager()

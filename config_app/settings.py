@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
     # external app
     'django_render_partial',
+    'captcha',
 ]
 
 AUTH_USER_MODEL = 'account_app.User'
