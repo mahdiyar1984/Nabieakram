@@ -5,10 +5,12 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
+from django.utils import timezone
 from django.views.generic import DetailView, TemplateView
 from blog_app.models import Article, ArticleCategory, ArticleTag, ArticleComment
 from main_app.models import FooterLink, ContactUs, SiteSetting, Slider, FooterLinkBox
 from media_app.models import Lecture, LectureCategory, LectureTag, LectureComment, GalleryImage, GalleryCategory, BaseModel, LectureClip
+from utils.email_service import send_activation_email
 from .forms import ArticleForm, GroupForm, ArticleCategoryForm, ArticleTagForm, LectureForm, LectureTagForm, \
     LectureCategoryForm, GalleryImageForm, \
     GalleryCategoryForm, FooterLinkForm, ContactUsForm, SliderForm, SiteSettingForm, LectureClipForm, FooterLinkBoxForm
@@ -41,173 +43,13 @@ class UserPanelDashboardPage(LoginRequiredMixin, View):
 
 # endregion
 
-# region Groups
-class GroupPermissionMatrixView(LoginRequiredMixin, AdminRequiredMixin, TemplateView):
-    template_name = "userprofile_app/groups/groups_list.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        groups = Group.objects.all()
-        actions = ["add", "change", "delete", "view"]
-
-        apps_dict = {}
-        for perm in Permission.objects.all().select_related("content_type"):
-            app_label = perm.content_type.app_label
-            model_name = perm.content_type.model  # lowercase مثل articlecategory
-
-            app_config = apps.get_app_config(app_label)
-            app_verbose = app_config.verbose_name.title()
-
-            model_class = apps.get_model(app_label, model_name)
-            model_verbose = model_class._meta.verbose_name.title()
-
-            codename = perm.codename
-
-            if app_verbose not in apps_dict:
-                apps_dict[app_verbose] = {}
-
-            if model_name not in apps_dict[app_verbose]:
-                apps_dict[app_verbose][model_name] = {
-                    "verbose": model_verbose,
-                    "perms": []
-                }
-
-            apps_dict[app_verbose][model_name]["perms"].append(codename)
-
-        for group in groups:
-            group.codename_list = set(group.permissions.values_list("codename", flat=True))
-
-        context.update({
-            "groups": groups,
-            "actions": actions,
-            "apps_dict": apps_dict,
-        })
-        return context
-
-    def post(self, request, *args, **kwargs):
-        groups = Group.objects.all()
-        all_perms = Permission.objects.all()
-        perm_map = {p.codename: p for p in all_perms}  # دیکشنری برای دسترسی سریع
-
-        for group in groups:
-            selected_codenames = request.POST.getlist(f'permissions_{group.id}[]')
-
-            # گرفتن لیست پرمیشن‌ها از دیکشنری به صورت سریع
-            selected_perms = [perm_map[c] for c in selected_codenames if c in perm_map]
-
-            # جایگزینی پرمیشن‌ها به صورت bulk
-            group.permissions.set(selected_perms)
-
-        return redirect(request.path)
-
-
-class GroupCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
-    model = Group
-    form_class = GroupForm
-    template_name = "userprofile_app/groups/group_form.html"
-    success_url = reverse_lazy("group_list")
-
-
-class GroupUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
-    model = Group
-    form_class = GroupForm
-    template_name = "userprofile_app/groups/group_form.html"
-    success_url = reverse_lazy("group_list")
-
-
-class GroupDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
-    model = Group
-    template_name = "userprofile_app/groups/group_confirm_delete.html"
-    success_url = reverse_lazy("group_list")
-
-
-# endregion
-
-# region user
-class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
+# region profile
+class InformationUserProfile(LoginRequiredMixin, DetailView):
     model = User
-    template_name = "userprofile_app/users/user_list.html"
+    template_name = 'userprofile_app/user_pofile/information_profile_user.html'
 
-
-class UserCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
-    model = User
-    form_class = UserCreateForm
-    template_name = "userprofile_app/users/user_form.html"
-    success_url = reverse_lazy('userprofile_app:user_list')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["groups"] = Group.objects.all()
-        return context
-
-    def form_valid(self, form):
-        # فیلدهای پایه
-        form.instance.first_name = self.request.POST.get("first_name")
-        form.instance.last_name = self.request.POST.get("last_name")
-        form.instance.phone_number = self.request.POST.get("phone_number")
-        form.instance.address = self.request.POST.get("address")
-        form.instance.about_user = self.request.POST.get("about_user")
-
-        if self.request.FILES.get("avatar"):
-            form.instance.avatar = self.request.FILES["avatar"]
-
-        # ذخیره superuser فقط اگر کاربر جاری superuser باشد
-        if self.request.user.is_superuser:
-            form.instance.is_superuser = self.request.POST.get("is_superuser") == "on"
-
-        response = super().form_valid(form)
-
-        # ذخیره گروه‌ها
-        groups_ids = self.request.POST.getlist("groups")
-        if groups_ids:
-            self.object.groups.set(groups_ids)
-
-        return response
-
-
-class UserUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
-    model = User
-    form_class = UserUpdateForm
-    template_name = "userprofile_app/users/user_form.html"
-    success_url = reverse_lazy('userprofile_app:user_list')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["groups"] = Group.objects.all()
-        return context
-
-    def form_valid(self, form):
-        # فیلدهای پایه
-        form.instance.first_name = self.request.POST.get("first_name")
-        form.instance.last_name = self.request.POST.get("last_name")
-        form.instance.phone_number = self.request.POST.get("phone_number")
-        form.instance.address = self.request.POST.get("address")
-        form.instance.about_user = self.request.POST.get("about_user")
-
-        if self.request.FILES.get("avatar"):
-            form.instance.avatar = self.request.FILES["avatar"]
-
-        # ذخیره superuser فقط اگر کاربر جاری superuser باشد
-        if self.request.user.is_superuser:
-            form.instance.is_superuser = self.request.POST.get("is_superuser") == "on"
-
-        response = super().form_valid(form)
-
-        # ذخیره گروه‌ها
-        groups_ids = self.request.POST.getlist("groups")
-        if groups_ids:
-            self.object.groups.set(groups_ids)
-
-        return response
-
-
-class UserDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
-    model = User
-    template_name = "userprofile_app/users/user_confirm_delete.html"
-    success_url = reverse_lazy('userprofile_app:user_list')
-
-
+    def get_object(self, queryset=None):
+        return self.request.user
 # endregion
 
 # region Article
@@ -1169,10 +1011,23 @@ class AdminFooterLinkBoxDeleteView(LoginRequiredMixin, DeleteView):
 
 # endregion
 
-# region Contact Us
+# region Article
 class AdminContactUsListView(LoginRequiredMixin, ListView):
     model = ContactUs
     template_name = 'userprofile_app/contact_us/contact_us_list.html'
+    paginate_by = 10
+
+
+class AdminContactUsReadView(LoginRequiredMixin, DetailView):
+    model = ContactUs
+    form_class = ContactUsForm
+    template_name = "userprofile_app/contact_us/contact_us_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = ContactUsForm(instance=self.get_object(), read_only=True)
+        context['read_only'] = getattr(context.get('form'), 'read_only', True)
+        return context
 
 
 class AdminContactUsUpdateView(LoginRequiredMixin, UpdateView):
@@ -1181,6 +1036,30 @@ class AdminContactUsUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'userprofile_app/contact_us/contact_us_form.html'
     success_url = reverse_lazy('userprofile_app:contact_us_list')
 
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.author = self.request.user
+        self.object.is_replied = True
+        self.object.response_date = timezone.now()
+        self.object.save()
+        # ارسال ایمیل به کاربر
+        try:
+            subject = "پاسخ به پیام شما در سایت"
+            text_message = self.object.response or "پاسخ شما از طرف پشتیبانی سایت ارسال شد."
+            activation_link = None  # اینجا لینک خاصی لازم نیست ولی تابع شما نیازش داره
+
+            send_activation_email(
+                subject=subject,
+                user=self.object,
+                activation_link=activation_link,
+                template='emails/contact_response.html',
+                text_message=text_message
+            )
+
+            messages.success(self.request, "پاسخ با موفقیت ذخیره و برای کاربر ارسال شد.")
+        except Exception as e:
+            messages.warning(self.request, f"پاسخ ذخیره شد ولی ایمیل ارسال نشد ({e})")
+        return super().form_valid(form)
 
 # endregion
 
@@ -1252,24 +1131,176 @@ class AdminSiteSettingUpdateView(LoginRequiredMixin, UpdateView):
 
 # endregion
 
-# region User Setting
+# region Groups
+class GroupPermissionMatrixView(LoginRequiredMixin, AdminRequiredMixin, TemplateView):
+    template_name = "userprofile_app/groups/groups_list.html"
 
-class InformationUserProfile(LoginRequiredMixin, DetailView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        groups = Group.objects.all()
+        actions = ["add", "change", "delete", "view"]
+
+        apps_dict = {}
+        for perm in Permission.objects.all().select_related("content_type"):
+            app_label = perm.content_type.app_label
+            model_name = perm.content_type.model  # lowercase مثل articlecategory
+
+            app_config = apps.get_app_config(app_label)
+            app_verbose = app_config.verbose_name.title()
+
+            model_class = apps.get_model(app_label, model_name)
+            model_verbose = model_class._meta.verbose_name.title()
+
+            codename = perm.codename
+
+            if app_verbose not in apps_dict:
+                apps_dict[app_verbose] = {}
+
+            if model_name not in apps_dict[app_verbose]:
+                apps_dict[app_verbose][model_name] = {
+                    "verbose": model_verbose,
+                    "perms": []
+                }
+
+            apps_dict[app_verbose][model_name]["perms"].append(codename)
+
+        for group in groups:
+            group.codename_list = set(group.permissions.values_list("codename", flat=True))
+
+        context.update({
+            "groups": groups,
+            "actions": actions,
+            "apps_dict": apps_dict,
+        })
+        return context
+
+    def post(self, request, *args, **kwargs):
+        groups = Group.objects.all()
+        all_perms = Permission.objects.all()
+        perm_map = {p.codename: p for p in all_perms}  # دیکشنری برای دسترسی سریع
+
+        for group in groups:
+            selected_codenames = request.POST.getlist(f'permissions_{group.id}[]')
+
+            # گرفتن لیست پرمیشن‌ها از دیکشنری به صورت سریع
+            selected_perms = [perm_map[c] for c in selected_codenames if c in perm_map]
+
+            # جایگزینی پرمیشن‌ها به صورت bulk
+            group.permissions.set(selected_perms)
+
+        return redirect(request.path)
+
+
+class GroupCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
+    model = Group
+    form_class = GroupForm
+    template_name = "userprofile_app/groups/group_form.html"
+    success_url = reverse_lazy("group_list")
+
+
+class GroupUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
+    model = Group
+    form_class = GroupForm
+    template_name = "userprofile_app/groups/group_form.html"
+    success_url = reverse_lazy("group_list")
+
+
+class GroupDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+    model = Group
+    template_name = "userprofile_app/groups/group_confirm_delete.html"
+    success_url = reverse_lazy("group_list")
+
+
+# endregion
+
+# region user
+class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
     model = User
-    template_name = 'userprofile_app/settings/information_profile_user.html'
-
-    def get_object(self, queryset=None):
-        return self.request.user
+    template_name = "userprofile_app/users/user_list.html"
 
 
-class ArticleUserPanel(LoginRequiredMixin, ListView):
-    model = Article
-    template_name = 'userprofile_app/articles/articles_list.html'
+class UserCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
+    model = User
+    form_class = UserCreateForm
+    template_name = "userprofile_app/users/user_form.html"
+    success_url = reverse_lazy('userprofile_app:user_list')
 
-    def get_queryset(self):
-        return Article.objects.filter(user=self.request.user)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["groups"] = Group.objects.all()
+        return context
+
+    def form_valid(self, form):
+        # فیلدهای پایه
+        form.instance.first_name = self.request.POST.get("first_name")
+        form.instance.last_name = self.request.POST.get("last_name")
+        form.instance.phone_number = self.request.POST.get("phone_number")
+        form.instance.address = self.request.POST.get("address")
+        form.instance.about_user = self.request.POST.get("about_user")
+
+        if self.request.FILES.get("avatar"):
+            form.instance.avatar = self.request.FILES["avatar"]
+
+        # ذخیره superuser فقط اگر کاربر جاری superuser باشد
+        if self.request.user.is_superuser:
+            form.instance.is_superuser = self.request.POST.get("is_superuser") == "on"
+
+        response = super().form_valid(form)
+
+        # ذخیره گروه‌ها
+        groups_ids = self.request.POST.getlist("groups")
+        if groups_ids:
+            self.object.groups.set(groups_ids)
+
+        return response
 
 
+class UserUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
+    model = User
+    form_class = UserUpdateForm
+    template_name = "userprofile_app/users/user_form.html"
+    success_url = reverse_lazy('userprofile_app:user_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["groups"] = Group.objects.all()
+        return context
+
+    def form_valid(self, form):
+        # فیلدهای پایه
+        form.instance.first_name = self.request.POST.get("first_name")
+        form.instance.last_name = self.request.POST.get("last_name")
+        form.instance.phone_number = self.request.POST.get("phone_number")
+        form.instance.address = self.request.POST.get("address")
+        form.instance.about_user = self.request.POST.get("about_user")
+
+        if self.request.FILES.get("avatar"):
+            form.instance.avatar = self.request.FILES["avatar"]
+
+        # ذخیره superuser فقط اگر کاربر جاری superuser باشد
+        if self.request.user.is_superuser:
+            form.instance.is_superuser = self.request.POST.get("is_superuser") == "on"
+
+        response = super().form_valid(form)
+
+        # ذخیره گروه‌ها
+        groups_ids = self.request.POST.getlist("groups")
+        if groups_ids:
+            self.object.groups.set(groups_ids)
+
+        return response
+
+
+class UserDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+    model = User
+    template_name = "userprofile_app/users/user_confirm_delete.html"
+    success_url = reverse_lazy('userprofile_app:user_list')
+
+
+# endregion
+
+# region SettingProfile
 class EditUserProfilePage(LoginRequiredMixin, View):
     def get(self, request):
         return render(request,
@@ -1286,7 +1317,6 @@ class EditUserProfilePage(LoginRequiredMixin, View):
         user.save()
         messages.success(request, 'تغییرات با موفقیت ثبت گردید')
         return redirect('userprofile_app:edit_user_profile_page')
-
 
 class ChangePasswordPage(LoginRequiredMixin, View):
     def get(self, request):
@@ -1315,6 +1345,10 @@ class ChangePasswordPage(LoginRequiredMixin, View):
         update_session_auth_hash(request, user)
         messages.success(request, 'کلمه عبور با موفقیت تغییر یافت')
         return redirect('userprofile_app:user_panel_dashboard_page')
+
+class SettingProfile(LoginRequiredMixin, ListView):
+    model = User
+    template_name = 'userprofile_app/settings/settings_profile.html'
 
 
 @login_required

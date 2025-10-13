@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from account_app.models import User
 from django.contrib.auth.models import Group, Permission
 
-from main_app.models import FooterLinkBox, FooterLink, Slider
+from main_app.models import FooterLinkBox, FooterLink, Slider, ContactUs
 from media_app.models import Lecture, LectureTag, LectureCategory, LectureClip, GalleryCategory, GalleryImage
 
 
@@ -389,7 +389,37 @@ class FooterLinkBoxForm(forms.ModelForm):
 
 # region Contact Us Management
 class ContactUsForm(forms.ModelForm):
-    pass
+    def __init__(self, *args, **kwargs):
+        read_only = kwargs.pop('read_only', False)
+        super().__init__(*args, **kwargs)
+
+        if read_only:
+            for field in self.fields.values():
+                field.disabled = True
+
+    class Meta:
+        model = ContactUs
+        fields = ['full_name', 'user', 'subject', 'email', 'message',
+                  'response', 'response_date', 'is_read_by_admin','is_replied']
+        widgets = {
+            'full_name': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'user': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'subject': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'email': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'message': forms.Textarea(attrs={
+                'class': 'form-control form--control user-text-editor pl-3',
+                'rows': 5
+            }),
+            'response': forms.Textarea(attrs={
+                'class': 'form-control form--control user-text-editor pl-3',
+                'rows': 5
+            }),
+            'response_date': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+
+            'is_read_by_admin': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_replied': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+
+        }
 
 
 # endregion
@@ -411,7 +441,7 @@ class SliderForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
             'url_title': forms.URLInput(attrs={'class': 'form-control form--control pl-3'}),
             'url': forms.URLInput(attrs={'class': 'form-control form--control pl-3'}),
-            'short_description': forms.Textarea(attrs={
+            'description': forms.Textarea(attrs={
                 'class': 'form-control form--control user-text-editor pl-3',
                 'rows': 4
             }),

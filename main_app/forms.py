@@ -14,27 +14,27 @@ class ContactUsModelForm(forms.ModelForm):
                 'id': 'name',
                 'type': 'text',
                 'name': 'full_name',
-                'placeholder': 'اسم شما',
+
             }),
             'email': forms.EmailInput(attrs={
                 'class': 'form-control form--control',
                 'id': 'email',
                 'type': 'email',
                 'name': 'email',
-                'placeholder': 'آدرس ایمیل',
+
             }),
             'subject': forms.TextInput(attrs={
                 'class': 'form-control form--control',
                 'id': 'subject',
                 'type': 'text',
                 'name': 'subject',
-                'placeholder': 'موضوع',
+
             }),
             'message': forms.Textarea(attrs={
                 'class': 'form-control form--control pl-4',
                 'id': 'message',
                 'name': 'message',
-                'placeholder': 'پیام',
+
                 'rows': '5',
             })
         }

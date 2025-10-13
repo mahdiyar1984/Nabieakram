@@ -89,16 +89,16 @@
                                         {% endif %}
                                     </a>
                                     <div class="media-body">
-                                        <h5 class="fs-15"><a href="{% url 'userprofile_app:slider_detail' pk=slider.id %}">{{ slider.title }}</a></h5>
+                                        <h5 class="fs-15"><a href="{% url 'userprofile_app:slider_detail' pk=slider.id %}">{{ slider.title|default_if_none:"-" }}</a></h5>
                                     </div>
                                 </div>
                             </td>
 
                             <!-- url_title -->
-                            <td>{{ slider.url_title }}</td>
+                            <td>{{ slider.url_title|default_if_none:"-" }}</td>
 
                             <!-- url -->
-                            <td>{{ slider.url }}</td>
+                            <td>{{ slider.url|default_if_none:"-" }}</td>
 
                             <!-- short_description -->
                             <td>{{ slider.description }}</td>

@@ -56,39 +56,56 @@
                         <div class="row">
 
                             <!-- title -->
-                            <div class="col-lg-3">
+                            <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="label-text">کپشن</label>
                                     {{ form.title }}
                                 </div>
                             </div>
 
-                            <!-- category -->
-                            <div class="col-lg-3">
+                            <!-- url_title -->
+                            <div class="col-lg-6">
                                 <div class="form-group">
-                                    <label class="label-text">وضعیت</label>
-                                    {{ form.category }}
+                                    <label class="label-text">لینک تصویر</label>
+                                    {{ form.url_title }}
                                 </div>
                             </div>
 
+                            <!-- url -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">لینک</label>
+                                    {{ form.url }}
+                                </div>
+                            </div>
+
+                            <!-- order -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">ترتیب</label>
+                                    {{ form.order }}
+                                </div>
+                            </div>
+
+                            <!-- description -->
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="label-text">شرح تصویر</label>
+                                    {{ form.description }}
+                                </div>
+                            </div>
+
+
                             <!-- is_active -->
-                            <div class="col-lg-3" style="margin-top: 40px;">
+                            <div class="col-lg-12" style="margin-top: 40px;">
                                 <div class="form-group">
                                     <label class="label-text mr-5">فعال</label>
                                     {{ form.is_active }}
                                 </div>
                             </div>
 
-                            <!-- is_delete -->
-                            <div class="col-lg-3" style="margin-top: 40px;">
-                                <div class="form-group">
-                                    <label class="label-text mr-5">حذف شده</label>
-                                    {{ form.is_delete }}
-                                </div>
-                            </div>
-
                             <!-- image -->
-                            <div class="col-lg-6 mt-5">
+                            <div class="col-lg-12 mt-5">
                                 <div class="form-group mb-0">
                                     <label class="label-text">تصویر</label>
                                     <div class="input-box col-lg-12 mb-5">
@@ -126,7 +143,7 @@
 
                 {% if not read_only %}
                     <div class="course-submit-btn-box pb-4">
-                        <button class="btn theme-btn" type="submit">ذخیره سخنرانی</button>
+                        <button class="btn theme-btn" type="submit">ذخیره</button>
                     </div>
                 {% endif %}
             </form>

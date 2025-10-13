@@ -1,0 +1,152 @@
+{% extends 'shared/dashboard.html' %}
+{% load shamsi_tags %}
+{% load static %}
+
+{% block title %}پروفایل - تماس ها{% endblock %}
+
+{% block content %}
+
+    <div class="dashboard-content-wrap">
+        <div class="dashboard-menu-toggler btn theme-btn theme-btn-sm lh-28 theme-btn-transparent mb-4 ml-3"><i
+                class="la la-bars mr-1"></i> منو
+        </div>
+
+        <!-- main content -->
+        <div class="container-fluid">
+
+            <!-- breadcrumb -->
+            <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between mb-5">
+                <div class="media media-card align-items-center">
+                    <div class="media-img media--img media-img-md rounded-full">
+                        <img class="rounded-full" src="{{ request.user.avatar.url }}" alt="تصویر کوچک دانش آموز">
+                    </div>
+                    <div class="media-body">
+                        <h2 class="section__title fs-30">{{ request.user.get_full_name }}</h2>
+                        <div class="rating-wrap d-flex align-items-center pt-2">
+                            <div class="review-stars">
+                                <span class="rating-number">4.4</span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star-o"></span>
+                            </div>
+                            <span class="rating-total pl-1">(20230)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- contact us -->
+            <div class="section-block mb-5"></div>
+            <div class="dashboard-heading mb-5">
+                <h3 class="fs-22 font-weight-semi-bold">مقاله جدید</h3>
+            </div>
+
+            <form action=""
+                  method="post"
+                  class="MultiFile-intercepted"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="card card-item">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <!-- full_name -->
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label class="label-text">نام</label>
+                                    {{ form.full_name }}
+                                </div>
+                            </div>
+
+                            <!-- user -->
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label class="label-text">نام کاربری</label>
+                                    {{ form.user }}
+                                </div>
+                            </div>
+
+                            <!-- email -->
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label class="label-text">ایمیل</label>
+                                    {{ form.email }}
+                                </div>
+                            </div>
+
+                            <!-- subject -->
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="label-text">موضوع</label>
+                                    {{ form.subject }}
+                                </div>
+                            </div>
+
+                            <!-- message -->
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="label-text">پیام</label>
+                                    {{ form.message }}
+                                </div>
+                            </div>
+
+                            <!-- created_at -->
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="label-text mr-5">تاریخ پیام</label>
+                                    <input class="form-control form--control pl-3" name="create_date" type="text"
+                                           value="{{ contactus.created_at|to_shamsi }}" disabled>
+                                </div>
+                            </div>
+
+
+                            <!-- response -->
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="label-text">پاسخ</label>
+                                    {{ form.response }}
+                                </div>
+                            </div>
+
+                            <!-- response_date -->
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="label-text">تاریخ پاسخ</label>
+                                    {{ form.response_date }}
+                                </div>
+                            </div>
+
+                            <!-- is_read_by_admin -->
+                            <div class="col-lg-3" style="margin-top: 40px;">
+                                <div class="form-group">
+                                    <label class="label-text mr-5">ادمین خوانده</label>
+                                    {{ form.is_read_by_admin }}
+                                </div>
+                            </div>
+
+                             <!-- is_replied -->
+                            <div class="col-lg-3" style="margin-top: 40px;">
+                                <div class="form-group">
+                                    <label class="label-text mr-5">پاسخ داده شده</label>
+                                    {{ form.is_replied }}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                {% if not read_only %}
+                    <div class="course-submit-btn-box pb-4">
+                        <button class="btn theme-btn" type="submit">ذخیره</button>
+                    </div>
+                {% endif %}
+            </form>
+
+        </div>
+    </div>
+
+
+{% endblock %}

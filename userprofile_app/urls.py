@@ -8,6 +8,14 @@ urlpatterns = [
     path('', views.UserPanelDashboardPage.as_view(), name='user_panel_dashboard_page'),
     # endregion
 
+    # region UserProfile
+    path('profile-user/', views.InformationUserProfile.as_view(), name='Information_user_profile_page'),
+    path('setting-profile/', views.SettingProfile.as_view(), name='setting_profile'),
+    path('edit_profile/', views.EditUserProfilePage.as_view(), name='edit_user_profile_page'),
+    path('change_password/', views.ChangePasswordPage.as_view(), name='change_password_page'),
+    path('update_avatar/', views.update_avatar, name='update_avatar'),
+    # endregion
+
     # region Article management
     path('articles/', views.AdminArticleListView.as_view(), name='articles_list'),
     path('articles/create/', views.AdminArticleCreateView.as_view(), name='article_create'),
@@ -111,6 +119,7 @@ urlpatterns = [
 
     # region Contact Us
     path('contact-us/', views.AdminContactUsListView.as_view(), name='contact_us_list'),
+    path('contact-us/<int:pk>/read/', views.AdminContactUsReadView.as_view(), name='contact_us_detail'),
     path('contact-us/<int:pk>/edit/', views.AdminContactUsUpdateView.as_view(), name='contact_us_edit'),
     # endregion
 
@@ -141,10 +150,4 @@ urlpatterns = [
     path('groups/<int:pk>/delete/', views.GroupDeleteView.as_view(), name='group_delete'),
     # endregion
 
-    # region User Profile
-    path('profile-user/', views.InformationUserProfile.as_view(), name='Information_user_profile_page'),
-    path('edit_profile/', views.EditUserProfilePage.as_view(), name='edit_user_profile_page'),
-    path('change_password/', views.ChangePasswordPage.as_view(), name='change_password_page'),
-    path('update_avatar/', views.update_avatar, name='update_avatar'),
-    # endregion
 ]
