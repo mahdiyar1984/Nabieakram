@@ -43,13 +43,55 @@ class UserPanelDashboardPage(LoginRequiredMixin, View):
 
 # endregion
 
-# region profile
-class InformationUserProfile(LoginRequiredMixin, DetailView):
+# region user profile
+class UserProfileDetailView(LoginRequiredMixin, DetailView):
     model = User
-    template_name = 'userprofile_app/user_pofile/information_profile_user.html'
+    template_name = 'userprofile_app/user_profile/settings_profile.html'
 
-    def get_object(self, queryset=None):
-        return self.request.user
+class UserProfileUpdateView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request,
+                      template_name='userprofile_app/settings/templates/userprofile_app/user_profile/edit_profile_page.html',
+                      context={'user': request.user})
+
+    def post(self, request):
+        user = request.user
+        user.first_name = request.POST.get('first_name', '')
+        user.last_name = request.POST.get('last_name', '')
+        user.address = request.POST.get('address', '')
+        user.phone_number = request.POST.get('phone_number', '')
+        user.about_user = request.POST.get('about_user')
+        user.save()
+        messages.success(request, 'تغییرات با موفقیت ثبت گردید')
+        return redirect('userprofile_app:edit_user_profile_page')
+
+class ChangePasswordPage(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, template_name='userprofile_app/settings/templates/userprofile_app/user_profile/change_password_page.html')
+
+    def post(self, request):
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password1')
+        confirm_password = request.POST.get('new_password2')
+
+        if not old_password or not new_password or not confirm_password:
+            messages.error(request, 'لطفاً همه فیلدها را پر کنید')
+            return redirect('userprofile_app:change_password_page')
+
+        user = request.user
+        if not user.check_password(old_password):
+            messages.error(request, 'کلمه عبور وارد شده اشتباه می باشد')
+            return redirect('userprofile_app:change_password_page')
+
+        if new_password != confirm_password:
+            messages.error(request, 'کلمه عبور و تکرار کلمه عبور یکسان نیستند')
+            return redirect('userprofile_app:change_password_page')
+
+        user.set_password(new_password)
+        user.save()
+        update_session_auth_hash(request, user)
+        messages.success(request, 'کلمه عبور با موفقیت تغییر یافت')
+        return redirect('userprofile_app:user_panel_dashboard_page')
 # endregion
 
 # region Article
@@ -1298,69 +1340,4 @@ class UserDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
     success_url = reverse_lazy('userprofile_app:user_list')
 
 
-# endregion
-
-# region SettingProfile
-class EditUserProfilePage(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request,
-                      template_name='userprofile_app/settings/edit_profile_page.html',
-                      context={'user': request.user})
-
-    def post(self, request):
-        user = request.user
-        user.first_name = request.POST.get('first_name', '')
-        user.last_name = request.POST.get('last_name', '')
-        user.address = request.POST.get('address', '')
-        user.phone_number = request.POST.get('phone_number', '')
-        user.about_user = request.POST.get('about_user')
-        user.save()
-        messages.success(request, 'تغییرات با موفقیت ثبت گردید')
-        return redirect('userprofile_app:edit_user_profile_page')
-
-class ChangePasswordPage(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, template_name='userprofile_app/settings/change_password_page.html')
-
-    def post(self, request):
-        old_password = request.POST.get('old_password')
-        new_password = request.POST.get('new_password1')
-        confirm_password = request.POST.get('new_password2')
-
-        if not old_password or not new_password or not confirm_password:
-            messages.error(request, 'لطفاً همه فیلدها را پر کنید')
-            return redirect('userprofile_app:change_password_page')
-
-        user = request.user
-        if not user.check_password(old_password):
-            messages.error(request, 'کلمه عبور وارد شده اشتباه می باشد')
-            return redirect('userprofile_app:change_password_page')
-
-        if new_password != confirm_password:
-            messages.error(request, 'کلمه عبور و تکرار کلمه عبور یکسان نیستند')
-            return redirect('userprofile_app:change_password_page')
-
-        user.set_password(new_password)
-        user.save()
-        update_session_auth_hash(request, user)
-        messages.success(request, 'کلمه عبور با موفقیت تغییر یافت')
-        return redirect('userprofile_app:user_panel_dashboard_page')
-
-class SettingProfile(LoginRequiredMixin, ListView):
-    model = User
-    template_name = 'userprofile_app/settings/settings_profile.html'
-
-
-@login_required
-def update_avatar(request):
-    if request.method == 'POST' and request.FILES.get('avatar'):
-        user = request.user
-        user.avatar = request.FILES['avatar']
-        user.save()
-    return redirect('userprofile_app:user_panel_dashboard_page')
-
-
-def user_panel_menu_component(request: HttpRequest):
-    return render(request,
-                  'userprofile_app/components/user_panel_menu_component.html')
 # endregion

@@ -9,11 +9,10 @@ urlpatterns = [
     # endregion
 
     # region UserProfile
-    path('profile-user/', views.InformationUserProfile.as_view(), name='Information_user_profile_page'),
-    path('setting-profile/', views.SettingProfile.as_view(), name='setting_profile'),
-    path('edit_profile/', views.EditUserProfilePage.as_view(), name='edit_user_profile_page'),
-    path('change_password/', views.ChangePasswordPage.as_view(), name='change_password_page'),
-    path('update_avatar/', views.update_avatar, name='update_avatar'),
+    path('setting-profile/<int:pk>', views.UserProfileDetailView.as_view(), name='user_profile_detail'),
+    # path('setting-profile/', views.UserProfileUpdateView.as_view(), name='setting_profile'),
+    # path('change_password/', views.ChangePasswordPage.as_view(), name='change_password_page'),
+
     # endregion
 
     # region Article management
