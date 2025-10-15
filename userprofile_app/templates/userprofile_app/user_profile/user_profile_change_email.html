@@ -1,0 +1,97 @@
+{% extends 'shared/dashboard.html' %}
+{% load shamsi_tags %}
+
+{% block title %}پروفایل - پروفایل کاربر{% endblock %}
+
+{% block content %}
+
+    <div class="dashboard-content-wrap">
+
+        <div class="dashboard-menu-toggler btn theme-btn theme-btn-sm lh-28 theme-btn-transparent mb-4 ml-3"><i
+                class="la la-bars mr-1"></i> منو
+        </div>
+
+        <!-- main content -->
+        <div class="container-fluid">
+
+            <!-- breadcrumb -->
+            <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between mb-5">
+                <!-- user avatar -->
+                <div class="media media-card align-items-center">
+                    <div class="media-img media--img media-img-md rounded-full">
+                        <img class="rounded-full" src="{{ request.user.avatar.url }}" alt="تصویر کوچک">
+                    </div>
+                    <div class="media-body">
+                        <h2 class="section__title fs-30">{{ request.user.get_full_name }}</h2>
+                        <div class="rating-wrap d-flex align-items-center pt-2">
+                            <div class="review-stars">
+                                <span class="rating-number">4.4</span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star-o"></span>
+                            </div>
+                            <span class="rating-total pl-1">(20230)</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                {% comment %}</div>
+            <!-- article_category section -->
+            <div class="section-block mb-5"></div>
+            <div class="dashboard-heading mb-5">
+
+                <!-- articles_category count -->
+                <h3 class="fs-22 font-weight-semi-bold">
+                    لیست دسته بندی مقالات
+                    <span class="badge badge-primary pr-3 pl-3 pt-2 pb-2"
+                          style="font-size: 14px; vertical-align: middle; margin-right: 8px;">{{ articlecategory_list.count }}</span>
+                </h3>
+            </div>{% endcomment %}
+
+            </div>
+            <!-- change email -->
+            <h3 class="fs-17 font-weight-semi-bold">تغییر ایمیل</h3>
+            <hr class="pb-5">
+            <div class="setting-body">
+                <form method="post" class="row MultiFile-intercepted">
+
+                    <!-- old_email -->
+                    <div class="input-box col-lg-4">
+                        <label class="label-text">ایمیل قدیمی</label>
+                        <div class="form-group">
+                            <input class="form-control form--control" type="text" name="old_email">
+                            <span class="la la-envelope input-icon"></span>
+                        </div>
+                    </div>
+
+                    <!-- new_email1 -->
+                    <div class="input-box col-lg-4">
+                        <label class="label-text">ایمیل جدید</label>
+                        <div class="form-group">
+                            <input class="form-control form--control" type="text" name="new_email1">
+                            <span class="la la-envelope input-icon"></span>
+                        </div>
+                    </div>
+
+                    <!-- new_email2 -->
+                    <div class="input-box col-lg-4">
+                        <label class="label-text">ایمیل جدید را تایید کنید</label>
+                        <div class="form-group">
+                            <input class="form-control form--control" type="text" name="new_email2">
+                            <span class="la la-envelope input-icon"></span>
+                        </div>
+                    </div>
+
+                    <!-- submit -->
+                    <div class="input-box col-lg-12 py-2">
+                        <button type="submit" class="btn theme-btn">تغییر ایمیل</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+{% endblock %}

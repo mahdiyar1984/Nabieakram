@@ -1,0 +1,118 @@
+{% extends 'shared/dashboard.html' %}
+{% load shamsi_tags %}
+
+{% block title %}پروفایل - ویرایش پروفایل{% endblock %}
+
+{% block content %}
+
+    <div class="dashboard-content-wrap">
+
+        <div class="dashboard-menu-toggler btn theme-btn theme-btn-sm lh-28 theme-btn-transparent mb-4 ml-3"><i
+                class="la la-bars mr-1"></i> منو
+        </div>
+
+        <!-- main content -->
+        <div class="container-fluid">
+
+
+            <!-- profile edite -->
+            <h3 class="fs-17 font-weight-semi-bold">ویرایش پروفایل کاربر</h3>
+            <hr class="pb-5">
+            <div class="setting-body">
+                <!-- edit form -->
+                <form method="post" enctype="multipart/form-data" class="row pt-40px">
+                    {% csrf_token %}
+
+                    <!-- avatar -->
+                    <div class="col-lg-12 mb-5">
+                        <div class="media media-card align-items-center">
+                            <div class="media-img media-img-lg mr-4 bg-gray">
+                                {% if request.user.avatar %}
+                                    <img class="mr-3" src="{{ request.user.avatar.url }}" alt="تصویر آواتار">
+                                {% else %}
+                                    <img class="mr-3" src="/static/images/team11.jpg" alt="تصویر آواتار">
+                                {% endif %}
+
+                            </div>
+                            <div class="media-body">
+                                <div class="file-upload-wrap file-upload-wrap-2">
+                                    <div class="MultiFile-wrap" id="MultiFile2">
+                                        <input type="file" name="avatar"
+                                               class="multi file-upload-input with-preview MultiFile-applied"
+                                               multiple="" id="avatar" value="">
+                                        <div class="MultiFile-list" id="MultiFile2_list"></div>
+                                    </div>
+                                    <span class="file-upload-text"><i class="la la-photo mr-2"></i>یک عکس آپلود کنید</span>
+                                </div>
+                                <!-- file-upload-wrap -->
+                                <p class="fs-14">حداکثر اندازه فایل 5 مگابایت، حداقل ابعاد: 200x200 و فایل های مناسب jpg و png.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- first_name -->
+                    <div class="input-box col-lg-6">
+                        <label class="label-text">نام</label>
+                        <div class="form-group">
+                            <input class="form-control form--control" type="text" name="first_name" value="{{ request.user.first_name }}">
+                            <span class="la la-user input-icon"></span>
+                        </div>
+                    </div>
+
+                    <!-- last_name -->
+                    <div class="input-box col-lg-6">
+                        <label class="label-text">نام خانوادگی</label>
+                        <div class="form-group">
+                            <input class="form-control form--control" type="text" name="last_name" value="{{ request.user.last_name }}">
+                            <span class="la la-user input-icon"></span>
+                        </div>
+                    </div>
+
+                    <!-- username -->
+                    <div class="input-box col-lg-6">
+                        <label class="label-text">نام کاربری</label>
+                        <div class="form-group">
+                            <input class="form-control form--control" type="text" name="username" value="{{ request.user.username }}">
+                            <span class="la la-user input-icon"></span>
+                        </div>
+                    </div>
+
+                    <!-- phone_number -->
+                    <div class="input-box col-lg-6">
+                        <label class="label-text">شماره تلفن</label>
+                        <div class="form-group">
+                            <input class="form-control form--control" type="text" name="phone_number" value="{{ request.user.phone_number }}">
+                            <span class="la la-phone input-icon"></span>
+                        </div>
+                    </div>
+
+                    <!-- address -->
+                    <div class="input-box col-lg-12">
+                        <label class="label-text">آدرس</label>
+                        <div class="form-group">
+                            <textarea class="form-control form--control user-text-editor pl-3" name="address" rows="5">{{ request.user.address }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- about user -->
+                    <div class="input-box col-lg-12">
+                        <label class="label-text">بیوگرافی</label>
+                        <div class="form-group">
+                            <textarea class="form-control form--control user-text-editor pl-3" name="about_user"
+                                      rows="10">{{ request.user.about_user }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- submit -->
+                    <div class="input-box col-lg-12 py-2">
+                        <button class="btn theme-btn">ذخیره</button>
+                    </div>
+
+                </form>
+
+            </div>
+
+
+        </div>
+
+{% endblock %}

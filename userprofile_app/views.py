@@ -31,6 +31,7 @@ class AdminRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_superuser
 
+
 class AuthenticatedHttpRequest(HttpRequest):
     user: Union[User, None]
 
@@ -44,30 +45,89 @@ class UserPanelDashboardPage(LoginRequiredMixin, View):
 # endregion
 
 # region user profile
-class UserProfileDetailView(LoginRequiredMixin, DetailView):
-    model = User
-    template_name = 'userprofile_app/user_profile/settings_profile.html'
+class UserProfileDetailView(LoginRequiredMixin,View):
+    def get(self, request):
+        return render(request, template_name='userprofile_app/user_profile/user_profile_view.html')
 
 class UserProfileUpdateView(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request,
-                      template_name='userprofile_app/settings/templates/userprofile_app/user_profile/edit_profile_page.html',
-                      context={'user': request.user})
+        return render(request, template_name='userprofile_app/user_profile/user_profile_edit.html')
 
     def post(self, request):
         user = request.user
         user.first_name = request.POST.get('first_name', '')
         user.last_name = request.POST.get('last_name', '')
+        user.username = request.POST.get('username','')
         user.address = request.POST.get('address', '')
         user.phone_number = request.POST.get('phone_number', '')
         user.about_user = request.POST.get('about_user')
+
+        if 'avatar' in request.FILES:
+            user.avatar = request.FILES['avatar']
+
         user.save()
         messages.success(request, 'تغییرات با موفقیت ثبت گردید')
-        return redirect('userprofile_app:edit_user_profile_page')
+        return redirect('userprofile_app:user_profile_detail')
 
-class ChangePasswordPage(LoginRequiredMixin, View):
+class UserProfileChangePassword(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, template_name='userprofile_app/settings/templates/userprofile_app/user_profile/change_password_page.html')
+        return render(request, template_name='userprofile_app/user_profile/user_profile_change_password.html')
+
+    def post(self, request):
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password1')
+        confirm_password = request.POST.get('new_password2')
+
+        if not old_password or not new_password or not confirm_password:
+            messages.error(request, 'لطفاً همه فیلدها را پر کنید')
+            return redirect('userprofile_app:user_profile_change_password')
+
+        user = request.user
+        if not user.check_password(old_password):
+            messages.error(request, 'کلمه عبور وارد شده اشتباه می باشد')
+            return redirect('userprofile_app:user_profile_change_password')
+
+        if new_password != confirm_password:
+            messages.error(request, 'کلمه عبور و تکرار کلمه عبور یکسان نیستند')
+            return redirect('userprofile_app:user_profile_change_password')
+
+        user.set_password(new_password)
+        user.save()
+        update_session_auth_hash(request, user)
+        messages.success(request, 'کلمه عبور با موفقیت تغییر یافت')
+        return redirect('userprofile_app:user_profile_change_password')
+
+class UserProfileForgotPassword(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, template_name='userprofile_app/user_profile/user_profile_change_password.html')
+
+    def post(self, request):
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password1')
+        confirm_password = request.POST.get('new_password2')
+
+        if not old_password or not new_password or not confirm_password:
+            messages.error(request, 'لطفاً همه فیلدها را پر کنید')
+            return redirect('userprofile_app:user_profile_change_password')
+
+        user = request.user
+        if not user.check_password(old_password):
+            messages.error(request, 'کلمه عبور وارد شده اشتباه می باشد')
+            return redirect('userprofile_app:user_profile_change_password')
+
+        if new_password != confirm_password:
+            messages.error(request, 'کلمه عبور و تکرار کلمه عبور یکسان نیستند')
+            return redirect('userprofile_app:user_profile_change_password')
+
+        user.set_password(new_password)
+        user.save()
+        update_session_auth_hash(request, user)
+        messages.success(request, 'کلمه عبور با موفقیت تغییر یافت')
+        return redirect('userprofile_app:user_profile_change_password')
+
+class UserProfileChangeEmail(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, template_name='userprofile_app/user_profile/user_profile_change_email.html')
 
     def post(self, request):
         old_password = request.POST.get('old_password')
@@ -92,6 +152,8 @@ class ChangePasswordPage(LoginRequiredMixin, View):
         update_session_auth_hash(request, user)
         messages.success(request, 'کلمه عبور با موفقیت تغییر یافت')
         return redirect('userprofile_app:user_panel_dashboard_page')
+
+
 # endregion
 
 # region Article
@@ -621,6 +683,7 @@ class AdminLectureCategoryListView(LoginRequiredMixin, ListView):
     template_name = 'userprofile_app/lectures/lecture_categories_list.html'
     paginate_by = 10
 
+
 class AdminLectureCategoryReadView(LoginRequiredMixin, DetailView):
     model = LectureCategory
     form_class = LectureCategoryForm
@@ -673,6 +736,7 @@ class AdminLectureTagListView(LoginRequiredMixin, ListView):
     model = LectureTag
     template_name = 'userprofile_app/lectures/lecture_tags_list.html'
     paginate_by = 10
+
 
 class AdminLectureTagReadView(LoginRequiredMixin, DetailView):
     model = LectureTag
@@ -821,7 +885,6 @@ class AdminLectureClipUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'userprofile_app/lectures/lecture_clip_form.html'
     success_url = reverse_lazy('userprofile_app:lecture_clips_list')
 
-
     def form_valid(self, form):
         self.object = form.save(commit=False)
         if self.request.FILES.get('video'):
@@ -838,6 +901,7 @@ class AdminLectureClipDeleteView(LoginRequiredMixin, DeleteView):
         lecture_clip.is_delete = True
         lecture_clip.save()
         return redirect(self.success_url)
+
 
 # endregion
 
@@ -883,6 +947,7 @@ class AdminGalleryImageUpdateView(LoginRequiredMixin, UpdateView):
             self.object.image = self.request.FILES['image']
         return super().form_valid(form)
 
+
 class AdminGalleryImageDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('userprofile_app:galleries_list')
 
@@ -892,12 +957,14 @@ class AdminGalleryImageDeleteView(LoginRequiredMixin, DeleteView):
         lecture.save()
         return redirect(self.success_url)
 
+
 # endregion
 # region Gallery Category
 class AdminGalleryCategoryListView(LoginRequiredMixin, ListView):
     model = GalleryCategory
     template_name = 'userprofile_app/galleries/gallery_categories_list.html'
     paginate_by = 10
+
 
 class AdminGalleryCategoryReadView(LoginRequiredMixin, DetailView):
     model = GalleryCategory
@@ -1005,6 +1072,7 @@ class AdminFooterLinkBoxListView(LoginRequiredMixin, ListView):
     template_name = 'userprofile_app/footer_links/footer_link_boxes_list.html'
     paginate_by = 5
 
+
 class AdminFooterLinkBoxReadView(LoginRequiredMixin, DetailView):
     model = FooterLinkBox
     form_class = FooterLinkBoxForm
@@ -1103,6 +1171,7 @@ class AdminContactUsUpdateView(LoginRequiredMixin, UpdateView):
             messages.warning(self.request, f"پاسخ ذخیره شد ولی ایمیل ارسال نشد ({e})")
         return super().form_valid(form)
 
+
 # endregion
 
 # region Slider
@@ -1147,6 +1216,7 @@ class AdminSliderUpdateView(LoginRequiredMixin, UpdateView):
             self.object.image = self.request.FILES['image']
         return super().form_valid(form)
 
+
 class AdminSliderDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('userprofile_app:sliders_list')
 
@@ -1155,6 +1225,7 @@ class AdminSliderDeleteView(LoginRequiredMixin, DeleteView):
         slider.is_active = False
         slider.save()
         return redirect(self.success_url)
+
 
 # endregion
 
@@ -1338,6 +1409,5 @@ class UserDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
     model = User
     template_name = "userprofile_app/users/user_confirm_delete.html"
     success_url = reverse_lazy('userprofile_app:user_list')
-
 
 # endregion
