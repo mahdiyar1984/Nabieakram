@@ -79,8 +79,13 @@ class BlogDetailView(View):
 
     def post(self, request:HttpRequest, pk):
         article = get_object_or_404(Article, pk=pk)
-        if not request.user.is_authenticated:
-            return redirect('account_app:login_page')
+
+        if request.user.is_authenticated:
+            name = article.author.first_name
+            email = article.author.email
+        else:
+            name = request.POST.get('name')
+            email = request.POST.get('email')
 
         message = request.POST.get('message')
         parent_id = request.POST.get('parent_id')
@@ -88,6 +93,8 @@ class BlogDetailView(View):
         comment = ArticleComment.objects.create(
             article=article,
             user=request.user,
+            name=name,
+            email=email,
             text=message,
             parent_id=parent_id if parent_id else None
         )

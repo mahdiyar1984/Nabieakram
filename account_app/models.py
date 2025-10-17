@@ -4,6 +4,7 @@ from django.db import models
 
 class User(AbstractUser):
     avatar = models.ImageField(upload_to="images/profile", null=True, blank=True, verbose_name="تصویر آواتار")
+    pending_email = models.EmailField(null=True, blank=True)
     email_activation_code = models.CharField(max_length=64, blank=True, null=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True, verbose_name='شماره تماس')
     about_user = models.TextField(null=True, blank=True, verbose_name='درباره شخص')

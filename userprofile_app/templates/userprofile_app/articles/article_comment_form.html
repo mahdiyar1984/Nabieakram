@@ -72,6 +72,24 @@
                                 </div>
                             </div>
 
+                            <!-- name -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">نویسنده</label>
+                                    <input class="form-control form--control pl-3" name="user" type="text"
+                                           value="{{ comment.name }}" {% if read_only %}disabled{% endif %}>
+                                </div>
+                            </div>
+
+                            <!-- email -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">نویسنده</label>
+                                    <input class="form-control form--control pl-3" name="user" type="text"
+                                           value="{{ comment.email }}" {% if read_only %}disabled{% endif %}>
+                                </div>
+                            </div>
+
                             <!-- text -->
                             <div class="col-lg-12">
                                 <div class="form-group">

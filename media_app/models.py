@@ -148,7 +148,8 @@ class LectureComment(models.Model):
     user = models.ForeignKey(User,
                              on_delete=models.CASCADE,
                              verbose_name='کاربر')
-
+    name = models.CharField(max_length=100, blank=True)
+    email = models.EmailField(blank=True)
     text = models.TextField(verbose_name='متن نظر')
     created_date = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ثبت')
 

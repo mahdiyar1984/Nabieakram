@@ -72,7 +72,7 @@
                         <tr>
                             <!-- article -->
                             <th scope="row">
-                                <a href="{% url 'blog_app:blog_detail' pk=comment.article.id %}"
+                                <a href="{% url 'userprofile_app:article_comment_detail' pk=comment.id %}"
                                    class="text-black">{{ comment.article.title }}</a>
                             </th>
 

@@ -9,7 +9,7 @@
 
 {% block content %}
 
-    {% comment %}breadcrumb{% endcomment %}
+    <!-- breadcrumb -->
     <section class="breadcrumb-area section-padding img-bg-3">
         <div class="overlay"></div>
         <div class="container">
@@ -20,19 +20,18 @@
                     <li>{{ article.title }}</li>
                 </ul>
             </div>
-            <!-- end breadcrumb-content -->
         </div>
-        <!-- end container -->
     </section>
 
-    {% comment %}content{% endcomment %}
+    <!-- content -->
     <section class="blog-area pt-100px pb-100px">
         <div class="container">
             <div class="row">
-                {% comment %}main{% endcomment %}
+
+                <!-- main -->
                 <div class="col-lg-8 mb-5">
 
-                    {% comment %}article_detail{% endcomment %}
+                    <!-- article_detail -->
                     <div class="card card-item">
                         <div class="card-body">
                             <div class="generic-img-box-content text-center mb-5">
@@ -73,7 +72,7 @@
                         <!-- end card-body -->
                     </div>
 
-                    {% comment %}about author{% endcomment %}
+                    <!-- about_author -->
                     <div class="card card-item">
                         <div class="card-body">
                             <div class="instructor-wrap py-5">
@@ -112,7 +111,8 @@
                             </div>
                         </div>
                     </div>
-                    {% comment %}show comment{% endcomment %}
+
+                    <!-- show comment -->
                     {% if comments %}
                         <div class="card card-item">
                             <div class="card-body">
@@ -133,11 +133,6 @@
                                                     <h5 class="pb-2">{{ comment.user.get_full_name }}</h5>
                                                     <span class="d-block lh-18 pb-2">{{ article.create_date|timeago }}</span>
                                                     <p class="pb-3">{{ comment.text }}</p>
-                                                    <div class="helpful-action d-flex align-items-center justify-content-between">
-                                                        <a href="#" onclick="setParentId({{ comment.id }}); return false;"
-                                                           class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30"><i
-                                                                class="la la-reply mr-1"></i> پاسخ</a>
-                                                    </div>
                                                 </div>
                                             </div>
                                             {% for reply in comment.articlecomment_set.all %}
@@ -164,35 +159,86 @@
                         </div>
                     {% endif %}
 
-
-                    {% comment %}add comment{% endcomment %}
+                    <!-- add_comment -->
                     <div class="card card-item">
                         <div class="card-body">
                             <div id="comment-form"></div>
                             <div class="add-comment-wrap pt-5">
                                 <h3 class="fs-22 font-weight-semi-bold pb-4">یک نظر اضافه کنید</h3>
 
-                                {% if user.is_authenticated %}
-                                    <form method="post" class="row"
-                                          action="{% url 'blog_app:blog_detail' pk=article.pk %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="parent_id" id="parent_id" value="">
+                                <form method="post" class="row" action="">
+                                    {% csrf_token %}
+
+                                    <input type="hidden" name="parent_id" id="parent_id" value="">
+
+                                    {% if request.user.is_authenticated %}
+                                        <!-- message -->
                                         <div class="input-box col-lg-12">
                                             <div class="form-group">
-                                    <textarea class="form-control form--control pl-3" name="message"
-                                              placeholder="پیام بنویس" rows="10"></textarea>
+                                                <textarea class="form-control form--control pl-3" name="message"
+                                                          rows="10"></textarea>
+
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <!-- name -->
+                                        <div class="input-box col-lg-6">
+                                            <label class="label-text">نام</label>
+                                            <div class="form-group">
+                                                <input class="form-control form--control" type="text" name="name">
+                                                <span class="la la-user input-icon"></span>
                                             </div>
                                         </div>
 
-                                        <div class="btn-box col-lg-12">
-                                            <button class="btn theme-btn" type="submit">ثبت کردن نظر</button>
+                                        <!-- email -->
+                                        <div class="input-box col-lg-6">
+                                            <label class="label-text">پست الکترونیک</label>
+                                            <div class="form-group">
+                                                <input class="form-control form--control" type="email" name="email">
+                                                <span class="la la-envelope input-icon"></span>
+                                            </div>
                                         </div>
 
-                                    </form>
-                                {% else %}
-                                    <p>برای ثبت نظر باید <a href="{% url 'account_app:login_page' %}">وارد شوید</a>.</p>
-                                {% endif %}
+                                        <!-- message -->
+                                        <div class="input-box col-lg-12">
+                                            <div class="form-group">
+                                                <textarea class="form-control form--control pl-3" name="message"
+                                                          rows="10"></textarea>
 
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+
+                                    <div class="input-box">
+                                        <label class="label-text">عبارت امنیتی</label>
+                                        <div class="form-group">
+                                            <img src="/captcha/image/29444b60313972ed0f1a0070a92fde0f3c17135f/"
+                                                 alt="captcha" class="captcha">
+                                            <input type="hidden" name="captcha_0"
+                                                   value="29444b60313972ed0f1a0070a92fde0f3c17135f" required=""
+                                                   id="id_captcha_0" autocomplete="off">
+                                            <input type="text"
+                                                   name="captcha_1"
+                                                   required=""
+                                                   id="id_captcha_1"
+                                                   autocapitalize="off"
+                                                   autocomplete="off"
+                                                   autocorrect="off"
+                                                   spellcheck="false">
+                                            <!-- این خودکار هم input و هم img را رندر می‌کند -->
+
+                                            <!-- لینک تازه کردن تصویر -->
+                                            <a href="#" id="refresh-captcha">↻ تغییر تصویر</a>
+
+
+                                        </div>
+                                    </div>
+
+                                    <div class="btn-box col-lg-12">
+                                        <button class="btn theme-btn" type="submit">ثبت کردن نظر</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -205,26 +251,6 @@
                         {% render_partial 'blog_app.views.CategoryArticlesView' %}
                         {% render_partial 'blog_app.views.ArchiveArticlesView' %}
                         {% render_partial 'blog_app.views.RecentArticlesView' %}
-
-                        {% comment %}<div class="card card-item">
-                            <div class="card-body">
-                                <h3 class="card-title fs-18 pb-2">برچسب های پست</h3>
-                                <div class="divider"><span></span></div>
-                                <ul class="generic-list-item generic-list-item-boxed d-flex flex-wrap fs-15">
-                                    <li class="mr-2"><a href="#">کسب و کار</a></li>
-                                    <li class="mr-2"><a href="#">رویداد</a></li>
-                                    <li class="mr-2"><a href="#">ویدئو</a></li>
-                                    <li class="mr-2"><a href="#">سمعی</a></li>
-                                    <li class="mr-2"><a href="#">نرم افزار</a></li>
-                                    <li class="mr-2"><a href="#">کنفرانس</a></li>
-                                    <li class="mr-2"><a href="#">بازار یابی</a></li>
-                                    <li class="mr-2"><a href="#">آزاد</a></li>
-                                    <li class="mr-2"><a href="#">نکات</a></li>
-                                    <li class="mr-2"><a href="#">فن آوری</a></li>
-                                    <li class="mr-2"><a href="#">کارآفرین</a></li>
-                                </ul>
-                            </div>
-                        </div>{% endcomment %}
 
                     </div>
                 </div>

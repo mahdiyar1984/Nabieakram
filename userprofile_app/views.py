@@ -6,10 +6,12 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django.views.generic import DetailView, TemplateView
 from blog_app.models import Article, ArticleCategory, ArticleTag, ArticleComment
 from main_app.models import FooterLink, ContactUs, SiteSetting, Slider, FooterLinkBox
-from media_app.models import Lecture, LectureCategory, LectureTag, LectureComment, GalleryImage, GalleryCategory, BaseModel, LectureClip
+from media_app.models import Lecture, LectureCategory, LectureTag, LectureComment, GalleryImage, GalleryCategory, \
+    BaseModel, LectureClip
 from utils.email_service import send_activation_email
 from .forms import ArticleForm, GroupForm, ArticleCategoryForm, ArticleTagForm, LectureForm, LectureTagForm, \
     LectureCategoryForm, GalleryImageForm, \
@@ -18,7 +20,7 @@ from django.contrib import messages
 from django.http import HttpRequest
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from account_app.models import User
@@ -45,9 +47,10 @@ class UserPanelDashboardPage(LoginRequiredMixin, View):
 # endregion
 
 # region user profile
-class UserProfileDetailView(LoginRequiredMixin,View):
+class UserProfileDetailView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, template_name='userprofile_app/user_profile/user_profile_view.html')
+
 
 class UserProfileUpdateView(LoginRequiredMixin, View):
     def get(self, request):
@@ -57,7 +60,7 @@ class UserProfileUpdateView(LoginRequiredMixin, View):
         user = request.user
         user.first_name = request.POST.get('first_name', '')
         user.last_name = request.POST.get('last_name', '')
-        user.username = request.POST.get('username','')
+        user.username = request.POST.get('username', '')
         user.address = request.POST.get('address', '')
         user.phone_number = request.POST.get('phone_number', '')
         user.about_user = request.POST.get('about_user')
@@ -68,6 +71,7 @@ class UserProfileUpdateView(LoginRequiredMixin, View):
         user.save()
         messages.success(request, 'تغییرات با موفقیت ثبت گردید')
         return redirect('userprofile_app:user_profile_detail')
+
 
 class UserProfileChangePassword(LoginRequiredMixin, View):
     def get(self, request):
@@ -97,6 +101,7 @@ class UserProfileChangePassword(LoginRequiredMixin, View):
         messages.success(request, 'کلمه عبور با موفقیت تغییر یافت')
         return redirect('userprofile_app:user_profile_change_password')
 
+
 class UserProfileForgotPassword(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, template_name='userprofile_app/user_profile/user_profile_change_password.html')
@@ -125,33 +130,69 @@ class UserProfileForgotPassword(LoginRequiredMixin, View):
         messages.success(request, 'کلمه عبور با موفقیت تغییر یافت')
         return redirect('userprofile_app:user_profile_change_password')
 
+
 class UserProfileChangeEmail(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, template_name='userprofile_app/user_profile/user_profile_change_email.html')
 
     def post(self, request):
-        old_password = request.POST.get('old_password')
-        new_password = request.POST.get('new_password1')
-        confirm_password = request.POST.get('new_password2')
+        old_email = request.POST.get('old_email')
+        new_email1 = request.POST.get('new_email1')
+        new_email2 = request.POST.get('new_email2')
 
-        if not old_password or not new_password or not confirm_password:
+        if not old_email or not new_email1 or not new_email2:
             messages.error(request, 'لطفاً همه فیلدها را پر کنید')
-            return redirect('userprofile_app:change_password_page')
+            return redirect('userprofile_app:user_profile_change_email')
 
-        user = request.user
-        if not user.check_password(old_password):
-            messages.error(request, 'کلمه عبور وارد شده اشتباه می باشد')
-            return redirect('userprofile_app:change_password_page')
+        user = User.objects.get(email=old_email)
+        if not user:
+            messages.error(request, 'ایمیل وارد شده اشتباه می باشد')
+            return redirect('userprofile_app:user_profile_change_email')
 
-        if new_password != confirm_password:
+        if new_email1 != new_email1:
             messages.error(request, 'کلمه عبور و تکرار کلمه عبور یکسان نیستند')
-            return redirect('userprofile_app:change_password_page')
+            return redirect('userprofile_app:user_profile_change_email')
 
-        user.set_password(new_password)
+        user.email_activation_code = get_random_string(64)
+        user.pending_email = new_email1
         user.save()
         update_session_auth_hash(request, user)
-        messages.success(request, 'کلمه عبور با موفقیت تغییر یافت')
-        return redirect('userprofile_app:user_panel_dashboard_page')
+
+        try:
+            subject = "فعالسازی ایمیل شما در سایت نبی اکرم"
+            text_message = "لطفا بر روی فعال شدن حساب کاربری بر روی لینک زیر کلیک بکنید."
+            activation_url = reverse('userprofile_app:user_profile_activate_email', args=[user.email_activation_code])
+            activation_link = request.build_absolute_uri(activation_url)
+
+            send_activation_email(
+                subject=subject,
+                user=user,
+                activation_link=activation_link,
+                template='emails/change_email.html',
+                text_message=text_message
+            )
+
+            messages.success(self.request,
+                             "کد فعالسازی به ایمیل جدید شما ارسال گردید، جهت تغییر ایمیل روی لینک فعالسازی در ایمیل جدیدتان کلیک کنید.")
+        except Exception as e:
+            messages.warning(self.request, f"ایمیل تغییر کرد ولی کدفعالسازی به ایمیل جدید کاربر ارسال نشد ({e})")
+        return redirect('userprofile_app:user_profile_change_email')
+
+
+class UserProfileActiveEmailView(View):
+    def get(self, request, email_active_code):
+        try:
+            user: User = User.objects.get(email_activation_code=email_active_code)
+            if user is not None:
+                user.email = user.pending_email
+                user.activation_code = get_random_string(64)
+                user.save()
+                messages.success(request, 'ایمیل شما با موفقیت تغییر یافت')
+
+        except User.DoesNotExist:
+            messages.error(request, 'کد فعالسازی معتبر نیست')
+
+        return redirect('userprofile_app:user_profile_detail')
 
 
 # endregion
@@ -1121,7 +1162,7 @@ class AdminFooterLinkBoxDeleteView(LoginRequiredMixin, DeleteView):
 
 # endregion
 
-# region Article
+# region Contact Us
 class AdminContactUsListView(LoginRequiredMixin, ListView):
     model = ContactUs
     template_name = 'userprofile_app/contact_us/contact_us_list.html'
@@ -1160,13 +1201,13 @@ class AdminContactUsUpdateView(LoginRequiredMixin, UpdateView):
 
             send_activation_email(
                 subject=subject,
-                user=self.object,
+                user=self.object.author,
                 activation_link=activation_link,
                 template='emails/contact_response.html',
                 text_message=text_message
             )
 
-            messages.success(self.request, "پاسخ با موفقیت ذخیره و برای کاربر ارسال شد.")
+            messages.success(self.request, "پاسخ با موفقیت ذخیره و به ایمیل کاربر ارسال شد.")
         except Exception as e:
             messages.warning(self.request, f"پاسخ ذخیره شد ولی ایمیل ارسال نشد ({e})")
         return super().form_valid(form)
@@ -1331,6 +1372,7 @@ class GroupDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
 class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
     model = User
     template_name = "userprofile_app/users/user_list.html"
+    paginate_by = 5
 
 
 class UserCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):

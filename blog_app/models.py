@@ -11,7 +11,8 @@ class ArticleCategory(models.Model):
                                verbose_name='دسته بندی والد')
     title = models.CharField(max_length=200, verbose_name='عنوان دسته بندی')
     url_title = models.CharField(max_length=200, unique=True, verbose_name='عنوان در url')
-    image = models.ImageField(upload_to='blog_app/article_category/images', null=True, blank=True, verbose_name='تصویر دسته بندی')
+    image = models.ImageField(upload_to='blog_app/article_category/images', null=True, blank=True,
+                              verbose_name='تصویر دسته بندی')
     is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
     is_delete = models.BooleanField(default=False, verbose_name='حذف شده / نشده')
     create_date = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='تاریخ ثبت')
@@ -30,7 +31,6 @@ class ArticleTag(models.Model):
     is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
     is_delete = models.BooleanField(default=False, verbose_name='حذف شده / نشده')
     create_date = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='تاریخ ثبت')
-
 
     class Meta:
         verbose_name = 'تگ مقاله'
@@ -67,7 +67,7 @@ class Article(models.Model):
 
     class Meta:
         verbose_name = 'مقاله'
-        verbose_name_plural = 'مقالات'
+        verbose_name_plural = 'مقاله ها'
         permissions = [
             ("can_publish_article", "Can publish article"),
             ("can_reject_article", "Can reject article"),
@@ -79,16 +79,15 @@ class ArticleComment(models.Model):
     article = models.ForeignKey(Article,
                                 on_delete=models.CASCADE,
                                 verbose_name='مقاله')
-    user = models.ForeignKey(User,
-                             on_delete=models.CASCADE,
-                             verbose_name='کاربر')
 
     parent = models.ForeignKey(to='ArticleComment',
                                null=True,
                                blank=True,
                                on_delete=models.CASCADE,
                                verbose_name='والد')
-
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,verbose_name='کاربر')
+    name = models.CharField(max_length=100, blank=True)
+    email = models.EmailField(blank=True)
     text = models.TextField(verbose_name='متن نظر')
     create_date = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ثبت')
     is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')

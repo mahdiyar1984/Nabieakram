@@ -50,6 +50,15 @@
                           style="font-size: 14px; vertical-align: middle; margin-right: 8px;">{{ page_obj.paginator.count }}</span>
                 </h3>
             </div>
+            {% if messages %}
+                <div class="mb-3">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
             <!-- article table -->
             <div class="table-responsive pb-4">
@@ -95,7 +104,7 @@
                             <td style="color: green">{{ contact_us.response|default_if_none:"-" }}</td>
 
                             <!-- create_date -->
-                            <td>{{ contact_us.response_date|to_shamsi}}</td>
+                            <td>{{ contact_us.response_date|to_shamsi }}</td>
 
                             <!-- is_read_by_admin -->
                             <td class="text-center">

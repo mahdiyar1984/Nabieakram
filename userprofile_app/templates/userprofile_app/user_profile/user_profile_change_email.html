@@ -36,33 +36,19 @@
                         </div>
                     </div>
                 </div>
-
-
-                {% comment %}</div>
-            <!-- article_category section -->
-            <div class="section-block mb-5"></div>
-            <div class="dashboard-heading mb-5">
-
-                <!-- articles_category count -->
-                <h3 class="fs-22 font-weight-semi-bold">
-                    لیست دسته بندی مقالات
-                    <span class="badge badge-primary pr-3 pl-3 pt-2 pb-2"
-                          style="font-size: 14px; vertical-align: middle; margin-right: 8px;">{{ articlecategory_list.count }}</span>
-                </h3>
-            </div>{% endcomment %}
-
             </div>
             <!-- change email -->
             <h3 class="fs-17 font-weight-semi-bold">تغییر ایمیل</h3>
             <hr class="pb-5">
             <div class="setting-body">
                 <form method="post" class="row MultiFile-intercepted">
+                    {% csrf_token %}
 
                     <!-- old_email -->
                     <div class="input-box col-lg-4">
                         <label class="label-text">ایمیل قدیمی</label>
                         <div class="form-group">
-                            <input class="form-control form--control" type="text" name="old_email">
+                            <input class="form-control form--control" type="email" name="old_email">
                             <span class="la la-envelope input-icon"></span>
                         </div>
                     </div>
@@ -71,7 +57,7 @@
                     <div class="input-box col-lg-4">
                         <label class="label-text">ایمیل جدید</label>
                         <div class="form-group">
-                            <input class="form-control form--control" type="text" name="new_email1">
+                            <input class="form-control form--control" type="email" name="new_email1">
                             <span class="la la-envelope input-icon"></span>
                         </div>
                     </div>
@@ -80,7 +66,7 @@
                     <div class="input-box col-lg-4">
                         <label class="label-text">ایمیل جدید را تایید کنید</label>
                         <div class="form-group">
-                            <input class="form-control form--control" type="text" name="new_email2">
+                            <input class="form-control form--control" type="email" name="new_email2">
                             <span class="la la-envelope input-icon"></span>
                         </div>
                     </div>
@@ -93,5 +79,14 @@
                 </form>
             </div>
         </div>
-
+        {% if messages %}
+            <div class="mb-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

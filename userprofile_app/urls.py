@@ -14,6 +14,7 @@ urlpatterns = [
     path('setting-profile/change-password/', views.UserProfileChangePassword.as_view(), name='user_profile_change_password'),
     path('setting-profile/forgot-password/', views.UserProfileForgotPassword.as_view(), name='user_profile_forgot_password'),
     path('setting-profile/change-email/', views.UserProfileChangeEmail.as_view(), name='user_profile_change_email'),
+    path('setting-profile/activate-email/<email_active_code>/', views.UserProfileActiveEmailView.as_view(), name='user_profile_activate_email'),
     # endregion
 
     # region Article management

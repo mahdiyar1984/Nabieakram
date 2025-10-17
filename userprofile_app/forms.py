@@ -9,52 +9,6 @@ from main_app.models import FooterLinkBox, FooterLink, Slider, ContactUs
 from media_app.models import Lecture, LectureTag, LectureCategory, LectureClip, GalleryCategory, GalleryImage
 
 
-# region group management
-
-class GroupForm(forms.ModelForm):
-    permissions = forms.ModelMultipleChoiceField(
-        queryset=Permission.objects.all(),
-        required=False,
-        widget=forms.CheckboxSelectMultiple
-    )
-
-    class Meta:
-        model = Group
-        fields = ['name', 'permissions']
-
-
-# endregion
-
-# region user management
-class UserCreateForm(UserCreationForm):
-    groups = forms.ModelMultipleChoiceField(
-        queryset=Group.objects.all(),
-        required=False,
-        widget=forms.CheckboxSelectMultiple
-    )
-
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'avatar', 'about_user', 'address',
-                  'groups', 'password1', 'password2']
-
-
-class UserUpdateForm(UserChangeForm):
-    password = None  # پنهان کردن فیلد پسورد در فرم ویرایش
-    groups = forms.ModelMultipleChoiceField(
-        queryset=Group.objects.all(),
-        required=False,
-        widget=forms.CheckboxSelectMultiple
-    )
-
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'avatar', 'about_user', 'address',
-                  'groups']
-
-
-# endregion
-
 # region Article Management
 class ArticleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -456,4 +410,50 @@ class SliderForm(forms.ModelForm):
 # region SiteSetting Management
 class SiteSettingForm(forms.ModelForm):
     pass
+# endregion
+
+# region group management
+
+class GroupForm(forms.ModelForm):
+    permissions = forms.ModelMultipleChoiceField(
+        queryset=Permission.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    class Meta:
+        model = Group
+        fields = ['name', 'permissions']
+
+
+# endregion
+
+# region user management
+class UserCreateForm(UserCreationForm):
+    groups = forms.ModelMultipleChoiceField(
+        queryset=Group.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'avatar', 'about_user', 'address',
+                  'groups', 'password1', 'password2']
+
+
+class UserUpdateForm(UserChangeForm):
+    password = None  # پنهان کردن فیلد پسورد در فرم ویرایش
+    groups = forms.ModelMultipleChoiceField(
+        queryset=Group.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'avatar', 'about_user', 'address',
+                  'groups']
+
+
 # endregion

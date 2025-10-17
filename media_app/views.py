@@ -95,15 +95,22 @@ class LectureDetailView(DetailView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
+
+        if request.user.is_authenticated:
+            name = Lecture.author.first_name
+            email = Lecture.author.email
+        else:
+            name = request.POST.get('name')
+            email = request.POST.get('email')
         message = request.POST.get('message', '').strip()
         parent_id = request.POST.get('parent_id')
 
-        if message and request.user.is_authenticated:
-            comment = LectureComment.objects.create(
-                lecture=self.object,
-                user=request.user,
-                text=message,
-                parent_id=parent_id if parent_id else None
-            )
+        LectureComment.objects.create(
+            lecture=self.object,
+            user=request.user,
+            name=name,
+            email=email,
+            text=message,
+            parent_id=parent_id if parent_id else None
+        )
         return redirect(self.get_success_url())
-
