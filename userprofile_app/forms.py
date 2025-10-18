@@ -182,7 +182,6 @@ class LectureForm(forms.ModelForm):
             'audio_url': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
         }
 
-
 class LectureCategoryForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         read_only = kwargs.pop('read_only', False)
@@ -202,7 +201,6 @@ class LectureCategoryForm(forms.ModelForm):
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
-
 
 class LectureTagForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

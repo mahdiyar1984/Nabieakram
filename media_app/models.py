@@ -143,7 +143,6 @@ class LectureComment(models.Model):
                                verbose_name='والد')
     lecture = models.ForeignKey(Lecture,
                                 on_delete=models.CASCADE,
-                                related_name="comments",
                                 verbose_name='سخنرانی')
     user = models.ForeignKey(User,
                              on_delete=models.CASCADE,
@@ -152,6 +151,9 @@ class LectureComment(models.Model):
     email = models.EmailField(blank=True)
     text = models.TextField(verbose_name='متن نظر')
     created_date = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ثبت')
+    is_active = models.BooleanField(default=False, verbose_name='فعال / غیرفعال')
+    is_delete = models.BooleanField(default=False, verbose_name='حذف شده / نشده')
+
 
     def __str__(self):
         return f"{self.lecture.title} - {self.text[:30]}"

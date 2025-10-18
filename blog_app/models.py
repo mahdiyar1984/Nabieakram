@@ -79,7 +79,6 @@ class ArticleComment(models.Model):
     article = models.ForeignKey(Article,
                                 on_delete=models.CASCADE,
                                 verbose_name='مقاله')
-
     parent = models.ForeignKey(to='ArticleComment',
                                null=True,
                                blank=True,

@@ -93,13 +93,60 @@
                             </div>
 
                             <!-- create_date -->
-                            <div class="col-lg-3">
+                            <div class="col-lg-12">
                                 <div class="form-group">
                                     <label class="label-text mr-5">تاریخ نظر</label>
                                     <input class="form-control form--control pl-3" name="create_date" type="text"
                                            value="{{ comment.created_date|to_shamsi }}" disabled>
                                 </div>
                             </div>
+
+                            {% if comment.lecturecomment_set.all.first %}
+                                <!-- is_active -->
+                                <div class="col-lg-6" style="margin-top: 40px;">
+                                    <div class="form-group">
+                                        <label class="label-text mr-5">فعال / غیرفعال(والد)</label>
+                                        <input type="checkbox" name="is_active_parent"
+                                               class="form-check-input" id="id_is_active"
+                                               {% if comment.lecturecomment_set.all.first.is_active %}checked{% endif %}
+                                               {% if read_only %}disabled{% endif %}>
+                                    </div>
+                                </div>
+
+                                <!-- is_delete -->
+                                <div class="col-lg-6" style="margin-top: 40px;">
+                                    <div class="form-group">
+                                        <label class="label-text mr-5">حذف شده / نشده(والد)</label>
+                                        <input type="checkbox" name="is_delete_parent"
+                                               class="form-check-input" id="id_is_delete"
+                                               {% if comment.lecturecomment_set.all.first.is_delete %}checked{% endif %}
+                                               {% if read_only %}disabled{% endif %}>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <!-- is_active -->
+                            <div class="col-lg-6" style="margin-top: 40px;">
+                                <div class="form-group">
+                                    <label class="label-text mr-5">فعال / غیرفعال</label>
+                                    <input type="checkbox" name="is_active"
+                                           class="form-check-input" id="id_is_active"
+                                           {% if comment.is_active %}checked{% endif %}
+                                           {% if read_only %}disabled{% endif %}>
+                                </div>
+                            </div>
+
+                            <!-- is_delete -->
+                            <div class="col-lg-6" style="margin-top: 40px;">
+                                <div class="form-group">
+                                    <label class="label-text mr-5">حذف شده / نشده</label>
+                                    <input type="checkbox" name="is_delete"
+                                           class="form-check-input" id="id_is_delete"
+                                           {% if comment.is_delete %}checked{% endif %}
+                                           {% if read_only %}disabled{% endif %}>
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
                 </div>

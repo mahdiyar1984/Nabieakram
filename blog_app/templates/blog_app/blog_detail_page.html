@@ -112,6 +112,16 @@
                         </div>
                     </div>
 
+                    {% if messages %}
+                        <div class="mb-3">
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     <!-- show comment -->
                     {% if comments %}
                         <div class="card card-item">
@@ -122,42 +132,78 @@
                                         <h3 class="fs-22 font-weight-semi-bold">نظرات</h3>
                                         <span class="ribbon ribbon-lg">{{ article.articlecomment_set.all.count }}</span>
                                     </div>
+
                                     <div class="comment-list">
                                         {% for comment in comments %}
-                                            <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
-                                                <div class="media-img mr-4 rounded-full">
-                                                    <img class="rounded-full lazy" src="{{ comment.user.avatar.url }}"
-                                                         alt="تصویر کاربر" style="">
-                                                </div>
-                                                <div class="media-body">
-                                                    <h5 class="pb-2">{{ comment.user.get_full_name }}</h5>
-                                                    <span class="d-block lh-18 pb-2">{{ article.create_date|timeago }}</span>
-                                                    <p class="pb-3">{{ comment.text }}</p>
-                                                </div>
-                                            </div>
-                                            {% for reply in comment.articlecomment_set.all %}
-                                                {% if reply.is_active and not reply.is_delete %}
-                                                    <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 review-reply">
-                                                        <div class="media-img mr-4 rounded-full">
-                                                            <img class="rounded-full lazy"
-                                                                 src="{{ reply.user.avatar.url }}"
-                                                                 alt="تصویر کاربر" style="">
-                                                        </div>
-                                                        <div class="media-body">
-                                                            <h5 class="pb-2">{{ reply.user.get_full_name }}</h5>
-                                                            <span class="d-block lh-18 pb-2">{{ reply.create_date|timeago }}</span>
-                                                            <p class="pb-3">{{ reply.text }}</p>
-
-                                                        </div>
+                                            {# نمایش فقط اگر کامنت فعال است یا متعلق به خود کاربر است #}
+                                            {% if comment.is_active or request.user == comment.user %}
+                                                <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 {% if not comment.is_active %}bg-light{% endif %}">
+                                                    <div class="media-img mr-4 rounded-full">
+                                                        {% if comment.user and comment.user.avatar %}
+                                                            <img class="rounded-full lazy" src="{{ comment.user.avatar.url }}" alt="تصویر کاربر">
+                                                        {% else %}
+                                                            <img class="rounded-full lazy" src="{% static 'images/default-avatar.png' %}" alt="کاربر مهمان">
+                                                        {% endif %}
                                                     </div>
-                                                {% endif %}
-                                            {% endfor %}
+
+                                                    <div class="media-body">
+                                                        <h5 class="pb-2">
+                                                            {% if comment.user %}
+                                                                {{ comment.user.get_full_name|default:comment.user.username }}
+                                                            {% else %}
+                                                                {{ comment.name }}
+                                                            {% endif %}
+                                                        </h5>
+
+                                                        <span class="d-block lh-18 pb-2">{{ comment.create_date|timeago }}</span>
+                                                        <p class="pb-3">{{ comment.text }}</p>
+
+                                                        {% if not comment.is_active and request.user == comment.user %}
+                                                            <small class="text-warning">(در انتظار تأیید مدیر)</small>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+
+                                                {# نمایش پاسخ‌ها #}
+                                                {% for reply in comment.articlecomment_set.all %}
+                                                    {% if reply.is_active or request.user == reply.user %}
+                                                        <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 review-reply {% if not reply.is_active %}bg-light{% endif %}">
+                                                            <div class="media-img mr-4 rounded-full">
+                                                                {% if reply.user and reply.user.avatar %}
+                                                                    <img class="rounded-full lazy" src="{{ reply.user.avatar.url }}" alt="تصویر کاربر">
+                                                                {% else %}
+                                                                    <img class="rounded-full lazy" src="{% static 'images/default-avatar.png' %}"
+                                                                         alt="کاربر مهمان">
+                                                                {% endif %}
+                                                            </div>
+
+                                                            <div class="media-body">
+                                                                <h5 class="pb-2">
+                                                                    {% if reply.user %}
+                                                                        {{ reply.user.get_full_name|default:reply.user.username }}
+                                                                    {% else %}
+                                                                        {{ reply.name }}
+                                                                    {% endif %}
+                                                                </h5>
+
+                                                                <span class="d-block lh-18 pb-2">{{ reply.create_date|timeago }}</span>
+                                                                <p class="pb-3">{{ reply.text }}</p>
+
+                                                                {% if not reply.is_active and request.user == reply.user %}
+                                                                    <small class="text-warning">(در انتظار تأیید مدیر)</small>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
                                         {% endfor %}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     {% endif %}
+
 
                     <!-- add_comment -->
                     <div class="card card-item">
@@ -209,32 +255,21 @@
                                         </div>
                                     {% endif %}
 
-
+                                    <!-- captcha -->
                                     <div class="input-box">
                                         <label class="label-text">عبارت امنیتی</label>
                                         <div class="form-group">
-                                            <img src="/captcha/image/29444b60313972ed0f1a0070a92fde0f3c17135f/"
-                                                 alt="captcha" class="captcha">
-                                            <input type="hidden" name="captcha_0"
-                                                   value="29444b60313972ed0f1a0070a92fde0f3c17135f" required=""
-                                                   id="id_captcha_0" autocomplete="off">
-                                            <input type="text"
-                                                   name="captcha_1"
-                                                   required=""
-                                                   id="id_captcha_1"
-                                                   autocapitalize="off"
-                                                   autocomplete="off"
-                                                   autocorrect="off"
-                                                   spellcheck="false">
-                                            <!-- این خودکار هم input و هم img را رندر می‌کند -->
-
-                                            <!-- لینک تازه کردن تصویر -->
+                                            <img src="/captcha/image/74f443cbe4bcd75250beaf2ab50712d8b047be8d/" alt="captcha" class="captcha">
+                                            <input type="hidden" name="captcha_0" value="74f443cbe4bcd75250beaf2ab50712d8b047be8d" required="" id="id_captcha_0"
+                                                   autocomplete="off"><input type="text" name="captcha_1" required="" id="id_captcha_1" autocapitalize="off"
+                                                                             autocomplete="off" autocorrect="off" spellcheck="false">
                                             <a href="#" id="refresh-captcha">↻ تغییر تصویر</a>
 
 
                                         </div>
                                     </div>
 
+                                    <!-- submit -->
                                     <div class="btn-box col-lg-12">
                                         <button class="btn theme-btn" type="submit">ثبت کردن نظر</button>
                                     </div>
@@ -244,7 +279,7 @@
                     </div>
                 </div>
 
-                {% comment %}sidebar{% endcomment %}
+                <!-- sidebar -->
                 <div class="col-lg-4">
                     <div class="sidebar">
                         {% render_partial 'blog_app.views.SearchArticlesView' %}

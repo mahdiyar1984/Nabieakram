@@ -1,4 +1,5 @@
 import jdatetime
+from django.contrib import messages
 from django.db.models import QuerySet
 from django.db.models import Q
 from django.http import HttpRequest
@@ -68,8 +69,19 @@ class RecentArticlesView(View):
 class BlogDetailView(View):
     def get(self, request: HttpRequest, pk):
         article: Article = Article.objects.get(pk=pk, is_active=True)
-
         comments = ArticleComment.objects.filter(article=article, parent=None, is_active=True)
+        if request.user.is_authenticated:
+            user_comments = ArticleComment.objects.filter(
+                article=article, user=request.user, parent=None
+            )
+            comments = (comments | user_comments).distinct()
+
+        temp_comment_ids = request.session.get('temp_comments',[])
+        if temp_comment_ids:
+            temp_comment = ArticleComment.objects.filter(id__in=temp_comment_ids)
+            comments = list(comments) + list(temp_comment)
+
+
         context = {
             'article': article,
             'comments': comments
@@ -92,12 +104,20 @@ class BlogDetailView(View):
 
         comment = ArticleComment.objects.create(
             article=article,
-            user=request.user,
+            user=request.user if request.user.is_authenticated else None,
             name=name,
             email=email,
             text=message,
-            parent_id=parent_id if parent_id else None
+            parent_id=parent_id if parent_id else None,
+            is_active=False
         )
+
+        temp_comments = request.session.get('temp_comments',[])
+        temp_comments.append(comment.id)
+        request.session['temp_comments'] = temp_comments
+        messages.info(request, 'نظر شما ثبت شد و پس از تایید مدیر نمایش داده خواهد شد. فعلاً فقط برای شما قابل مشاهده است.')
+
+
         return redirect("blog_app:blog_detail", pk=article.pk)
 
 

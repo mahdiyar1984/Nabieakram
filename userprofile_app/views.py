@@ -545,8 +545,7 @@ def admin_article_comment_list(request: HttpRequest):
         .order_by('-create_date')
     )
     paginator = Paginator(article_comments, 5)
-    page_number = request.GET.get('page', 1)
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginator.get_page(request.GET.get('page', 1))
     context = {
         'page_obj': page_obj
     }
@@ -570,6 +569,7 @@ def admin_article_comment_update(request: AuthenticatedHttpRequest, pk):
         comment.text = request.POST.get('text', comment.text)
         comment.is_active = 'is_active' in request.POST
         comment.is_delete = 'is_delete' in request.POST
+
         comment.save()
         reply_text = request.POST.get('reply_text')
         if reply_text:
@@ -838,8 +838,7 @@ def admin_lecture_comment_list(request: HttpRequest):
         .order_by('-created_date')
     )
     paginator = Paginator(lecture_comments, 5)
-    page_number = request.GET.get('page', 1)
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginator.get_page(request.GET.get('page', 1))
     context = {
         'page_obj': page_obj
     }
@@ -861,7 +860,15 @@ def admin_lecture_comment_update(request: AuthenticatedHttpRequest, pk):
     comment: LectureComment = LectureComment.objects.get(pk=pk)
     if request.method == 'POST':
         comment.text = request.POST.get('text', comment.text)
+        comment.is_active = 'is_active' in request.POST
+        comment.is_delete = 'is_delete' in request.POST
         comment.save()
+
+        if comment.parent:
+            comment.parent.is_active = 'is_active_parent' in request.POST
+            comment.parent.is_delete = 'is_delete_parent' in request.POST
+            comment.parent.save()
+
         reply_text = request.POST.get('reply_text')
         if reply_text:
             first_reply = comment.lecturecomment_set.first()
@@ -870,7 +877,7 @@ def admin_lecture_comment_update(request: AuthenticatedHttpRequest, pk):
                 first_reply.save()
             else:
                 LectureComment.objects.create(
-                    article=comment.lecture,
+                    lecture=comment.lecture,
                     user=request.user,
                     parent=comment,
                     text=reply_text
