@@ -1353,21 +1353,21 @@ class GroupPermissionMatrixView(LoginRequiredMixin, AdminRequiredMixin, Template
         return redirect(request.path)
 
 
-class GroupCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
+class GroupCreateView(LoginRequiredMixin, CreateView):
     model = Group
     form_class = GroupForm
     template_name = "userprofile_app/groups/group_form.html"
     success_url = reverse_lazy("group_list")
 
 
-class GroupUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
+class GroupUpdateView(LoginRequiredMixin, UpdateView):
     model = Group
     form_class = GroupForm
     template_name = "userprofile_app/groups/group_form.html"
     success_url = reverse_lazy("group_list")
 
 
-class GroupDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+class GroupDeleteView(LoginRequiredMixin, DeleteView):
     model = Group
     template_name = "userprofile_app/groups/group_confirm_delete.html"
     success_url = reverse_lazy("group_list")
@@ -1376,13 +1376,13 @@ class GroupDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
 # endregion
 
 # region user
-class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
+class UserListView(LoginRequiredMixin, ListView):
     model = User
     template_name = "userprofile_app/users/user_list.html"
     paginate_by = 5
 
 
-class UserCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
+class UserCreateView(LoginRequiredMixin, CreateView):
     model = User
     form_class = UserCreateForm
     template_name = "userprofile_app/users/user_form.html"
@@ -1418,7 +1418,7 @@ class UserCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
         return response
 
 
-class UserUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
+class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserUpdateForm
     template_name = "userprofile_app/users/user_form.html"
@@ -1454,7 +1454,7 @@ class UserUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
         return response
 
 
-class UserDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
     template_name = "userprofile_app/users/user_confirm_delete.html"
     success_url = reverse_lazy('userprofile_app:user_list')

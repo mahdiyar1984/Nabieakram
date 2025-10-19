@@ -18,8 +18,11 @@
             <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between mb-5">
                 <div class="media media-card align-items-center">
                     <div class="media-img media--img media-img-md rounded-full">
-                        <img class="rounded-full" src="{{ request.user.avatar.url }}" alt="تصویر کوچک دانش آموز">
-                    </div>
+                        {% if request.user.avatar %}
+                            <img class="rounded-full" src="{{ request.user.avatar.url }}" alt="تصویر آواتار">
+                        {% else %}
+                            <img class="rounded-full" src="/static/images/team11.jpg" alt="تصویر آواتار">
+                        {% endif %}                     </div>
                     <div class="media-body">
                         <h2 class="section__title fs-30">{{ request.user.get_full_name }}</h2>
                         <div class="rating-wrap d-flex align-items-center pt-2">
@@ -135,19 +138,19 @@
                                                 {% endif %}
                                             </div>
                                             {% if not read_only %}
-                                            <div class="media-body mt-3">
-                                                <div class="file-upload-wrap file-upload-wrap-2">
-                                                    <div class="MultiFile-wrap" id="MultiFile2">
-                                                        <input type="file" name="{{ form.image.name }}"
-                                                               id="customFileInput" class="file-upload-input">
-                                                        <div class="MultiFile-list" id="MultiFile2_list"></div>
-                                                    </div>
-                                                    <div class="file-upload-text">
-                                                        <i class="la la-photo mr-2"></i> آپلود تصویر
+                                                <div class="media-body mt-3">
+                                                    <div class="file-upload-wrap file-upload-wrap-2">
+                                                        <div class="MultiFile-wrap" id="MultiFile2">
+                                                            <input type="file" name="{{ form.image.name }}"
+                                                                   id="customFileInput" class="file-upload-input">
+                                                            <div class="MultiFile-list" id="MultiFile2_list"></div>
+                                                        </div>
+                                                        <div class="file-upload-text">
+                                                            <i class="la la-photo mr-2"></i> آپلود تصویر
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        {% endif %}
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>

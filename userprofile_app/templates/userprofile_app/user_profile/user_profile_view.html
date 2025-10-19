@@ -5,74 +5,80 @@
 
 {% block content %}
 
-    <div class="dashboard-content-wrap">
+<div class="dashboard-content-wrap">
 
-        <div class="dashboard-menu-toggler btn theme-btn theme-btn-sm lh-28 theme-btn-transparent mb-4 ml-3"><i
-                class="la la-bars mr-1"></i> منو
-        </div>
+    <div class="dashboard-menu-toggler btn theme-btn theme-btn-sm lh-28 theme-btn-transparent mb-4 ml-3"><i
+            class="la la-bars mr-1"></i> منو
+    </div>
 
-        <!-- main content -->
-        <div class="container-fluid">
+    <!-- main content -->
+    <div class="container-fluid">
 
 
-            <!-- profile view -->
-            <h3 class="fs-17 font-weight-semi-bold">پروفایل کاربر</h3>
-            <hr class="pb-5">
+        <!-- profile view -->
+        <h3 class="fs-17 font-weight-semi-bold">پروفایل کاربر</h3>
+        <hr class="pb-5">
 
-            <div class="setting-body">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="profile-detail mb-5">
-                            <ul class="generic-list-item generic-list-item-flash">
-                                <li><span class="profile-name">تاریخ ثبت نام: </span><span
-                                        class="profile-desc">{{ object.date_joined|to_shamsi }}</span>
-                                </li>
-                                <li><span class="profile-name">نام: </span><span
-                                        class="profile-desc">{{ request.user.first_name }}</span></li>
-                                <li><span class="profile-name">نام خانوادگی: </span><span
-                                        class="profile-desc">{{ request.user.last_name }}</span></li>
-                                <li><span class="profile-name">نام کاربری: </span><span
-                                        class="profile-desc">{{ request.user.username }}</span></li>
-                                <li><span class="profile-name">ایمیل: </span><span
-                                        class="profile-desc">{{ request.user.email }}</span>
-                                </li>
-                                <li><span class="profile-name">شماره تلفن: </span><span
-                                        class="profile-desc">{{ request.user.phone_number }}</span>
-                                </li>
-                                <li>
-                                    <span class="profile-name">آدرس: </span>
-                                    <span class="profile-desc">{{ request.user.address }}</span>
-                                </li>
-                                <li>
-                                    <span class="profile-name">بیو: </span>
-                                    <span class="profile-desc">{{ request.user.about_user }}</span>
-                                </li>
-                            </ul>
-                        </div>
+        <div class="setting-body">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="profile-detail mb-5">
+                        <ul class="generic-list-item generic-list-item-flash">
+                            <li><span class="profile-name">تاریخ ثبت نام: </span><span
+                                    class="profile-desc">{{ object.date_joined|to_shamsi }}</span>
+                            </li>
+                            <li><span class="profile-name">نام: </span><span
+                                    class="profile-desc">{{ request.user.first_name }}</span></li>
+                            <li><span class="profile-name">نام خانوادگی: </span><span
+                                    class="profile-desc">{{ request.user.last_name }}</span></li>
+                            <li><span class="profile-name">نام کاربری: </span><span
+                                    class="profile-desc">{{ request.user.username }}</span></li>
+                            <li><span class="profile-name">ایمیل: </span><span
+                                    class="profile-desc">{{ request.user.email }}</span>
+                            </li>
+                            <li><span class="profile-name">شماره تلفن: </span><span
+                                    class="profile-desc">{{ request.user.phone_number }}</span>
+                            </li>
+                            <li>
+                                <span class="profile-name">آدرس: </span>
+                                <span class="profile-desc">{{ request.user.address }}</span>
+                            </li>
+                            <li>
+                                <span class="profile-name">بیو: </span>
+                                <span class="profile-desc">{{ request.user.about_user }}</span>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="media media-card align-items-center">
-                            <div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="media media-card align-items-center">
+                        <div>
+                            {% if request.user.avatar %}
                                 <img class="mr-3" style="width: 400px; border-radius: 15px"
                                      src="{{ request.user.avatar.url }}" alt="تصویر آواتار">
-                            </div>
+                            {% else %}
+                                <img class="mr-3" style="width: 400px; border-radius: 15px"
+                                     src="/static/images/team11.jpg" alt="تصویر آواتار">
+                            {% endif %}
+
                         </div>
                     </div>
                 </div>
             </div>
-            {% if messages %}
-                <div class="mb-3">
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-
         </div>
+        {% if messages %}
+            <div class="mb-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
 
     </div>
+
+</div>
 
 {% endblock %}

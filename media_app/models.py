@@ -19,9 +19,7 @@ class GalleryCategory(BaseModel):
     def __str__(self):
         return self.name
 
-    class Meta:
-        verbose_name = 'دسته بندی تصاویر'
-        verbose_name_plural = 'دسته بندهای تصاویر'
+
 class GalleryImage(BaseModel):
     objects = models.Manager()
     category = models.ForeignKey(
@@ -35,10 +33,6 @@ class GalleryImage(BaseModel):
 
     def __str__(self):
         return self.title if self.title else f"عکس {self.id}"
-
-    class Meta:
-        verbose_name = 'تصویر'
-        verbose_name_plural = 'تصاویر'
 
 
 class LectureCategory(BaseModel):
@@ -54,20 +48,16 @@ class LectureCategory(BaseModel):
     def __str__(self):
         return self.title
 
-    class Meta:
-        verbose_name = 'دسته بندی سخنرانی'
-        verbose_name_plural = 'دسته بندی های سخنرانی'
+
 class LectureTag(BaseModel):
     objects = models.Manager()
     title = models.CharField(max_length=300, db_index=True, verbose_name="عنوان تگ")
     slug = models.SlugField(max_length=100, unique=True, allow_unicode=True, verbose_name="عنوان در URL")
 
-    class Meta:
-        verbose_name = 'تگ سخنرانی'
-        verbose_name_plural = 'تگ های سخنرانی'
-
     def __str__(self):
         return self.title
+
+
 class Lecture(BaseModel):
     objects = models.Manager()
 
@@ -108,12 +98,12 @@ class Lecture(BaseModel):
         return self.title
 
     class Meta:
-        verbose_name = 'سخنرانی'
-        verbose_name_plural = 'سخنرانی ها'
         permissions = [
             ("can_publish_lecture", "Can publish lecture"),
             ("can_reject_lecture", "Can reject lecture"),
         ]
+
+
 class LectureClip(BaseModel):
     objects = models.Manager()
     lecture = models.ForeignKey(
@@ -131,9 +121,7 @@ class LectureClip(BaseModel):
     def __str__(self):
         return self.title
 
-    class Meta:
-        verbose_name = 'کلیپ'
-        verbose_name_plural = 'کلیپ ها'
+
 class LectureComment(models.Model):
     objects = models.Manager()
     parent = models.ForeignKey(to='LectureComment',
@@ -154,10 +142,5 @@ class LectureComment(models.Model):
     is_active = models.BooleanField(default=False, verbose_name='فعال / غیرفعال')
     is_delete = models.BooleanField(default=False, verbose_name='حذف شده / نشده')
 
-
     def __str__(self):
         return f"{self.lecture.title} - {self.text[:30]}"
-
-    class Meta:
-        verbose_name = 'نظر سخنرانی'
-        verbose_name_plural = 'نظرات سخنرانی'

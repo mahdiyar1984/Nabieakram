@@ -11,13 +11,9 @@ class FooterLinkBox(models.Model):
     is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
     create_date = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='تاریخ ثبت')
 
-
-    class Meta:
-        verbose_name = 'دسته بندی لینک های فوتر'
-        verbose_name_plural = 'دسته بندی های لینک های فوتر'
-
     def __str__(self):
         return self.title
+
 class FooterLink(models.Model):
     objects = models.Manager()
     footer_link_box = models.ForeignKey(to=FooterLinkBox, on_delete=models.CASCADE, verbose_name='دسته بندی',
@@ -29,8 +25,6 @@ class FooterLink(models.Model):
     create_date = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='تاریخ ثبت')
 
     class Meta:
-        verbose_name = 'لینک فوتر'
-        verbose_name_plural = 'لینک های فوتر'
         ordering = ["order"]
 
     def __str__(self):
@@ -49,8 +43,6 @@ class Slider(models.Model):
     is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
 
     class Meta:
-        verbose_name = "اسلایدر"
-        verbose_name_plural = "اسلایدرها"
         ordering = ["order", "-created_at"]
 
     def __str__(self):
@@ -81,8 +73,6 @@ class ContactUs(models.Model):
     is_replied = models.BooleanField(default=False, verbose_name="پاسخ داده شده")
 
     class Meta:
-        verbose_name = "پیام تماس با ما"
-        verbose_name_plural = "پیام‌های تماس با ما"
         ordering = ['-created_at']
 
     def __str__(self):
@@ -126,10 +116,6 @@ class SiteSetting(models.Model):
     about_us_text = models.TextField(verbose_name="متن درباره ما")
     site_logo = models.ImageField(upload_to="site_logo/images/", verbose_name="لوگو")
     working_hours = models.CharField(max_length=200, verbose_name="ساعات فعالیت", blank=True, null=True, )
-
-    class Meta:
-        verbose_name = 'تنظیمات سایت'
-        verbose_name_plural = 'تنظیمات'
 
     def __str__(self):
         return self.site_name

@@ -20,10 +20,6 @@ class ArticleCategory(models.Model):
     def __str__(self):
         return self.title
 
-    class Meta:
-        verbose_name = 'دسته بندی مقاله'
-        verbose_name_plural = 'دسته بندی های مقاله'
-
 
 class ArticleTag(models.Model):
     objects = models.Manager()
@@ -31,10 +27,6 @@ class ArticleTag(models.Model):
     is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
     is_delete = models.BooleanField(default=False, verbose_name='حذف شده / نشده')
     create_date = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='تاریخ ثبت')
-
-    class Meta:
-        verbose_name = 'تگ مقاله'
-        verbose_name_plural = 'تگ های مقاله'
 
     def __str__(self):
         return self.title
@@ -66,8 +58,6 @@ class Article(models.Model):
         return self.title
 
     class Meta:
-        verbose_name = 'مقاله'
-        verbose_name_plural = 'مقاله ها'
         permissions = [
             ("can_publish_article", "Can publish article"),
             ("can_reject_article", "Can reject article"),
@@ -94,7 +84,3 @@ class ArticleComment(models.Model):
 
     def __str__(self):
         return f"{self.article.title}"
-
-    class Meta:
-        verbose_name = 'نظر مقاله'
-        verbose_name_plural = 'نظرات مقاله'
