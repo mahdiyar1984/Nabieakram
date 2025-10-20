@@ -127,54 +127,8 @@
                         </div>
                     {% endfor %}
                 </div>
-
                 <button type="submit" class="btn btn-primary mt-5 mb-5" style="width:200px;">ذخیره</button>
             </form>
-
-            {% comment %}<div class="table-responsive pb-4">
-                <form method="post">
-                    {% csrf_token %}
-                    <table class="table generic-table align-middle">
-                        <thead>
-                        <tr>
-                            <th scope="col">گروه</th>
-                            <th scope="col">برنامه</th>
-                            <th scope="col">مدل</th>
-                            <th scope="col">ایجاد</th>
-                            <th scope="col">ویرایش</th>
-                            <th scope="col">حذف</th>
-                            <th scope="col">مشاهده</th>
-                        </tr>
-                        </thead>
-
-                        <tbody>
-                        {% for group in groups %}
-                            {% for app, models in apps_dict.items %}
-                                {% for model_name, model_data in models.items %}
-                                    <tr>
-                                        <td>{{ group.name }}</td>
-                                        <td>{{ app }}</td>
-                                        <td>{{ model_data.verbose }}</td>
-                                        {% for action in actions %}
-                                            <td>
-                                                {% with codename=action|add:"_"|add:model_name %}
-                                                    <input type="checkbox"
-                                                           name="permissions_{{ group.id }}[]"
-                                                           value="{{ codename }}"
-                                                           {% if codename in group.codename_list %}checked{% endif %}>
-                                                {% endwith %}
-                                            </td>
-                                        {% endfor %}
-                                    </tr>
-                                {% endfor %}
-                            {% endfor %}
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    <button type="submit" class="btn btn-primary mt-5">ذخیره</button>
-                </form>
-            </div>{% endcomment %}
-
         </div>
     </div>
 

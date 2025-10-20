@@ -10,8 +10,8 @@ from django.utils.crypto import get_random_string
 from django.views.generic import DetailView, TemplateView
 from blog_app.models import Article, ArticleCategory, ArticleTag, ArticleComment
 from main_app.models import FooterLink, ContactUs, SiteSetting, Slider, FooterLinkBox
-from media_app.models import Lecture, LectureCategory, LectureTag, LectureComment, GalleryImage, GalleryCategory, \
-    BaseModel, LectureClip
+from media_app.models import Lecture, LectureCategory, LectureTag, \
+    LectureComment, GalleryImage, GalleryCategory, LectureClip
 from utils.email_service import send_activation_email
 from .forms import ArticleForm, GroupForm, ArticleCategoryForm, ArticleTagForm, LectureForm, LectureTagForm, \
     LectureCategoryForm, GalleryImageForm, \
@@ -22,16 +22,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from account_app.models import User
 from .forms import UserCreateForm, UserUpdateForm
 from django.contrib.auth.models import Group, Permission
 from django.apps import apps
-
-
-class AdminRequiredMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.is_superuser
 
 
 class AuthenticatedHttpRequest(HttpRequest):
@@ -39,7 +34,7 @@ class AuthenticatedHttpRequest(HttpRequest):
 
 
 # region dashboard
-class UserPanelDashboardPage(LoginRequiredMixin, View):
+class UserPanelDashboardPage(View):
     def get(self, request):
         return render(request, template_name='userprofile_app/dashboard/user_panel_dashboard_page.html')
 
@@ -47,12 +42,12 @@ class UserPanelDashboardPage(LoginRequiredMixin, View):
 # endregion
 
 # region user profile
-class UserProfileDetailView(LoginRequiredMixin, View):
+class UserProfileDetailView(View):
     def get(self, request):
         return render(request, template_name='userprofile_app/user_profile/user_profile_view.html')
 
 
-class UserProfileUpdateView(LoginRequiredMixin, View):
+class UserProfileUpdateView(View):
     def get(self, request):
         return render(request, template_name='userprofile_app/user_profile/user_profile_edit.html')
 
@@ -73,7 +68,7 @@ class UserProfileUpdateView(LoginRequiredMixin, View):
         return redirect('userprofile_app:user_profile_detail')
 
 
-class UserProfileChangePassword(LoginRequiredMixin, View):
+class UserProfileChangePassword(View):
     def get(self, request):
         return render(request, template_name='userprofile_app/user_profile/user_profile_change_password.html')
 
@@ -102,7 +97,7 @@ class UserProfileChangePassword(LoginRequiredMixin, View):
         return redirect('userprofile_app:user_profile_change_password')
 
 
-class UserProfileForgotPassword(LoginRequiredMixin, View):
+class UserProfileForgotPassword(View):
     def get(self, request):
         return render(request, template_name='userprofile_app/user_profile/user_profile_change_password.html')
 
@@ -131,7 +126,7 @@ class UserProfileForgotPassword(LoginRequiredMixin, View):
         return redirect('userprofile_app:user_profile_change_password')
 
 
-class UserProfileChangeEmail(LoginRequiredMixin, View):
+class UserProfileChangeEmail(View):
     def get(self, request):
         return render(request, template_name='userprofile_app/user_profile/user_profile_change_email.html')
 
@@ -198,13 +193,13 @@ class UserProfileActiveEmailView(View):
 # endregion
 
 # region Article
-class AdminArticleListView(LoginRequiredMixin, ListView):
+class AdminArticleListView(ListView):
     model = Article
     template_name = 'userprofile_app/articles/articles_list.html'
     paginate_by = 10
 
 
-class AdminArticleReadView(LoginRequiredMixin, DetailView):
+class AdminArticleReadView(DetailView):
     model = Article
     form_class = ArticleForm
     template_name = "userprofile_app/articles/article_form.html"
@@ -218,7 +213,7 @@ class AdminArticleReadView(LoginRequiredMixin, DetailView):
         return context
 
 
-class AdminArticleCreateView(LoginRequiredMixin, CreateView):
+class AdminArticleCreateView(CreateView):
     model = Article
     form_class = ArticleForm
     template_name = 'userprofile_app/articles/article_form.html'
@@ -250,7 +245,7 @@ class AdminArticleCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class AdminArticleUpdateView(LoginRequiredMixin, UpdateView):
+class AdminArticleUpdateView(UpdateView):
     model = Article
     form_class = ArticleForm
     template_name = 'userprofile_app/articles/article_form.html'
@@ -285,7 +280,7 @@ class AdminArticleUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class AdminArticleDeleteView(LoginRequiredMixin, View):
+class AdminArticleDeleteView(View):
     success_url = reverse_lazy('userprofile_app:articles_list')
 
     def post(self, request, pk, *args, **kwargs):
@@ -295,7 +290,7 @@ class AdminArticleDeleteView(LoginRequiredMixin, View):
         return redirect(self.success_url)
 
 
-class AdminArticleChangeStatusView(LoginRequiredMixin, View):
+class AdminArticleChangeStatusView(View):
     def post(self, request, pk, *args, **kwargs):
         article = get_object_or_404(Article, pk=pk)
         action = request.POST.get("action")
@@ -327,7 +322,7 @@ class AdminArticleChangeStatusView(LoginRequiredMixin, View):
 
 # endregion
 # region Article Category
-class AdminArticleCategoryListView(LoginRequiredMixin, ListView):
+class AdminArticleCategoryListView(ListView):
     model = ArticleCategory
     template_name = 'userprofile_app/articles/article_categories_list.html'
     paginate_by = 10
@@ -464,7 +459,7 @@ def article_category_delete_view(request, pk):
 
 # endregion
 # region Article Tag
-class AdminArticleTagListView(LoginRequiredMixin, View):
+class AdminArticleTagListView(View):
     def get(self, request: HttpRequest):
         article_tags: QuerySet[ArticleTag] = ArticleTag.objects.all().order_by('id')
         paginator = Paginator(article_tags, 5)
@@ -476,7 +471,7 @@ class AdminArticleTagListView(LoginRequiredMixin, View):
         return render(request, 'userprofile_app/articles/article_tags_list.html', context)
 
 
-class AdminArticleTagReadView(LoginRequiredMixin, View):
+class AdminArticleTagReadView(View):
     def get(self, request: HttpRequest, pk):
         article_tag: ArticleTag = get_object_or_404(ArticleTag, pk=pk)
         article_tag_form = ArticleTagForm(instance=article_tag, read_only=True)
@@ -486,7 +481,7 @@ class AdminArticleTagReadView(LoginRequiredMixin, View):
         return render(request, 'userprofile_app/articles/article_tag_form.html', context)
 
 
-class AdminArticleTagCreateView(LoginRequiredMixin, View):
+class AdminArticleTagCreateView(View):
     def get(self, request: HttpRequest):
         article_tag_form = ArticleTagForm()
         context = {
@@ -504,7 +499,7 @@ class AdminArticleTagCreateView(LoginRequiredMixin, View):
             messages.error(request, "خطا در ثبت فرم ❌ لطفاً فیلدها را بررسی کنید.")
 
 
-class AdminArticleTagUpdateView(LoginRequiredMixin, View):
+class AdminArticleTagUpdateView(View):
     def get(self, request: HttpRequest, pk):
         article_tag: ArticleTag = get_object_or_404(ArticleTag, pk=pk)
         article_tag_form = ArticleTagForm(instance=article_tag)
@@ -524,7 +519,7 @@ class AdminArticleTagUpdateView(LoginRequiredMixin, View):
             messages.error(request, "خطا در ثبت فرم ❌ لطفاً فیلدها را بررسی کنید.")
 
 
-class AdminArticleTagDeleteView(LoginRequiredMixin, View):
+class AdminArticleTagDeleteView(View):
     def post(self, request: HttpRequest, pk):
         article_tag: ArticleTag = get_object_or_404(ArticleTag, pk=pk)
         article_tag.is_delete = True
@@ -601,13 +596,13 @@ def admin_article_comment_delete(request: HttpRequest, pk):
 # endregion
 
 # region Lecture
-class AdminLectureListView(LoginRequiredMixin, ListView):
+class AdminLectureListView(ListView):
     model = Lecture
     template_name = 'userprofile_app/lectures/lectures_list.html'
     paginate_by = 5
 
 
-class AdminLectureReadView(LoginRequiredMixin, DetailView):
+class AdminLectureReadView(DetailView):
     model = Lecture
     form_class = LectureForm
     template_name = "userprofile_app/lectures/lecture_form.html"
@@ -621,7 +616,7 @@ class AdminLectureReadView(LoginRequiredMixin, DetailView):
         return context
 
 
-class AdminLectureCreateView(LoginRequiredMixin, CreateView):
+class AdminLectureCreateView(CreateView):
     model = Lecture
     form_class = LectureForm
     template_name = 'userprofile_app/lectures/lecture_form.html'
@@ -641,7 +636,7 @@ class AdminLectureCreateView(LoginRequiredMixin, CreateView):
         return redirect(self.get_success_url())
 
 
-class AdminLectureUpdateView(LoginRequiredMixin, UpdateView):
+class AdminLectureUpdateView(UpdateView):
     model = Lecture
     form_class = LectureForm
     template_name = 'userprofile_app/lectures/lecture_form.html'
@@ -680,7 +675,7 @@ class AdminLectureUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class AdminLectureDeleteView(LoginRequiredMixin, DeleteView):
+class AdminLectureDeleteView(DeleteView):
     success_url = reverse_lazy('userprofile_app:lectures_list')
 
     def post(self, request, pk, *args, **kwargs):
@@ -690,7 +685,7 @@ class AdminLectureDeleteView(LoginRequiredMixin, DeleteView):
         return redirect(self.success_url)
 
 
-class AdminLectureChangeStatusView(LoginRequiredMixin, View):
+class AdminLectureChangeStatusView(View):
     def post(self, request, pk, *args, **kwargs):
         lecture = get_object_or_404(Lecture, pk=pk)
         action = request.POST.get("action")
@@ -719,13 +714,13 @@ class AdminLectureChangeStatusView(LoginRequiredMixin, View):
 
 # endregion
 # region Lecture Category
-class AdminLectureCategoryListView(LoginRequiredMixin, ListView):
+class AdminLectureCategoryListView(ListView):
     model = LectureCategory
     template_name = 'userprofile_app/lectures/lecture_categories_list.html'
     paginate_by = 10
 
 
-class AdminLectureCategoryReadView(LoginRequiredMixin, DetailView):
+class AdminLectureCategoryReadView(DetailView):
     model = LectureCategory
     form_class = LectureCategoryForm
     template_name = "userprofile_app/lectures/lecture_category_form.html"
@@ -737,7 +732,7 @@ class AdminLectureCategoryReadView(LoginRequiredMixin, DetailView):
         return context
 
 
-class AdminLectureCategoryCreateView(LoginRequiredMixin, CreateView):
+class AdminLectureCategoryCreateView(CreateView):
     model = LectureCategory
     form_class = LectureCategoryForm
     template_name = 'userprofile_app/lectures/lecture_category_form.html'
@@ -749,7 +744,7 @@ class AdminLectureCategoryCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class AdminLectureCategoryUpdateView(LoginRequiredMixin, UpdateView):
+class AdminLectureCategoryUpdateView(UpdateView):
     model = LectureCategory
     form_class = LectureCategoryForm
     template_name = 'userprofile_app/lectures/lecture_category_form.html'
@@ -761,7 +756,7 @@ class AdminLectureCategoryUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class AdminLectureCategoryDeleteView(LoginRequiredMixin, DeleteView):
+class AdminLectureCategoryDeleteView(DeleteView):
     success_url = reverse_lazy('userprofile_app:lecture_categories_list')
 
     def post(self, request, pk, *args, **kwargs):
@@ -773,13 +768,13 @@ class AdminLectureCategoryDeleteView(LoginRequiredMixin, DeleteView):
 
 # endregion
 # region Lecture Tag
-class AdminLectureTagListView(LoginRequiredMixin, ListView):
+class AdminLectureTagListView(ListView):
     model = LectureTag
     template_name = 'userprofile_app/lectures/lecture_tags_list.html'
     paginate_by = 10
 
 
-class AdminLectureTagReadView(LoginRequiredMixin, DetailView):
+class AdminLectureTagReadView(DetailView):
     model = LectureTag
     form_class = LectureTagForm
     template_name = "userprofile_app/lectures/lecture_tag_form.html"
@@ -791,7 +786,7 @@ class AdminLectureTagReadView(LoginRequiredMixin, DetailView):
         return context
 
 
-class AdminLectureTagCreateView(LoginRequiredMixin, CreateView):
+class AdminLectureTagCreateView(CreateView):
     model = LectureTag
     form_class = LectureTagForm
     template_name = 'userprofile_app/lectures/lecture_tag_form.html'
@@ -803,7 +798,7 @@ class AdminLectureTagCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class AdminLectureTagUpdateView(LoginRequiredMixin, UpdateView):
+class AdminLectureTagUpdateView(UpdateView):
     model = LectureTag
     form_class = LectureTagForm
     template_name = 'userprofile_app/lectures/lecture_tag_form.html'
@@ -815,7 +810,7 @@ class AdminLectureTagUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class AdminLectureTagDeleteView(LoginRequiredMixin, DeleteView):
+class AdminLectureTagDeleteView(DeleteView):
     success_url = reverse_lazy('userprofile_app:lecture_tags_list')
 
     def post(self, request, pk, *args, **kwargs):
@@ -898,13 +893,13 @@ def admin_lecture_comment_delete(request: HttpRequest, pk):
 
 # endregion
 # region Lecture Clip
-class AdminLectureClipListView(LoginRequiredMixin, ListView):
+class AdminLectureClipListView(ListView):
     model = LectureClip
     template_name = 'userprofile_app/lectures/lecture_clips_list.html'
     paginate_by = 5
 
 
-class AdminLectureClipReadView(LoginRequiredMixin, DetailView):
+class AdminLectureClipReadView(DetailView):
     model = LectureClip
     form_class = LectureClipForm
     template_name = "userprofile_app/lectures/lecture_clip_form.html"
@@ -916,7 +911,7 @@ class AdminLectureClipReadView(LoginRequiredMixin, DetailView):
         return context
 
 
-class AdminLectureClipCreateView(LoginRequiredMixin, CreateView):
+class AdminLectureClipCreateView(CreateView):
     model = LectureClip
     form_class = LectureClipForm
     template_name = 'userprofile_app/lectures/lecture_clip_form.html'
@@ -927,7 +922,7 @@ class AdminLectureClipCreateView(LoginRequiredMixin, CreateView):
         return redirect(self.get_success_url())
 
 
-class AdminLectureClipUpdateView(LoginRequiredMixin, UpdateView):
+class AdminLectureClipUpdateView(UpdateView):
     model = LectureClip
     form_class = LectureClipForm
     template_name = 'userprofile_app/lectures/lecture_clip_form.html'
@@ -941,7 +936,7 @@ class AdminLectureClipUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class AdminLectureClipDeleteView(LoginRequiredMixin, DeleteView):
+class AdminLectureClipDeleteView(DeleteView):
     success_url = reverse_lazy('userprofile_app:lecture_clips_list')
 
     def post(self, request, pk, *args, **kwargs):
@@ -954,13 +949,13 @@ class AdminLectureClipDeleteView(LoginRequiredMixin, DeleteView):
 # endregion
 
 # region Gallery
-class AdminGalleryImageListView(LoginRequiredMixin, ListView):
+class AdminGalleryImageListView(ListView):
     model = GalleryImage
     template_name = 'userprofile_app/galleries/galleries_list.html'
     paginate_by = 5
 
 
-class AdminGalleryImageReadView(LoginRequiredMixin, DetailView):
+class AdminGalleryImageReadView(DetailView):
     model = GalleryImage
     form_class = GalleryImageForm
     template_name = "userprofile_app/galleries/gallery_form.html"
@@ -972,7 +967,7 @@ class AdminGalleryImageReadView(LoginRequiredMixin, DetailView):
         return context
 
 
-class AdminGalleryImageCreateView(LoginRequiredMixin, CreateView):
+class AdminGalleryImageCreateView(CreateView):
     model = GalleryImage
     form_class = GalleryImageForm
     template_name = 'userprofile_app/galleries/gallery_form.html'
@@ -983,7 +978,7 @@ class AdminGalleryImageCreateView(LoginRequiredMixin, CreateView):
         return redirect(self.get_success_url())
 
 
-class AdminGalleryImageUpdateView(LoginRequiredMixin, UpdateView):
+class AdminGalleryImageUpdateView(UpdateView):
     model = GalleryImage
     form_class = GalleryImageForm
     template_name = 'userprofile_app/galleries/gallery_form.html'
@@ -996,7 +991,7 @@ class AdminGalleryImageUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class AdminGalleryImageDeleteView(LoginRequiredMixin, DeleteView):
+class AdminGalleryImageDeleteView(DeleteView):
     success_url = reverse_lazy('userprofile_app:galleries_list')
 
     def post(self, request, pk, *args, **kwargs):
@@ -1008,13 +1003,13 @@ class AdminGalleryImageDeleteView(LoginRequiredMixin, DeleteView):
 
 # endregion
 # region Gallery Category
-class AdminGalleryCategoryListView(LoginRequiredMixin, ListView):
+class AdminGalleryCategoryListView(ListView):
     model = GalleryCategory
     template_name = 'userprofile_app/galleries/gallery_categories_list.html'
     paginate_by = 10
 
 
-class AdminGalleryCategoryReadView(LoginRequiredMixin, DetailView):
+class AdminGalleryCategoryReadView(DetailView):
     model = GalleryCategory
     form_class = GalleryCategoryForm
     template_name = "userprofile_app/galleries/gallery_category_form.html"
@@ -1026,7 +1021,7 @@ class AdminGalleryCategoryReadView(LoginRequiredMixin, DetailView):
         return context
 
 
-class AdminGalleryCategoryCreateView(LoginRequiredMixin, CreateView):
+class AdminGalleryCategoryCreateView(CreateView):
     model = GalleryCategory
     form_class = GalleryCategoryForm
     template_name = 'userprofile_app/galleries/gallery_category_form.html'
@@ -1037,7 +1032,7 @@ class AdminGalleryCategoryCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class AdminGalleryCategoryUpdateView(LoginRequiredMixin, UpdateView):
+class AdminGalleryCategoryUpdateView(UpdateView):
     model = GalleryCategory
     form_class = GalleryCategoryForm
     template_name = 'userprofile_app/galleries/gallery_category_form.html'
@@ -1048,7 +1043,7 @@ class AdminGalleryCategoryUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class AdminGalleryCategoryDeleteView(LoginRequiredMixin, DeleteView):
+class AdminGalleryCategoryDeleteView(DeleteView):
     success_url = reverse_lazy('userprofile_app:gallery_categories_list')
 
     def post(self, request, pk, *args, **kwargs):
@@ -1061,13 +1056,13 @@ class AdminGalleryCategoryDeleteView(LoginRequiredMixin, DeleteView):
 # endregion
 
 # region Footer Link
-class AdminFooterLinkListView(LoginRequiredMixin, ListView):
+class AdminFooterLinkListView(ListView):
     model = FooterLink
     template_name = 'userprofile_app/footer_links/footer_links_list.html'
     paginate_by = 5
 
 
-class AdminFooterLinkReadView(LoginRequiredMixin, DetailView):
+class AdminFooterLinkReadView(DetailView):
     model = FooterLink
     form_class = LectureForm
     template_name = "userprofile_app/footer_links/footer_link_form.html"
@@ -1080,7 +1075,7 @@ class AdminFooterLinkReadView(LoginRequiredMixin, DetailView):
         return context
 
 
-class AdminFooterLinkCreateView(LoginRequiredMixin, CreateView):
+class AdminFooterLinkCreateView(CreateView):
     model = FooterLink
     form_class = FooterLinkForm
     template_name = 'userprofile_app/footer_links/footer_link_form.html'
@@ -1092,7 +1087,7 @@ class AdminFooterLinkCreateView(LoginRequiredMixin, CreateView):
         return redirect(self.get_success_url())
 
 
-class AdminFooterLinkUpdateView(LoginRequiredMixin, UpdateView):
+class AdminFooterLinkUpdateView(UpdateView):
     model = FooterLink
     form_class = FooterLinkForm
     template_name = 'userprofile_app/footer_links/footer_link_form.html'
@@ -1103,7 +1098,7 @@ class AdminFooterLinkUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class AdminFooterLinkDeleteView(LoginRequiredMixin, DeleteView):
+class AdminFooterLinkDeleteView(DeleteView):
     success_url = reverse_lazy('userprofile_app:footer_links_list')
 
     def post(self, request, pk, *args, **kwargs):
@@ -1115,13 +1110,13 @@ class AdminFooterLinkDeleteView(LoginRequiredMixin, DeleteView):
 
 # endregion
 # region Footer Link Box
-class AdminFooterLinkBoxListView(LoginRequiredMixin, ListView):
+class AdminFooterLinkBoxListView(ListView):
     model = FooterLinkBox
     template_name = 'userprofile_app/footer_links/footer_link_boxes_list.html'
     paginate_by = 5
 
 
-class AdminFooterLinkBoxReadView(LoginRequiredMixin, DetailView):
+class AdminFooterLinkBoxReadView(DetailView):
     model = FooterLinkBox
     form_class = FooterLinkBoxForm
     template_name = "userprofile_app/footer_links/footer_link_box_form.html"
@@ -1133,7 +1128,7 @@ class AdminFooterLinkBoxReadView(LoginRequiredMixin, DetailView):
         return context
 
 
-class AdminFooterLinkBoxCreateView(LoginRequiredMixin, CreateView):
+class AdminFooterLinkBoxCreateView(CreateView):
     model = FooterLinkBox
     form_class = FooterLinkBoxForm
     template_name = 'userprofile_app/footer_links/footer_link_box_form.html'
@@ -1145,7 +1140,7 @@ class AdminFooterLinkBoxCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class AdminFooterLinkBoxUpdateView(LoginRequiredMixin, UpdateView):
+class AdminFooterLinkBoxUpdateView(UpdateView):
     model = FooterLinkBox
     form_class = FooterLinkBoxForm
     template_name = 'userprofile_app/footer_links/footer_link_box_form.html'
@@ -1157,7 +1152,7 @@ class AdminFooterLinkBoxUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class AdminFooterLinkBoxDeleteView(LoginRequiredMixin, DeleteView):
+class AdminFooterLinkBoxDeleteView(DeleteView):
     success_url = reverse_lazy('userprofile_app:footer_link_boxes_list')
 
     def post(self, request, pk, *args, **kwargs):
@@ -1170,13 +1165,13 @@ class AdminFooterLinkBoxDeleteView(LoginRequiredMixin, DeleteView):
 # endregion
 
 # region Contact Us
-class AdminContactUsListView(LoginRequiredMixin, ListView):
+class AdminContactUsListView(ListView):
     model = ContactUs
     template_name = 'userprofile_app/contact_us/contact_us_list.html'
     paginate_by = 10
 
 
-class AdminContactUsReadView(LoginRequiredMixin, DetailView):
+class AdminContactUsReadView(DetailView):
     model = ContactUs
     form_class = ContactUsForm
     template_name = "userprofile_app/contact_us/contact_us_form.html"
@@ -1188,7 +1183,7 @@ class AdminContactUsReadView(LoginRequiredMixin, DetailView):
         return context
 
 
-class AdminContactUsUpdateView(LoginRequiredMixin, UpdateView):
+class AdminContactUsUpdateView(UpdateView):
     model = ContactUs
     form_class = ContactUsForm
     template_name = 'userprofile_app/contact_us/contact_us_form.html'
@@ -1223,13 +1218,13 @@ class AdminContactUsUpdateView(LoginRequiredMixin, UpdateView):
 # endregion
 
 # region Slider
-class AdminSliderListView(LoginRequiredMixin, ListView):
+class AdminSliderListView(ListView):
     model = Slider
     template_name = 'userprofile_app/sliders/sliders_list.html'
     paginate_by = 5
 
 
-class AdminSliderReadView(LoginRequiredMixin, DetailView):
+class AdminSliderReadView(DetailView):
     model = Slider
     form_class = SliderForm
     template_name = "userprofile_app/sliders/slider_form.html"
@@ -1241,7 +1236,7 @@ class AdminSliderReadView(LoginRequiredMixin, DetailView):
         return context
 
 
-class AdminSliderCreateView(LoginRequiredMixin, CreateView):
+class AdminSliderCreateView(CreateView):
     model = Slider
     form_class = SliderForm
     template_name = 'userprofile_app/sliders/slider_form.html'
@@ -1252,7 +1247,7 @@ class AdminSliderCreateView(LoginRequiredMixin, CreateView):
         return redirect(self.get_success_url())
 
 
-class AdminSliderUpdateView(LoginRequiredMixin, UpdateView):
+class AdminSliderUpdateView(UpdateView):
     model = Slider
     form_class = SliderForm
     template_name = 'userprofile_app/sliders/slider_form.html'
@@ -1265,7 +1260,7 @@ class AdminSliderUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class AdminSliderDeleteView(LoginRequiredMixin, DeleteView):
+class AdminSliderDeleteView(DeleteView):
     success_url = reverse_lazy('userprofile_app:sliders_list')
 
     def post(self, request, pk, *args, **kwargs):
@@ -1278,12 +1273,12 @@ class AdminSliderDeleteView(LoginRequiredMixin, DeleteView):
 # endregion
 
 # region SiteSetting
-class AdminSiteSettingListView(LoginRequiredMixin, ListView):
+class AdminSiteSettingListView(ListView):
     model = SiteSetting
     template_name = 'userprofile_app/site_settings/site_settings_list.html'
 
 
-class AdminSiteSettingUpdateView(LoginRequiredMixin, UpdateView):
+class AdminSiteSettingUpdateView(UpdateView):
     model = SiteSetting
     form_class = SiteSettingForm
     template_name = 'userprofile_app/site_settings/site_setting_form.html'
@@ -1293,7 +1288,7 @@ class AdminSiteSettingUpdateView(LoginRequiredMixin, UpdateView):
 # endregion
 
 # region Groups
-class GroupPermissionMatrixView(LoginRequiredMixin, AdminRequiredMixin, TemplateView):
+class GroupPermissionMatrixView(TemplateView):
     template_name = "userprofile_app/groups/groups_list.html"
 
     def get_context_data(self, **kwargs):
@@ -1353,21 +1348,21 @@ class GroupPermissionMatrixView(LoginRequiredMixin, AdminRequiredMixin, Template
         return redirect(request.path)
 
 
-class GroupCreateView(LoginRequiredMixin, CreateView):
+class GroupCreateView(CreateView):
     model = Group
     form_class = GroupForm
     template_name = "userprofile_app/groups/group_form.html"
     success_url = reverse_lazy("group_list")
 
 
-class GroupUpdateView(LoginRequiredMixin, UpdateView):
+class GroupUpdateView(UpdateView):
     model = Group
     form_class = GroupForm
     template_name = "userprofile_app/groups/group_form.html"
     success_url = reverse_lazy("group_list")
 
 
-class GroupDeleteView(LoginRequiredMixin, DeleteView):
+class GroupDeleteView(DeleteView):
     model = Group
     template_name = "userprofile_app/groups/group_confirm_delete.html"
     success_url = reverse_lazy("group_list")
@@ -1376,13 +1371,13 @@ class GroupDeleteView(LoginRequiredMixin, DeleteView):
 # endregion
 
 # region user
-class UserListView(LoginRequiredMixin, ListView):
+class UserListView(ListView):
     model = User
     template_name = "userprofile_app/users/user_list.html"
     paginate_by = 5
 
 
-class UserCreateView(LoginRequiredMixin, CreateView):
+class UserCreateView(CreateView):
     model = User
     form_class = UserCreateForm
     template_name = "userprofile_app/users/user_form.html"
@@ -1418,7 +1413,7 @@ class UserCreateView(LoginRequiredMixin, CreateView):
         return response
 
 
-class UserUpdateView(LoginRequiredMixin, UpdateView):
+class UserUpdateView(UpdateView):
     model = User
     form_class = UserUpdateForm
     template_name = "userprofile_app/users/user_form.html"
@@ -1454,7 +1449,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         return response
 
 
-class UserDeleteView(LoginRequiredMixin, DeleteView):
+class UserDeleteView(DeleteView):
     model = User
     template_name = "userprofile_app/users/user_confirm_delete.html"
     success_url = reverse_lazy('userprofile_app:user_list')
