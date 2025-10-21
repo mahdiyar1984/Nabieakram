@@ -145,22 +145,11 @@
                                                 {{ group.name }}
                                             </label>
                                         {% endfor %}
-                                        {% if request.user.is_superuser %}
-
-                                            <input class="form-check-input"
-                                                   type="checkbox"
-                                                   name="is_superuser"
-                                                   id="is_superuser"
-                                                   {% if object.is_superuser %}checked{% endif %}>
-                                            <label class="form-check-label" for="is_superuser">
-                                                Superuser
-                                            </label>
-
-                                        {% endif %}
                                     </div>
 
                                 </div>
                             </div>
+
 
                             <!-- password1 -->
                             <div class="input-box col-lg-6">
@@ -195,6 +184,28 @@
                                 <div class="form-group">
                                     <textarea rows="7" class="form-control form--control user-text-editor pl-3"
                                               name="about_user">{{ object.about_user|default:'' }}</textarea>
+                                </div>
+                            </div>
+                            <!-- is_superuser -->
+                            {% if request.user.is_superuser %}
+                                <div class="col-lg-6" style="margin-top: 40px;">
+                                    <div class="form-group">
+                                        <label class="label-text mr-5">ابرکاربر</label>
+                                        <input type="checkbox" name="is_superuser"
+                                               class="form-check-input" id="is_superuser"
+                                               {% if object.is_superuser %}checked{% endif %}>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <!-- is_active -->
+                            <div class="col-lg-6" style="margin-top: 40px;">
+                                <div class="form-group">
+                                    <label class="label-text mr-5">فعال / غیرفعال</label>
+                                    <input type="checkbox" name="is_active"
+                                           class="form-check-input" id="id_is_active"
+                                           {% if request.user.is_active %}checked{% endif %}
+                                           {% if read_only %}disabled{% endif %}>
                                 </div>
                             </div>
 
