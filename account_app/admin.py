@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from account_app.models import User
+from .models import DashboardPermissionView
 
 
 @admin.register(User)
@@ -29,3 +30,9 @@ class UserAdmin(BaseUserAdmin):
         return ", ".join([g.name for g in obj.groups.all()])
 
     get_groups.short_description = 'گروه ها'  # عنوان ستون در ادمین
+
+
+@admin.register(DashboardPermissionView)
+class DashboardPermissionViewAdmin(admin.ModelAdmin):
+    filter_horizontal = ['permissions']
+    list_display = ['group']

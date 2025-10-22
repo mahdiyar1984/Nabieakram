@@ -1,8 +1,6 @@
 from typing import Union
-
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from django.utils import timezone
@@ -22,11 +20,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import UserPassesTestMixin
 from account_app.models import User
 from .forms import UserCreateForm, UserUpdateForm
 from django.contrib.auth.models import Group, Permission
 from django.apps import apps
+from account_app.models import DashboardPermissionView
 
 
 class AuthenticatedHttpRequest(HttpRequest):
@@ -1297,17 +1295,25 @@ class GroupPermissionMatrixView(TemplateView):
         groups = Group.objects.all()
         actions = ["add", "change", "delete", "view"]
 
-        apps_dict = {}
-        for perm in Permission.objects.all().select_related("content_type"):
-            app_label = perm.content_type.app_label
-            model_name = perm.content_type.model  # lowercase مثل articlecategory
+        # ✳️ تعیین مجوزهای قابل نمایش
+        if self.request.user.is_superuser:
+            # superuser همه مجوزها را ببیند
+            permissions = Permission.objects.all().select_related("content_type")
+        else:
+            # فقط مجوزهایی که در DashboardPermissionView تعریف شده‌اند
+            permissions = Permission.objects.filter(
+                dashboardpermissionview__isnull=False
+            ).select_related("content_type").distinct()
 
+        # ⚙️ ساخت دیکشنری اپلیکیشن‌ها و مدل‌ها
+        apps_dict = {}
+        for perm in permissions:
+            app_label = perm.content_type.app_label
+            model_name = perm.content_type.model  # lowercase
             app_config = apps.get_app_config(app_label)
             app_verbose = app_config.verbose_name.title()
-
             model_class = apps.get_model(app_label, model_name)
             model_verbose = model_class._meta.verbose_name.title()
-
             codename = perm.codename
 
             if app_verbose not in apps_dict:
@@ -1321,6 +1327,7 @@ class GroupPermissionMatrixView(TemplateView):
 
             apps_dict[app_verbose][model_name]["perms"].append(codename)
 
+        # افزودن مجوزهای هر گروه برای تیک خوردن چک‌باکس‌ها
         for group in groups:
             group.codename_list = set(group.permissions.values_list("codename", flat=True))
 
@@ -1334,15 +1341,11 @@ class GroupPermissionMatrixView(TemplateView):
     def post(self, request, *args, **kwargs):
         groups = Group.objects.all()
         all_perms = Permission.objects.all()
-        perm_map = {p.codename: p for p in all_perms}  # دیکشنری برای دسترسی سریع
+        perm_map = {p.codename: p for p in all_perms}
 
         for group in groups:
             selected_codenames = request.POST.getlist(f'permissions_{group.id}[]')
-
-            # گرفتن لیست پرمیشن‌ها از دیکشنری به صورت سریع
             selected_perms = [perm_map[c] for c in selected_codenames if c in perm_map]
-
-            # جایگزینی پرمیشن‌ها به صورت bulk
             group.permissions.set(selected_perms)
 
         return redirect(request.path)
