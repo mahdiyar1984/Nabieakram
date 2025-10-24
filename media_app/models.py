@@ -47,8 +47,6 @@ class LectureCategory(BaseModel):
 
     def __str__(self):
         return self.title
-
-
 class LectureTag(BaseModel):
     objects = models.Manager()
     title = models.CharField(max_length=300, db_index=True, verbose_name="عنوان تگ")
@@ -56,8 +54,6 @@ class LectureTag(BaseModel):
 
     def __str__(self):
         return self.title
-
-
 class Lecture(BaseModel):
     objects = models.Manager()
 
@@ -99,11 +95,9 @@ class Lecture(BaseModel):
 
     class Meta:
         permissions = [
-            ("can_publish_lecture", "Can publish lecture"),
-            ("can_reject_lecture", "Can reject lecture"),
+            ("publish_lecture", "Can publish lecture"),
+            ("reject_lecture", "Can reject lecture"),
         ]
-
-
 class LectureClip(BaseModel):
     objects = models.Manager()
     lecture = models.ForeignKey(
@@ -120,8 +114,6 @@ class LectureClip(BaseModel):
 
     def __str__(self):
         return self.title
-
-
 class LectureComment(models.Model):
     objects = models.Manager()
     parent = models.ForeignKey(to='LectureComment',

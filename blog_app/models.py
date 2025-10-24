@@ -59,8 +59,8 @@ class Article(models.Model):
 
     class Meta:
         permissions = [
-            ("can_publish_article", "Can publish article"),
-            ("can_reject_article", "Can reject article"),
+            ("publish_article", "Can publish article"),
+            ("reject_article", "Can reject article"),
         ]
 
 

@@ -1,5 +1,6 @@
 {% load render_partial %}
 {% load static %}
+{% load permission_tags %}
 
 <!DOCTYPE html>
 <html lang="fa">
@@ -83,215 +84,261 @@
                 </div>
             </li>
 
+
             <!-- Article -->
-            <li class="dropdown {% if request.resolver_match.url_name in 'articles_list article_categories_list article_tags_list article_comments_list' %}show{% endif %}"
-                style="position: relative;">
-                <a href="#" id="userProfileDropdown"
-                   data-toggle="dropdown" aria-haspopup="true"
-                   aria-expanded="{% if request.resolver_match.url_name in 'articles_list article_categories_list article_tags_list article_comments_list' %}true{% else %}false{% endif %}"
-                   style="display: flex; align-items: center; position: relative; font-size: 15px;">
-                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
-                        <path d="M0 0h24v24H0V0z" fill="none"></path>
-                        <path
-                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z">
-                        </path>
-                    </svg>
-                    مقاله ها
-                    <span style="margin-right: auto; font-size: 12px;">▼</span>
-                </a>
-
-
-                <!-- زیرمنو -->
-                <div class="dropdown-menu {% if request.resolver_match.url_name in 'articles_list article_categories_list article_tags_list article_comments_list' %}show{% endif %}"
-                     aria-labelledby="userProfileDropdown"
-                     style="box-shadow: none; border: none; margin-top: 2px;
+            {% if perms.blog_app.view_article or perms.blog_app.view_articlecategory or perms.blog_app.view_articletag or perms.blog_app.view_articlecomment %}
+                <li class="dropdown {% if request.resolver_match.url_name in 'articles_list article_categories_list article_tags_list article_comments_list' %}show{% endif %}"
+                    style="position: relative;">
+                    <a href="#" id="userProfileDropdown"
+                       data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="{% if request.resolver_match.url_name in 'articles_list article_categories_list article_tags_list article_comments_list' %}true{% else %}false{% endif %}"
+                       style="display: flex; align-items: center; position: relative; font-size: 15px;">
+                        <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24"
+                             width="18px">
+                            <path d="M0 0h24v24H0V0z" fill="none"></path>
+                            <path
+                                    d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z">
+                            </path>
+                        </svg>
+                        مقاله ها
+                        <span style="margin-right: auto; font-size: 12px;">▼</span>
+                    </a>
+                    <!-- زیرمنو -->
+                    <div class="dropdown-menu {% if request.resolver_match.url_name in 'articles_list article_categories_list article_tags_list article_comments_list' %}show{% endif %}"
+                         aria-labelledby="userProfileDropdown"
+                         style="box-shadow: none; border: none; margin-top: 2px;
                      right: 0; left: 0; min-width: unset; width: 100%; padding: 0.25rem 0.75rem 0.25rem 28px;">
+                        {% if perms.blog_app.view_article %}
 
-                    <a href="{% url 'userprofile_app:articles_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'articles_list' %}active bg-secondary text-white{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">لیست مقاله ها</a>
+                            <a href="{% url 'userprofile_app:articles_list' %}"
+                               class="dropdown-item {% if request.resolver_match.url_name == 'articles_list' %}active bg-secondary text-white{% endif %}"
+                               style="padding: 6px 25px; color: #6c757d;">لیست مقاله ها</a>
 
-                    <a href="{% url 'userprofile_app:article_categories_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'article_categories_list' %}active bg-secondary text-white{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">دسته بندی ها</a>
+                        {% endif %}
 
-                    <a href="{% url 'userprofile_app:article_tags_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'article_tags_list' %}active bg-secondary text-white{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">تگ ها</a>
+                        {% if perms.blog_app.view_articlecategory %}
+                            <a href="{% url 'userprofile_app:article_categories_list' %}"
+                               class="dropdown-item {% if request.resolver_match.url_name == 'article_categories_list' %}active bg-secondary text-white{% endif %}"
+                               style="padding: 6px 25px; color: #6c757d;">دسته بندی ها</a>
+                        {% endif %}
 
-                    <a href="{% url 'userprofile_app:article_comments_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'article_comments_list' %}active bg-secondary text-white{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">نظرات</a>
-                </div>
-            </li>
+                        {% if perms.blog_app.view_articletag %}
+                            <a href="{% url 'userprofile_app:article_tags_list' %}"
+                               class="dropdown-item {% if request.resolver_match.url_name == 'article_tags_list' %}active bg-secondary text-white{% endif %}"
+                               style="padding: 6px 25px; color: #6c757d;">تگ ها</a>
+                        {% endif %}
+
+                        {% if perms.blog_app.view_articlecomment %}
+                            <a href="{% url 'userprofile_app:article_comments_list' %}"
+                               class="dropdown-item {% if request.resolver_match.url_name == 'article_comments_list' %}active bg-secondary text-white{% endif %}"
+                               style="padding: 6px 25px; color: #6c757d;">نظرات</a>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endif %}
+
 
             <!-- Lecture -->
-            <li class="dropdown {% if request.resolver_match.url_name in 'lectures_list lecture_categories_list lecture_tags_list lecture_comments_list' %}show{% endif %}"
-                style="position: relative;">
-                <a href="#" id="userProfileDropdown"
-                   data-toggle="dropdown" aria-haspopup="true"
-                   aria-expanded="{% if request.resolver_match.url_name in 'lectures_list lecture_categories_list lecture_tags_list lecture_comments_list' %}true{% else %}false{% endif %}"
-                   style="display: flex; align-items: center; position: relative; font-size: 15px;">
-                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
-                        <path d="M0 0h24v24H0V0z" fill="none"></path>
-                        <path
-                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z">
-                        </path>
-                    </svg>
-                    سخنرانی ها
-                    <span style="margin-right: auto; font-size: 12px;">▼</span>
-                </a>
+            {% if perms.media_app.view_lecture or perms.media_app.view_lecturecategory or perms.media_app.view_lecturetag or perms.media_app.view_lecturecomment or perms.media_app.view_lectureclip %}
+                <li class="dropdown {% if request.resolver_match.url_name in 'lectures_list lecture_categories_list lecture_tags_list lecture_comments_list' %}show{% endif %}"
+                    style="position: relative;">
+                    <a href="#" id="userProfileDropdown"
+                       data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="{% if request.resolver_match.url_name in 'lectures_list lecture_categories_list lecture_tags_list lecture_comments_list' %}true{% else %}false{% endif %}"
+                       style="display: flex; align-items: center; position: relative; font-size: 15px;">
+                        <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24"
+                             width="18px">
+                            <path d="M0 0h24v24H0V0z" fill="none"></path>
+                            <path
+                                    d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z">
+                            </path>
+                        </svg>
+                        سخنرانی ها
+                        <span style="margin-right: auto; font-size: 12px;">▼</span>
+                    </a>
 
-                <!-- زیرمنو -->
-                <div class="dropdown-menu {% if request.resolver_match.url_name in 'lectures_list lecture_categories_list lecture_tags_list lecture_comments_list lecture_clips_list' %}show{% endif %}"
-                     aria-labelledby="userProfileDropdown"
-                     style="box-shadow: none; border: none; margin-top: 2px;
+                    <!-- زیرمنو -->
+                    <div class="dropdown-menu {% if request.resolver_match.url_name in 'lectures_list lecture_categories_list lecture_tags_list lecture_comments_list lecture_clips_list' %}show{% endif %}"
+                         aria-labelledby="userProfileDropdown"
+                         style="box-shadow: none; border: none; margin-top: 2px;
                      right: 0; left: 0; min-width: unset; width: 100%; padding: 0.25rem 0.75rem 0.25rem 28px;">
 
-                    <a href="{% url 'userprofile_app:lectures_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'lectures_list' %}active bg-secondary text-white{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">لیست سخنرانی ها</a>
+                        {% if perms.media_app.view_lecture %}
+                            <a href="{% url 'userprofile_app:lectures_list' %}"
+                               class="dropdown-item {% if request.resolver_match.url_name == 'lectures_list' %}active bg-secondary text-white{% endif %}"
+                               style="padding: 6px 25px; color: #6c757d;">لیست سخنرانی ها</a>
+                        {% endif %}
 
-                    <a href="{% url 'userprofile_app:lecture_categories_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'lecture_categories_list' %}active bg-secondary text-white{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">دسته بندی ها</a>
 
-                    <a href="{% url 'userprofile_app:lecture_tags_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'lecture_tags_list' %}active bg-secondary text-white{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">تگ ها</a>
+                        {% if perms.media_app.view_lecturecategory %}
+                            <a href="{% url 'userprofile_app:lecture_categories_list' %}"
+                               class="dropdown-item {% if request.resolver_match.url_name == 'lecture_categories_list' %}active bg-secondary text-white{% endif %}"
+                               style="padding: 6px 25px; color: #6c757d;">دسته بندی ها</a>
+                        {% endif %}
 
-                    <a href="{% url 'userprofile_app:lecture_comments_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'lecture_comments_list' %}active bg-secondary text-white{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">نظرات</a>
+                        {% if perms.media_app.view_lecturetag %}
+                            <a href="{% url 'userprofile_app:lecture_tags_list' %}"
+                               class="dropdown-item {% if request.resolver_match.url_name == 'lecture_tags_list' %}active bg-secondary text-white{% endif %}"
+                               style="padding: 6px 25px; color: #6c757d;">تگ ها</a>
+                        {% endif %}
 
-                    <a href="{% url 'userprofile_app:lecture_clips_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'lecture_clips_list' %}active bg-secondary text-white{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">کلیپ ها</a>
-                </div>
-            </li>
+
+                        {% if perms.media_app.view_lecturecomment %}
+                            <a href="{% url 'userprofile_app:lecture_comments_list' %}"
+                               class="dropdown-item {% if request.resolver_match.url_name == 'lecture_comments_list' %}active bg-secondary text-white{% endif %}"
+                               style="padding: 6px 25px; color: #6c757d;">نظرات</a>
+                        {% endif %}
+
+                        {% if perms.media_app.view_lectureclip %}
+                            <a href="{% url 'userprofile_app:lecture_clips_list' %}"
+                               class="dropdown-item {% if request.resolver_match.url_name == 'lecture_clips_list' %}active bg-secondary text-white{% endif %}"
+                               style="padding: 6px 25px; color: #6c757d;">کلیپ ها</a>
+                        {% endif %}
+
+                    </div>
+                </li>
+            {% endif %}
 
             <!-- gallery -->
-            <li class="dropdown {% if request.resolver_match.url_name in 'galleries_list gallery_categories_list' %}show{% endif %}"
-                style="position: relative;">
-                <a href="#" id="userProfileDropdown"
-                   data-toggle="dropdown" aria-haspopup="true"
-                   aria-expanded="{% if request.resolver_match.url_name in 'galleries_list gallery_categories_list' %}true{% else %}false{% endif %}"
-                   style="display: flex; align-items: center; position: relative; font-size: 15px;">
-                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
-                        <path d="M0 0h24v24H0V0z" fill="none"></path>
-                        <path
-                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z">
-                        </path>
-                    </svg>
-                    تصاویر
-                    <span style="margin-right: auto; font-size: 12px;">▼</span>
-                </a>
+            {% if perms.media_app.view_galleryimage or perms.media_app.view_gallerycategory %}
+                <li class="dropdown {% if request.resolver_match.url_name in 'galleries_list gallery_categories_list' %}show{% endif %}"
+                    style="position: relative;">
+                    <a href="#" id="userProfileDropdown"
+                       data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="{% if request.resolver_match.url_name in 'galleries_list gallery_categories_list' %}true{% else %}false{% endif %}"
+                       style="display: flex; align-items: center; position: relative; font-size: 15px;">
+                        <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24"
+                             width="18px">
+                            <path d="M0 0h24v24H0V0z" fill="none"></path>
+                            <path
+                                    d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z">
+                            </path>
+                        </svg>
+                        تصاویر
+                        <span style="margin-right: auto; font-size: 12px;">▼</span>
+                    </a>
 
-                <!-- زیرمنو -->
-                <div class="dropdown-menu {% if request.resolver_match.url_name in 'galleries_list gallery_categories_list' %}show{% endif %}"
-                     aria-labelledby="userProfileDropdown"
-                     style="box-shadow: none; border: none; margin-top: 2px;
+                    <!-- زیرمنو -->
+                    <div class="dropdown-menu {% if request.resolver_match.url_name in 'galleries_list gallery_categories_list' %}show{% endif %}"
+                         aria-labelledby="userProfileDropdown"
+                         style="box-shadow: none; border: none; margin-top: 2px;
                      right: 0; left: 0; min-width: unset; width: 100%; padding: 0.25rem 0.75rem 0.25rem 28px;">
 
-                    <a href="{% url 'userprofile_app:galleries_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'galleries_list' %}active bg-secondary text-white{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">تصاویر</a>
+                        <a href="{% url 'userprofile_app:galleries_list' %}"
+                           class="dropdown-item {% if request.resolver_match.url_name == 'galleries_list' %}active bg-secondary text-white{% endif %}"
+                           style="padding: 6px 25px; color: #6c757d;">تصاویر</a>
 
-                    <a href="{% url 'userprofile_app:gallery_categories_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'gallery_categories_list' %}active bg-secondary text-white{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">دسته بندی ها</a>
-                </div>
-            </li>
+                        <a href="{% url 'userprofile_app:gallery_categories_list' %}"
+                           class="dropdown-item {% if request.resolver_match.url_name == 'gallery_categories_list' %}active bg-secondary text-white{% endif %}"
+                           style="padding: 6px 25px; color: #6c757d;">دسته بندی ها</a>
+                    </div>
+                </li>
+            {% endif %}
 
             <!-- Footer Link -->
-            <li class="dropdown {% if request.resolver_match.url_name in 'footer_links_list footer_link_boxes_list' %}show{% endif %}"
-                style="position: relative;">
-                <a href="#" id="userProfileDropdown"
-                   data-toggle="dropdown" aria-haspopup="true"
-                   aria-expanded="{% if request.resolver_match.url_name in 'footer_links_list footer_link_boxes_list' %}true{% else %}false{% endif %}"
-                   style="display: flex; align-items: center; position: relative; font-size: 15px;">
-                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
-                        <path d="M0 0h24v24H0V0z" fill="none"></path>
-                        <path
-                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z">
-                        </path>
-                    </svg>
-                    لینک ها
-                    <span style="margin-right: auto; font-size: 12px;">▼</span>
-                </a>
+            {% if perms.main_app.view_footerlinkBox or perms.main_app.view_footerlink %}
+                <li class="dropdown {% if request.resolver_match.url_name in 'footer_links_list footer_link_boxes_list' %}show{% endif %}"
+                    style="position: relative;">
+                    <a href="#" id="userProfileDropdown"
+                       data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="{% if request.resolver_match.url_name in 'footer_links_list footer_link_boxes_list' %}true{% else %}false{% endif %}"
+                       style="display: flex; align-items: center; position: relative; font-size: 15px;">
+                        <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24"
+                             width="18px">
+                            <path d="M0 0h24v24H0V0z" fill="none"></path>
+                            <path
+                                    d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z">
+                            </path>
+                        </svg>
+                        لینک ها
+                        <span style="margin-right: auto; font-size: 12px;">▼</span>
+                    </a>
 
-                <!-- زیرمنو -->
-                <div class="dropdown-menu {% if request.resolver_match.url_name in 'footer_links_list footer_link_boxes_list' %}show{% endif %}"
-                     aria-labelledby="userProfileDropdown"
-                     style="box-shadow: none; border: none; margin-top: 2px;
+                    <!-- زیرمنو -->
+                    <div class="dropdown-menu {% if request.resolver_match.url_name in 'footer_links_list footer_link_boxes_list' %}show{% endif %}"
+                         aria-labelledby="userProfileDropdown"
+                         style="box-shadow: none; border: none; margin-top: 2px;
                      right: 0; left: 0; min-width: unset; width: 100%; padding: 0.25rem 0.75rem 0.25rem 28px;">
 
-                    <a href="{% url 'userprofile_app:footer_links_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'footer_links_list' %}active bg-secondary text-white{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">لینک ها</a>
+                        <a href="{% url 'userprofile_app:footer_links_list' %}"
+                           class="dropdown-item {% if request.resolver_match.url_name == 'footer_links_list' %}active bg-secondary text-white{% endif %}"
+                           style="padding: 6px 25px; color: #6c757d;">لینک ها</a>
 
-                    <a href="{% url 'userprofile_app:footer_link_boxes_list' %}"
-                       class="dropdown-item {% if request.resolver_match.url_name == 'footer_link_boxes_list' %}active bg-secondary text-white{% endif %}"
-                       style="padding: 6px 25px; color: #6c757d;">دسته بندی ها</a>
-                </div>
-            </li>
+                        <a href="{% url 'userprofile_app:footer_link_boxes_list' %}"
+                           class="dropdown-item {% if request.resolver_match.url_name == 'footer_link_boxes_list' %}active bg-secondary text-white{% endif %}"
+                           style="padding: 6px 25px; color: #6c757d;">دسته بندی ها</a>
+                    </div>
+                </li>
+            {% endif %}
 
             <!-- Contact Us -->
-            <li>
-                <a href="{% url 'userprofile_app:contact_us_list' %}">
-                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
-                        <path d="M0 0h24v24H0V0z" fill="none"></path>
-                        <path
-                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
-                        ></path>
-                    </svg>
-                    تماس با ما
-                </a>
-            </li>
+            {% if perms.main_app.view_contactus %}
+                <li>
+                    <a href="{% url 'userprofile_app:contact_us_list' %}">
+                        <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24"
+                             width="18px">
+                            <path d="M0 0h24v24H0V0z" fill="none"></path>
+                            <path
+                                    d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
+                            ></path>
+                        </svg>
+                        تماس با ما
+                    </a>
+                </li>
+            {% endif %}
 
             <!-- slider -->
-            <li>
-                <a href="{% url 'userprofile_app:sliders_list' %}">
-                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
-                        <path d="M0 0h24v24H0V0z" fill="none"></path>
-                        <path
-                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
-                        ></path>
-                    </svg>
-                    اسلایدر
-                </a>
-            </li>
+            {% if perms.main_app.view_slider %}
+                <li>
+                    <a href="{% url 'userprofile_app:sliders_list' %}">
+                        <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24"
+                             width="18px">
+                            <path d="M0 0h24v24H0V0z" fill="none"></path>
+                            <path
+                                    d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
+                            ></path>
+                        </svg>
+                        اسلایدر
+                    </a>
+                </li>
+            {% endif %}
 
-            <!-- Group -->
-            <li>
-                <a href="{% url 'userprofile_app:group_list' %}">
-                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
-                        <path d="M0 0h24v24H0V0z" fill="none"></path>
-                        <path
-                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
-                        ></path>
-                    </svg>
-                    نقش ها و دسترسی ها
-                </a>
-            </li>
+            <!-- group & users -->
+            {% if request.user|in_group:"Manager"  or request.user.is_superuser %}
+                <!-- Group -->
+                <li>
+                    <a href="{% url 'userprofile_app:group_list' %}">
+                        <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24"
+                             width="18px">
+                            <path d="M0 0h24v24H0V0z" fill="none"></path>
+                            <path
+                                    d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
+                            ></path>
+                        </svg>
+                        نقش ها و دسترسی ها
+                    </a>
+                </li>
 
-            <!-- users -->
-            <li>
-                <a href="{% url 'userprofile_app:user_list' %}">
-                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
-                        <path d="M0 0h24v24H0V0z" fill="none"></path>
-                        <path
-                                d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
-                        ></path>
-                    </svg>
-                    لیست کاربران
-                </a>
-            </li>
+                <!-- users -->
+                <li>
+                    <a href="{% url 'userprofile_app:user_list' %}">
+                        <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24"
+                             width="18px">
+                            <path d="M0 0h24v24H0V0z" fill="none"></path>
+                            <path
+                                    d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
+                            ></path>
+                        </svg>
+                        لیست کاربران
+                    </a>
+                </li>
+            {% endif %}
 
-            <!-- users -->
+            <!-- exit -->
             <li>
                 <a href="{% url 'account_app:logout_page' %}">
-                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px">
+                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24"
+                         width="18px">
                         <path d="M0 0h24v24H0V0z" fill="none"></path>
                         <path
                                 d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"
@@ -300,8 +347,6 @@
                     خروج
                 </a>
             </li>
-
-
         </ul>
     </div>
 

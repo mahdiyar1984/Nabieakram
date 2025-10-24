@@ -49,6 +49,7 @@
 
             </div>
 
+
             <!-- article section -->
             <div class="section-block mb-5"></div>
             <div class="dashboard-heading mb-5">
@@ -60,6 +61,17 @@
                           style="font-size: 14px; vertical-align: middle; margin-right: 8px;">{{ article_list.count }}</span>
                 </h3>
             </div>
+
+            {% if messages %}
+                <div class="mb-3">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
 
             <!-- article table -->
             <div class="table-responsive pb-4">
@@ -131,11 +143,14 @@
                                     <span class="badge bg-secondary text-white p-1"
                                           style="display: block; width: 100%;">{{ article.get_status_display }}</span>
                                 {% elif article.status == 'pending' %}
-                                    <span class="badge bg-warning text-white p-1" style="display: block; width: 100%;">{{ article.get_status_display }}</span>
+                                    <span class="badge bg-warning text-white p-1"
+                                          style="display: block; width: 100%;">{{ article.get_status_display }}</span>
                                 {% elif article.status == 'published' %}
-                                    <span class="badge bg-success text-white p-1" style="display: block; width: 100%;">{{ article.get_status_display }}</span>
+                                    <span class="badge bg-success text-white p-1"
+                                          style="display: block; width: 100%;">{{ article.get_status_display }}</span>
                                 {% elif article.status == 'rejected' %}
-                                    <span class="badge bg-danger text-white p-1" style="display: block; width: 100%;">{{ article.get_status_display }}</span>
+                                    <span class="badge bg-danger text-white p-1"
+                                          style="display: block; width: 100%;">{{ article.get_status_display }}</span>
                                 {% endif %}
                             </td>
 
@@ -158,14 +173,16 @@
                                     </a>
 
                                     <!-- delete -->
-                                    <a href="javascript:void(0)" data-toggle="modal" data-target="#deleteModal-{{ article.id }}"
+                                    <a href="javascript:void(0)" data-toggle="modal"
+                                       data-target="#deleteModal-{{ article.id }}"
                                        class="icon-element icon-element-sm shadow-sm cursor-pointer ml-1 text-danger"
                                        data-toggle="tooltip" title="حذف">
                                         <i class="la la-trash"></i>
                                     </a>
 
                                     <!-- modal: delete -->
-                                    <div class="modal fade modal-container" id="deleteModal-{{ article.id }}" tabindex="-1" role="dialog"
+                                    <div class="modal fade modal-container" id="deleteModal-{{ article.id }}"
+                                         tabindex="-1" role="dialog"
                                          aria-labelledby="deleteModalTitle-{{ article.id }}"
                                          aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">

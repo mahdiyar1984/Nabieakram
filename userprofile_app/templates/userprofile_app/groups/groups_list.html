@@ -39,7 +39,8 @@
                     </div>
                 </div>
 
-                <a href="{% url 'userprofile_app:group_create' %}" class="btn btn-info d-inline-flex align-items-center new-article-btn"
+                <a href="{% url 'userprofile_app:group_create' %}"
+                   class="btn btn-info d-inline-flex align-items-center new-article-btn"
                    style="background-color: #e3f2fd; color: #1976d2; border-color: #b3e5fc; font-weight: bold;">
                     <i class="la la-plus mr-2"></i><span style="font-weight: bold;">ایجاد گروه جدید</span>
                 </a>
@@ -95,13 +96,15 @@
                                         <th scope="col">ویرایش</th>
                                         <th scope="col">حذف</th>
                                         <th scope="col">مشاهده</th>
+                                        <th scope="col">انتشار</th>
+                                        <th scope="col">رد</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for app, models in apps_dict.items %}
                                         <!-- ردیف عنوان برنامه -->
                                         <tr style="background-color:#f8f9fa; font-weight:bold;">
-                                            <td colspan="6">{{ app }}</td>
+                                            <td colspan="8">{{ app }}</td>
                                         </tr>
 
                                         {% for model_name, model_data in models.items %}
@@ -111,13 +114,18 @@
                                                 {% for action in actions %}
                                                     <td>
                                                         {% with codename=action|add:"_"|add:model_name %}
-                                                            <input type="checkbox"
-                                                                   name="permissions_{{ group.id }}[]"
-                                                                   value="{{ codename }}"
-                                                                   {% if codename in group.codename_list %}checked{% endif %}>
+                                                            {% if codename in model_data.perms %}
+                                                                <input type="checkbox"
+                                                                       name="permissions_{{ group.id }}[]"
+                                                                       value="{{ codename }}"
+                                                                       {% if codename in group.codename_list %}checked{% endif %}>
+                                                            {% else %}
+                                                                &mdash;  {# خط تیره برای مجوز تعریف نشده #}
+                                                            {% endif %}
                                                         {% endwith %}
                                                     </td>
                                                 {% endfor %}
+
                                             </tr>
                                         {% endfor %}
                                     {% endfor %}
