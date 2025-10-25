@@ -1,7 +1,7 @@
 from typing import Union
 from django.contrib.auth import update_session_auth_hash
 from django.core.paginator import Paginator
-from django.db.models import QuerySet, Q
+from django.db.models import QuerySet, Q,Case, When, BooleanField
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.generic import DetailView, TemplateView
@@ -14,7 +14,7 @@ from .forms import ArticleForm, GroupForm, ArticleCategoryForm, ArticleTagForm, 
     LectureCategoryForm, GalleryImageForm, \
     GalleryCategoryForm, FooterLinkForm, ContactUsForm, SliderForm, SiteSettingForm, LectureClipForm, FooterLinkBoxForm
 from django.contrib import messages
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.urls import reverse_lazy, reverse
@@ -25,7 +25,7 @@ from django.contrib.auth.models import Group, Permission
 from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
 
@@ -194,23 +194,29 @@ class UserProfileActiveEmailView(LoginRequiredMixin, View):
 
 # region Article
 
-class AdminArticleListView(LoginRequiredMixin, ListView):
+class AdminArticleListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Article
     template_name = 'userprofile_app/articles/articles_list.html'
     paginate_by = 10
 
+    def test_func(self):
+        return self.request.user.groups.filter(name='author').exists()
+
+    def handle_no_permission(self):
+        return HttpResponseForbidden('شما اجازه دسترسی به این صفحه را ندارید.')
+
     def get_queryset(self):
         user = self.request.user
-
-        if user.is_superuser or user.groups.filter(name__in=["manager", "editor"]).exists():
-            return Article.objects.filter(is_delete=False)
-
-        elif user.groups.filter(name="author").exists():
-            return Article.objects.filter(
-                Q(author=user) | Q(status="published"),
-                is_delete=False
+        queryset = Article.objects.filter(
+            Q(status='published') | Q(author=user)
+        ).annotate(
+            is_owner=Case(
+                When(author=user, then=True),
+                default=False,
+                output_field=BooleanField()
             )
-        return Article.objects.none()
+        ).order_by('-is_owner','-create_date')
+        return queryset
 
 
 class AdminArticleReadView(LoginRequiredMixin, DetailView):
@@ -239,7 +245,6 @@ class AdminArticleCreateView(LoginRequiredMixin, CreateView):
         context['tags'] = ArticleTag.objects.all()
         return context
 
-
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.author = self.request.user
@@ -260,27 +265,19 @@ class AdminArticleCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class AdminArticleUpdateView(LoginRequiredMixin, UpdateView):
+class AdminArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Article
     form_class = ArticleForm
     template_name = 'userprofile_app/articles/article_form.html'
     success_url = reverse_lazy('userprofile_app:articles_list')
 
-    def dispatch(self, request, *args, **kwargs):
+    def test_func(self):
         article = self.get_object()
-        user = request.user
+        return article.author == self.request.user
 
-        if user.is_superuser:
-            return super().dispatch(request, *args, **kwargs)
+    def handle_no_permission(self):
+        return HttpResponseForbidden('شما اجازه ویرایش این مقاله را ندارید.')
 
-        if user.groups.filter(name__in=["Manager", "Editor"]).exists():
-            return super().dispatch(request, *args, **kwargs)
-
-        if user.groups.filter(name="Author").exists() and article.author == user and not article.is_delete:
-            return super().dispatch(request, *args, **kwargs)
-
-        messages.error(request, "شما مجوز ویرایش این مقاله را ندارید.")
-        return redirect('userprofile_app:articles_list') 
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1338,7 +1335,7 @@ class GroupPermissionMatrixView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         groups = Group.objects.all()
-        actions = ["add", "change", "delete", "view","publish", "reject"]
+        actions = ["add", "change", "delete", "view", "publish", "reject"]
 
         # ✳️ تعیین مجوزهای قابل نمایش
         if self.request.user.is_superuser:
