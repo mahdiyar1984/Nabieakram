@@ -84,7 +84,6 @@
                 </div>
             </li>
 
-
             <!-- Article -->
             {% if perms.blog_app.view_article or perms.blog_app.view_articlecategory or perms.blog_app.view_articletag or perms.blog_app.view_articlecomment %}
                 <li class="dropdown {% if request.resolver_match.url_name in 'articles_list article_categories_list article_tags_list article_comments_list' %}show{% endif %}"
@@ -108,12 +107,11 @@
                          aria-labelledby="userProfileDropdown"
                          style="box-shadow: none; border: none; margin-top: 2px;
                      right: 0; left: 0; min-width: unset; width: 100%; padding: 0.25rem 0.75rem 0.25rem 28px;">
-                        {% if perms.blog_app.view_article %}
 
+                        {% if perms.blog_app.view_article %}
                             <a href="{% url 'userprofile_app:articles_list' %}"
                                class="dropdown-item {% if request.resolver_match.url_name == 'articles_list' %}active bg-secondary text-white{% endif %}"
                                style="padding: 6px 25px; color: #6c757d;">لیست مقاله ها</a>
-
                         {% endif %}
 
                         {% if perms.blog_app.view_articlecategory %}

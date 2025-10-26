@@ -1,7 +1,7 @@
 from typing import Union
 from django.contrib.auth import update_session_auth_hash
 from django.core.paginator import Paginator
-from django.db.models import QuerySet, Q,Case, When, BooleanField
+from django.db.models import QuerySet, Q, Case, When, BooleanField
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.generic import DetailView, TemplateView
@@ -197,28 +197,47 @@ class UserProfileActiveEmailView(LoginRequiredMixin, View):
 class AdminArticleListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Article
     template_name = 'userprofile_app/articles/articles_list.html'
-    paginate_by = 10
+    paginate_by = 5
 
+    # اجازه دسترسی رو کنترل می‌کنه
     def test_func(self):
-        return self.request.user.groups.filter(name='author').exists()
+        return (
+                self.request.user.is_superuser or
+                self.request.user.groups.filter(name__in=['editor', 'manager', 'author']).exists()
+        )
 
+    # اگر دسترسی نداشت خطا میده
     def handle_no_permission(self):
         return HttpResponseForbidden('شما اجازه دسترسی به این صفحه را ندارید.')
 
+    # کوئری را کنترل می کند
     def get_queryset(self):
         user = self.request.user
-        queryset = Article.objects.filter(
-            Q(status='published') | Q(author=user)
-        ).annotate(
-            is_owner=Case(
-                When(author=user, then=True),
-                default=False,
-                output_field=BooleanField()
-            )
-        ).order_by('-is_owner','-create_date')
+        if user.is_superuser or user.groups.filter(name__in=['editor','manager']).exists():
+            queryset = Article.objects.all().order_by('-create_date')
+        else:
+            queryset = Article.objects.filter(
+                Q(status='published') | Q(author=user)
+            ).annotate(  # وقتی لیست مقالات رو نشون می‌دی: مقاله‌هایی که خود کاربر نوشته بیاد بالاتر، بعدش مقاله‌های بقیه که منتشر شدن.
+                is_owner=Case(
+                    When(author=user, then=True),
+                    default=False,
+                    output_field=BooleanField()
+                )
+            ).order_by('-is_owner', '-create_date')
         return queryset
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
 
+        # 🔹 نقش کاربر را در قالب بفرست
+        context['is_author'] = user.groups.filter(name='author').exists()
+        context['is_editor_or_manager'] = (
+                user.is_superuser or user.groups.filter(name__in=['editor', 'manager']).exists()
+        )
+
+        return context
 class AdminArticleReadView(LoginRequiredMixin, DetailView):
     model = Article
     form_class = ArticleForm
@@ -231,8 +250,6 @@ class AdminArticleReadView(LoginRequiredMixin, DetailView):
         context['tags'] = ArticleTag.objects.all()
         context['categories'] = ArticleCategory.objects.all()
         return context
-
-
 class AdminArticleCreateView(LoginRequiredMixin, CreateView):
     model = Article
     form_class = ArticleForm
@@ -263,8 +280,6 @@ class AdminArticleCreateView(LoginRequiredMixin, CreateView):
             self.object.selected_tags.set(form.cleaned_data['selected_tags'])
 
         return super().form_valid(form)
-
-
 class AdminArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Article
     form_class = ArticleForm
@@ -272,12 +287,22 @@ class AdminArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView
     success_url = reverse_lazy('userprofile_app:articles_list')
 
     def test_func(self):
-        article = self.get_object()
-        return article.author == self.request.user
+        user = self.request.user
+        article = get_object_or_404(Article, pk=self.kwargs['pk'])
+
+        # اگر سوپریوزر یا منیجر یا ادیتور باشد، اجازه ویرایش دارد
+        if user.is_superuser or user.groups.filter(name__in=['manager', 'editor']).exists():
+            return True
+
+        # اگر نویسنده باشد فقط مقاله خودش را بتواند ویرایش کند
+        if user.groups.filter(name='author').exists() and article.author == user:
+            return True
+
+        # در غیر این صورت اجازه ندارد
+        return False
 
     def handle_no_permission(self):
         return HttpResponseForbidden('شما اجازه ویرایش این مقاله را ندارید.')
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -287,18 +312,19 @@ class AdminArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.author = self.request.user
 
-        # آپلود تصویر جدید
+        # اگر نویسنده مقاله را تغییر دهد، نویسنده فعلی همان کاربر باقی می‌ماند
+        if not self.request.user.is_superuser and not self.request.user.groups.filter(name__in=['manager', 'editor']).exists():
+            self.object.author = self.request.user
+
+        # اگر تصویر جدید آپلود شده باشد
         if self.request.FILES.get('image'):
             self.object.image = self.request.FILES['image']
 
-        # وضعیت پیش‌فرض
+        # وضعیت مقاله (در صورت نیاز)
         if self.object.status in ['rejected', 'draft', 'pending']:
             self.object.status = 'draft'
-
-        self.object.status = "draft"
-
+        self.object.status = 'draft'
         self.object.save()
 
         # ذخیره ManyToMany
@@ -306,34 +332,39 @@ class AdminArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView
         self.object.selected_tags.set(form.cleaned_data['selected_tags'])
 
         return super().form_valid(form)
-
-
 class AdminArticleDeleteView(LoginRequiredMixin, View):
     success_url = reverse_lazy('userprofile_app:articles_list')
 
     def post(self, request, pk, *args, **kwargs):
         article = get_object_or_404(Article, pk=pk)
         user = request.user
-        if user.groups.filter(name__in=["Manager", "Editor"]).exists():
+
+        # فقط superuser، manager و editor مجازند
+        if user.is_superuser or user.groups.filter(name__in=['manager', 'editor']).exists():
             article.is_delete = True
             article.save()
-            messages.success(request, "مقاله حذف شد.")
+            messages.success(request, "مقاله با موفقیت حذف شد.")
         else:
             messages.error(request, "شما اجازه حذف مقاله را ندارید.")
+
         return redirect(self.success_url)
-
-
 class AdminArticleChangeStatusView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         article = get_object_or_404(Article, pk=pk)
         action = request.POST.get("action")
 
         # if author wants to do pending in himself article
-        if action == "submit_for_review" and article.author == request.user:
-            article.status = "pending"
-            article.save()
-            messages.success(request, "مقاله برای بررسی ارسال شد.")
-            return redirect("userprofile_app:articles_list")
+        if action == "submit_for_review":
+            if article.status == "draft" and (
+                    request.user == article.author
+                    or request.user.is_superuser
+                    or request.user.groups.filter(name__in=["manager", "editor"]).exists()
+            ):
+                article.status = "pending"
+                article.save()
+                messages.success(request, "مقاله برای بررسی ارسال شد.")
+            else:
+                messages.error(request, "شما مجاز به ارسال این مقاله نیستید.")
 
         # if editor or admin wants to confirm the article
         if action == "publish" and request.user.has_perm("blog_app.can_publish_article"):
@@ -635,12 +666,51 @@ def admin_article_comment_delete(request: HttpRequest, pk):
 # endregion
 
 # region Lecture
-class AdminLectureListView(LoginRequiredMixin, ListView):
+
+class AdminLectureListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Lecture
     template_name = 'userprofile_app/lectures/lectures_list.html'
     paginate_by = 5
 
+    # اجازه دسترسی رو کنترل می‌کنه
+    def test_func(self):
+        return (
+                self.request.user.is_superuser or
+                self.request.user.groups.filter(name__in=['editor', 'manager', 'author']).exists()
+        )
 
+    # اگر دسترسی نداشت خطا میده
+    def handle_no_permission(self):
+        return HttpResponseForbidden('شما اجازه دسترسی به این صفحه را ندارید.')
+
+    # کوئری را کنترل می کند
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser or user.groups.filter(name__in=['editor', 'manager']).exists():
+            queryset = Article.objects.all().order_by('-create_date')
+        else:
+            queryset = Lecture.objects.filter(
+                Q(status='published') | Q(author=user)
+            ).annotate(  # وقتی لیست مقالات رو نشون می‌دی: مقاله‌هایی که خود کاربر نوشته بیاد بالاتر، بعدش مقاله‌های بقیه که منتشر شدن.
+                is_owner=Case(
+                    When(author=user, then=True),
+                    default=False,
+                    output_field=BooleanField()
+                )
+            ).order_by('-is_owner', '-created_date')
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        # 🔹 نقش کاربر را در قالب بفرست
+        context['is_author'] = user.groups.filter(name='author').exists()
+        context['is_editor_or_manager'] = (
+                user.is_superuser or user.groups.filter(name__in=['editor', 'manager']).exists()
+        )
+
+        return context
 class AdminLectureReadView(LoginRequiredMixin, DetailView):
     model = Lecture
     form_class = LectureForm
@@ -653,29 +723,7 @@ class AdminLectureReadView(LoginRequiredMixin, DetailView):
         context['categories'] = LectureCategory.objects.all()
         context['tags'] = LectureTag.objects.all()
         return context
-
-
 class AdminLectureCreateView(LoginRequiredMixin, CreateView):
-    model = Lecture
-    form_class = LectureForm
-    template_name = 'userprofile_app/lectures/lecture_form.html'
-    success_url = reverse_lazy('userprofile_app:lectures_list')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['categories'] = LectureCategory.objects.all()
-        context['tags'] = LectureTag.objects.all()
-        return context
-
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.author = self.request.user
-        self.object.save()
-        form.save_m2m()
-        return redirect(self.get_success_url())
-
-
-class AdminLectureUpdateView(LoginRequiredMixin, UpdateView):
     model = Lecture
     form_class = LectureForm
     template_name = 'userprofile_app/lectures/lecture_form.html'
@@ -695,15 +743,65 @@ class AdminLectureUpdateView(LoginRequiredMixin, UpdateView):
             self.object.image = self.request.FILES['image']
 
         if self.request.FILES.get('video'):
-            self.object.image = self.request.FILES['video']
+            self.object.video = self.request.FILES['video']
 
         if self.request.FILES.get('audio'):
-            self.object.image = self.request.FILES['audio']
+            self.object.audio = self.request.FILES['audio']
 
         if self.object.status in ['rejected', 'draft', 'pending']:
             self.object.status = 'draft'
 
-        self.object.status = "draft"
+        self.object.save()
+        form.save_m2m()
+        return redirect(self.get_success_url())
+class AdminLectureUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Lecture
+    form_class = LectureForm
+    template_name = 'userprofile_app/lectures/lecture_form.html'
+    success_url = reverse_lazy('userprofile_app:lectures_list')
+
+    def test_func(self):
+        lecture = self.get_object()
+        user = self.request.user
+
+        # فقط مدیر، سوپریوزر یا ادیتور می‌تونن هر درسی رو ویرایش کنن
+        if user.is_superuser or user.groups.filter(name__in=['manager', 'editor']).exists():
+            return True
+
+        # نویسنده فقط درس خودش رو می‌تونه ویرایش کنه
+        if user.groups.filter(name='author').exists() and lecture.author == user:
+            return True
+
+        return False
+
+    def handle_no_permission(self):
+        return HttpResponseForbidden('شما اجازه ویرایش این درس را ندارید.')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = LectureCategory.objects.all()
+        context['tags'] = LectureTag.objects.all()
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+
+        if not self.request.user.is_superuser and not self.request.user.groups.filter(name__in=['manager', 'editor']).exists():
+            self.object.author = self.request.user
+
+        if self.request.FILES.get('image'):
+            self.object.image = self.request.FILES['image']
+
+        if self.request.FILES.get('video'):
+            self.object.video = self.request.FILES['video']
+
+        if self.request.FILES.get('audio'):
+            self.object.audio = self.request.FILES['audio']
+
+        if self.object.status in ['rejected', 'draft', 'pending']:
+            self.object.status = 'draft'
+
+        self.object.status = 'draft'
 
         self.object.save()
 
@@ -712,36 +810,47 @@ class AdminLectureUpdateView(LoginRequiredMixin, UpdateView):
         self.object.selected_tags.set(form.cleaned_data['selected_tags'])
 
         return super().form_valid(form)
-
-
 class AdminLectureDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('userprofile_app:lectures_list')
 
     def post(self, request, pk, *args, **kwargs):
-        lecture = get_object_or_404(Lecture, pk=pk, author=request.user)
-        lecture.is_delete = True
-        lecture.save()
-        return redirect(self.success_url)
+        lecture = get_object_or_404(Lecture, pk=pk)
+        user = request.user
 
-
+        # فقط superuser، manager و editor مجازند
+        if user.is_superuser or user.groups.filter(name__in=['manager', 'editor']).exists():
+            lecture.is_delete = True
+            lecture.save()
+            messages.success(request, "مقاله با موفقیت حذف شد.")
+        else:
+            messages.error(request, "شما اجازه حذف مقاله را ندارید.")
 class AdminLectureChangeStatusView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         lecture = get_object_or_404(Lecture, pk=pk)
         action = request.POST.get("action")
 
-        if action == "submit_for_review" and lecture.author == request.user:
-            lecture.status = "pending"
-            lecture.save()
-            messages.success(request, "سخنرانی برای بررسی ارسال شد.")
-            return redirect("userprofile_app:lectures_list")
+        # if lecture wants to do pending in himself lecture
+        if action == "submit_for_review":
+            if lecture.status == "draft" and (
+                    request.user == lecture.author
+                    or request.user.is_superuser
+                    or request.user.groups.filter(name__in=["manager", "editor"]).exists()
+            ):
+                lecture.status = "pending"
+                lecture.save()
+                messages.success(request, "سخنرانی برای بررسی ارسال شد.")
+            else:
+                messages.error(request, "شما مجاز به ارسال این سخنرانی نیستید.")
 
-        if action == "publish" and request.user.has_perm("blog_app.can_publish_lecture"):
+        # if editor or admin wants to confirm the lecture
+        if action == "publish" and request.user.has_perm("media_app.publish_lecture"):
             lecture.status = "published"
             lecture.save()
             messages.success(request, "سخنرانی منتشر شد.")
             return redirect("userprofile_app:lectures_list")
 
-        if action == "reject" and request.user.has_perm("blog_app.can_reject_lecture"):
+        # if editor or admin wants to reject the lecture
+        if action == "reject" and request.user.has_perm("media_app.reject_lecture"):
             lecture.status = "rejected"
             lecture.save()
             messages.warning(request, "سخنرانی رد شد.")
@@ -749,7 +858,6 @@ class AdminLectureChangeStatusView(LoginRequiredMixin, View):
 
         messages.error(request, "شما اجازه این کار را ندارید.")
         return redirect("userprofile_app:lectures_list")
-
 
 # endregion
 # region Lecture Category
