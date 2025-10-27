@@ -90,6 +90,7 @@ TEMPLATES = [
                 # باعث میشه پیام‌هایی که با framework پیام جنگو
                 # (messages.add_message, messages.success, ...) ساختی، در تمپلیت قابل استفاده باشن.
                 'django.contrib.messages.context_processors.messages',
+                'main_app.context_processors.site_settings',
             ],
         },
     },

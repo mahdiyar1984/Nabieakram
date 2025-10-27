@@ -1,0 +1,236 @@
+{% extends 'shared/dashboard.html' %}
+{% load shamsi_tags %}
+{% load static %}
+
+{% block title %}پیکربندی سایت{% endblock %}
+
+{% block content %}
+
+    <div class="dashboard-content-wrap">
+        <div class="dashboard-menu-toggler btn theme-btn theme-btn-sm lh-28 theme-btn-transparent mb-4 ml-3"><i
+                class="la la-bars mr-1"></i> منو
+        </div>
+
+        <!-- main content -->
+        <div class="container-fluid">
+
+            <!-- breadcrumb -->
+            <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between mb-5">
+                <div class="media media-card align-items-center">
+                    <div class="media-img media--img media-img-md rounded-full">
+                        {% if request.user.avatar %}
+                            <img class="rounded-full" src="{{ request.user.avatar.url }}" alt="تصویر آواتار">
+                        {% else %}
+                            <img class="rounded-full" src="/static/images/team11.jpg" alt="تصویر آواتار">
+                        {% endif %}
+                    </div>
+                    <div class="media-body">
+                        <h2 class="section__title fs-30">{{ request.user.get_full_name }}</h2>
+                        <div class="rating-wrap d-flex align-items-center pt-2">
+                            <div class="review-stars">
+                                <span class="rating-number">4.4</span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star"></span>
+                                <span class="la la-star-o"></span>
+                            </div>
+                            <span class="rating-total pl-1">(20230)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- new article -->
+            <div class="section-block mb-5"></div>
+            <div class="dashboard-heading mb-5">
+                <h3 class="fs-22 font-weight-semi-bold">تنظیمات پیکربندی</h3>
+            </div>
+            {% if messages %}
+                <div class="mb-3">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form action=""
+                  method="post"
+                  class="MultiFile-intercepted"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="card card-item">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <!-- fax -->
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label class="label-text">فکس</label>
+                                    {{ form.fax }}
+                                </div>
+                            </div>
+
+                            <!-- phone -->
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label class="label-text">تلفن ثابت</label>
+                                    {{ form.phone }}
+                                </div>
+                            </div>
+
+                            <!-- mobile -->
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label class="label-text">تلفن همراه</label>
+                                    {{ form.mobile }}
+                                </div>
+                            </div>
+
+                            <!-- email -->
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label class="label-text">ایمیل</label>
+                                    {{ form.email }}
+                                </div>
+                            </div>
+
+                            <!-- address -->
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="label-text">آدرس</label>
+                                    {{ form.address }}
+                                </div>
+                            </div>
+
+                            <!-- copy_rights -->
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="label-text">متن کپی رایت</label>
+                                    {{ form.copy_rights }}
+                                </div>
+                            </div>
+
+                            <!-- about_us -->
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="label-text">درباره ما</label>
+                                    {{ form.about_us_text }}
+                                </div>
+                            </div>
+
+                            <!-- working_hours -->
+                            <div class="input-box col-lg-12">
+                                <label class="label-text">ساعت هیئت</label>
+                                <div class="form-group">
+                                    {{ form.working_hours }}
+                                </div>
+                            </div>
+
+                            <!-- site_name -->
+                            <div class="input-box col-lg-12">
+                                <label class="label-text">نام سایت</label>
+                                <div class="form-group">
+                                    {{ form.site_name }}
+                                </div>
+                            </div>
+
+                            <!-- site_url -->
+                            <div class="input-box col-lg-12">
+                                <label class="label-text">لینک سایت</label>
+                                <div class="form-group">
+                                    {{ form.site_url }}
+                                </div>
+                            </div>
+
+                            <!-- map_embed -->
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="label-text">map_embed</label>
+                                    {{ form.map_embed }}
+                                </div>
+                            </div>
+
+                            <!-- google_maps_link -->
+                            <div class="input-box col-lg-12">
+                                <label class="label-text">لینک گوگل مپ</label>
+                                <div class="form-group">
+                                    {{ form.google_maps_link }}
+                                </div>
+                            </div>
+
+                            <!-- balad_link -->
+                            <div class="input-box col-lg-6">
+                                <label class="label-text">لینک بلد</label>
+                                <div class="form-group">
+                                    {{ form.balad_link }}
+                                </div>
+                            </div>
+
+                            <!-- neshan_link -->
+                            <div class="input-box col-lg-6">
+                                <label class="label-text">لینک نشان</label>
+                                <div class="form-group">
+                                    {{ form.neshan_link }}
+                                </div>
+                            </div>
+
+                            <!-- longitude -->
+                            <div class="input-box col-lg-6">
+                                <label class="label-text">طول جغرافیایی</label>
+                                <div class="form-group">
+                                    {{ form.longitude }}
+                                </div>
+                            </div>
+
+                            <!-- latitude -->
+                            <div class="input-box col-lg-6">
+                                <label class="label-text">عرض جغرافیایی</label>
+                                <div class="form-group">
+                                    {{ form.latitude }}
+                                </div>
+                            </div>
+
+                            <!-- logo -->
+                            <div class="col-lg-12 mb-5">
+                                <div class="media media-card align-items-center">
+                                    <div class="media-img media-img-lg mr-4 bg-gray">
+                                        {% if form.instance.site_logo %}
+                                            <img class="mr-3" src="{{ form.instance.site_logo.url }}" alt="تصویر لوگو">
+                                        {% else %}
+                                            <img class="mr-3" src="/static/images/Heiat-Red.png" alt="تصویر لوگو">
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="media-body">
+                                        <div class="file-upload-wrap file-upload-wrap-2">
+                                            <div class="MultiFile-wrap" id="MultiFile2">
+                                                <input type="file" name="logo"
+                                                       class="multi file-upload-input with-preview MultiFile-applied"
+                                                       multiple="" id="logo" value="">
+                                                <div class="MultiFile-list" id="MultiFile2_list"></div>
+                                            </div>
+                                            <span class="file-upload-text"><i class="la la-photo mr-2"></i>یک لوگو آپلود کنید</span>
+                                        </div>
+                                        <!-- file-upload-wrap -->
+                                        <p class="fs-14">حداکثر اندازه فایل 5 مگابایت، حداقل ابعاد: 200x200 و فایل های مناسب jpg و png.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-submit-btn-box pb-4">
+                    <button class="btn theme-btn" type="submit">ذخیره</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+
+{% endblock %}

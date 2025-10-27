@@ -133,8 +133,7 @@ urlpatterns = [
     # endregion
 
     # region SiteSetting
-    path('Site-Settings/', views.AdminSiteSettingListView.as_view(), name='site_Settings_list'),
-    path('Site-Setting/<int:pk>/edit/', views.AdminSiteSettingUpdateView.as_view(), name='Site_Setting_edit'),
+    path('site-setting/<int:pk>/edit/', views.AdminSiteSettingUpdateView.as_view(), name='site_setting_edit'),
     # endregion
 
     # region User

@@ -28,7 +28,6 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
-
 class AuthenticatedHttpRequest(HttpRequest):
     user: Union[User, None]
 
@@ -1421,18 +1420,26 @@ class AdminSliderDeleteView(LoginRequiredMixin, DeleteView):
 # endregion
 
 # region SiteSetting
-class AdminSiteSettingListView(LoginRequiredMixin, ListView):
-    model = SiteSetting
-    template_name = 'userprofile_app/site_settings/site_settings_list.html'
-
-
 class AdminSiteSettingUpdateView(LoginRequiredMixin, UpdateView):
     model = SiteSetting
     form_class = SiteSettingForm
     template_name = 'userprofile_app/site_settings/site_setting_form.html'
-    success_url = reverse_lazy('userprofile_app:site_Settings_list')
 
+    def get_success_url(self):
+        # بعد از ذخیره، دوباره به همان صفحه ویرایش بازگردد
+        return reverse_lazy(
+            'userprofile_app:site_setting_edit',
+            kwargs={'pk': self.object.pk}
+        )
 
+    def form_valid(self, form):
+        # ذخیره لوگو اگر آپلود شده باشد
+        if self.request.FILES.get('logo'):
+            form.instance.site_logo = self.request.FILES['logo']
+        response = super().form_valid(form)
+        # پیام موفقیت
+        messages.success(self.request, "تنظیمات سایت با موفقیت ذخیره شد!")
+        return response
 # endregion
 
 # region Groups

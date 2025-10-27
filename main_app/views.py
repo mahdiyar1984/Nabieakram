@@ -17,10 +17,8 @@ def site_header_component(request):
     return render(request, 'shared/site_header_component.html', context)
 def site_footer_component(request):
     footer_link_boxes: QuerySet[FooterLinkBox] = FooterLinkBox.objects.all()
-    site_setting: SiteSetting = SiteSetting.objects.all().first()
     context = {
         'footer_link_boxes': footer_link_boxes,
-        'site_settings': site_setting,
     }
     return render(request, 'shared/site_footer_component.html', context)
 def index(request):

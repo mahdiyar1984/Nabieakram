@@ -13,7 +13,6 @@ class FooterLinkBox(models.Model):
 
     def __str__(self):
         return self.title
-
 class FooterLink(models.Model):
     objects = models.Manager()
     footer_link_box = models.ForeignKey(to=FooterLinkBox, on_delete=models.CASCADE, verbose_name='دسته بندی',
@@ -92,17 +91,15 @@ class ContactUs(models.Model):
         self.save(update_fields=['response', 'response_date', 'is_replied'])
 
 class SiteSetting(models.Model):
-    objects = models.Manager()
-
     address = models.TextField(verbose_name="آدرس")
-    fax = models.CharField(max_length=200, null=True, blank=True, verbose_name="فکس")
-    phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="تلفن ثابت")
-    mobile = models.CharField(max_length=20, blank=True, null=True, verbose_name="موبایل")
+    fax = models.CharField(max_length=20, null=True, blank=True, verbose_name="فکس")
+    phone = models.CharField(max_length=15, blank=True, null=True, verbose_name="تلفن ثابت")
+    mobile = models.CharField(max_length=15, blank=True, null=True, verbose_name="موبایل")
     email = models.EmailField(max_length=200, null=True, blank=True, verbose_name="ایمیل")
 
-    # موقعیت مکانی
-    latitude = models.CharField(blank=True, null=True, verbose_name="عرض جغرافیایی")
-    longitude = models.CharField(blank=True, null=True, verbose_name="طول جغرافیایی")
+    # موقعیت مکانی با دقت عددی
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True, verbose_name="عرض جغرافیایی")
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True, verbose_name="طول جغرافیایی")
     map_embed = models.TextField(blank=True, null=True, verbose_name="کد نقشه (iframe)")
 
     # لینک‌های مسیریاب
@@ -115,7 +112,9 @@ class SiteSetting(models.Model):
     copy_rights = models.TextField(verbose_name="متن کپی رایت")
     about_us_text = models.TextField(verbose_name="متن درباره ما")
     site_logo = models.ImageField(upload_to="site_logo/images/", verbose_name="لوگو")
-    working_hours = models.CharField(max_length=200, verbose_name="ساعات فعالیت", blank=True, null=True, )
+    working_hours = models.CharField(max_length=200, verbose_name="ساعات فعالیت", blank=True, null=True)
+
+    objects = models.Manager()
 
     def __str__(self):
         return self.site_name

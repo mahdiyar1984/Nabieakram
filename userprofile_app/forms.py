@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from account_app.models import User
 from django.contrib.auth.models import Group, Permission
 
-from main_app.models import FooterLinkBox, FooterLink, Slider, ContactUs
+from main_app.models import FooterLinkBox, FooterLink, Slider, ContactUs, SiteSetting
 from media_app.models import Lecture, LectureTag, LectureCategory, LectureClip, GalleryCategory, GalleryImage
 
 
@@ -182,6 +182,7 @@ class LectureForm(forms.ModelForm):
             'audio_url': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
         }
 
+
 class LectureCategoryForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         read_only = kwargs.pop('read_only', False)
@@ -197,10 +198,11 @@ class LectureCategoryForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
             'slug': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
-            'parent':forms.Select(attrs={'class': 'form-control form--control pl-3'}),
+            'parent': forms.Select(attrs={'class': 'form-control form--control pl-3'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
 
 class LectureTagForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -221,6 +223,7 @@ class LectureTagForm(forms.ModelForm):
             'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
+
 class LectureClipForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         read_only = kwargs.pop('read_only', False)
@@ -233,7 +236,7 @@ class LectureClipForm(forms.ModelForm):
     class Meta:
         model = LectureClip
         fields = [
-            'title','lecture', 'slug', 'short_description', 'video', 'video_url', 'is_active', 'is_delete']
+            'title', 'lecture', 'slug', 'short_description', 'video', 'video_url', 'is_active', 'is_delete']
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
@@ -250,6 +253,7 @@ class LectureClipForm(forms.ModelForm):
             'video_url': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
         }
 
+
 # endregion
 
 # region Gallery Management
@@ -264,7 +268,7 @@ class GalleryImageForm(forms.ModelForm):
 
     class Meta:
         model = GalleryImage
-        fields = ['title', 'category', 'is_active', 'is_delete','image']
+        fields = ['title', 'category', 'is_active', 'is_delete', 'image']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
             'category': forms.Select(attrs={'class': 'form-control form--control pl-3'}),
@@ -330,7 +334,7 @@ class FooterLinkBoxForm(forms.ModelForm):
 
     class Meta:
         model = FooterLinkBox
-        fields = ['title','is_active']
+        fields = ['title', 'is_active']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
@@ -352,7 +356,7 @@ class ContactUsForm(forms.ModelForm):
     class Meta:
         model = ContactUs
         fields = ['full_name', 'user', 'subject', 'email', 'message',
-                  'response', 'response_date', 'is_read_by_admin','is_replied']
+                  'response', 'response_date', 'is_read_by_admin', 'is_replied']
         widgets = {
             'full_name': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
             'user': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
@@ -388,7 +392,7 @@ class SliderForm(forms.ModelForm):
 
     class Meta:
         model = Slider
-        fields = ['title','url_title','url','description','image','order','is_active']
+        fields = ['title', 'url_title', 'url', 'description', 'image', 'order', 'is_active']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
             'url_title': forms.URLInput(attrs={'class': 'form-control form--control pl-3'}),
@@ -406,8 +410,47 @@ class SliderForm(forms.ModelForm):
 # endregion
 
 # region SiteSetting Management
+
 class SiteSettingForm(forms.ModelForm):
-    pass
+    class Meta:
+        model = SiteSetting
+        fields = '__all__'
+        widgets = {
+            # فیلدهای متن بلند
+            'address': forms.Textarea(attrs={'class': 'form-control form--control pl-3', 'rows': 3}),
+            'copy_rights': forms.Textarea(attrs={'class': 'form-control form--control pl-3', 'rows': 2}),
+            'about_us_text': forms.Textarea(attrs={'class': 'form-control form--control pl-3', 'rows': 4}),
+            'map_embed': forms.Textarea(attrs={'class': 'form-control form--control pl-3', 'rows': 3}),
+
+            # فیلدهای متنی کوتاه
+            'fax': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'mobile': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control form--control pl-3'}),
+            'working_hours': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'site_name': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
+            'site_url': forms.URLInput(attrs={'class': 'form-control form--control pl-3'}),
+
+            # لینک‌های مسیریاب
+            'google_maps_link': forms.URLInput(attrs={'class': 'form-control form--control pl-3'}),
+            'balad_link': forms.URLInput(attrs={'class': 'form-control form--control pl-3'}),
+            'neshan_link': forms.URLInput(attrs={'class': 'form-control form--control pl-3'}),
+
+            # فیلد فایل
+            'site_logo': forms.ClearableFileInput(attrs={'class': 'form-control form--control pl-3'}),
+
+            # موقعیت مکانی (DecimalField)
+            'latitude': forms.NumberInput(attrs={'class': 'form-control form--control pl-3', 'step': '0.000001'}),
+            'longitude': forms.NumberInput(attrs={'class': 'form-control form--control pl-3', 'step': '0.000001'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        read_only = kwargs.pop('read_only', False)
+        super().__init__(*args, **kwargs)
+        if read_only:
+            for field in self.fields.values():
+                field.disabled = True
+
 # endregion
 
 # region group management
@@ -452,6 +495,5 @@ class UserUpdateForm(UserChangeForm):
         model = User
         fields = ['username', 'email', 'first_name', 'last_name', 'phone_number', 'avatar', 'about_user', 'address',
                   'groups']
-
 
 # endregion
