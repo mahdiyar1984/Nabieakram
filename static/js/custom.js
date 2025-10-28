@@ -75,3 +75,52 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('CAPTCHA refresh error:', error));
     });
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const ratingDiv = document.getElementById('rating');
+    if (!ratingDiv) return; // اگه صفحه امتیاز نداره، هیچی اجرا نکن
+
+    const articleId = ratingDiv.dataset.articleId;
+    const csrfToken = ratingDiv.dataset.csrf;
+    const messageBox = document.getElementById('rating-message');
+
+    document.querySelectorAll('input[name="rate"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            const score = this.value;
+
+            fetch("/rate-article/", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `score=${score}&article_id=${articleId}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.average) {
+                        // نمایش پیام در صفحه
+                        messageBox.textContent = `✅ امتیاز شما ثبت شد.`;
+                        messageBox.style.display = 'block';
+                        messageBox.style.color = 'green';
+
+                        // بعد از چند ثانیه پنهان شود
+                        setTimeout(() => {
+                            messageBox.style.display = 'none';
+                        }, 4000);
+                    } else if (data.error) {
+                        messageBox.textContent = '❌ خطا در ثبت امتیاز. لطفا دوباره تلاش کنید.';
+                        messageBox.style.color = 'red';
+                        messageBox.style.display = 'block';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    messageBox.textContent = '❌ ارتباط با سرور برقرار نشد.';
+                    messageBox.style.color = 'red';
+                    messageBox.style.display = 'block';
+                });
+        });
+    });
+});

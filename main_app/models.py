@@ -2,6 +2,10 @@ from django.db import models
 from account_app.models import User
 from config_app import settings
 from django.utils import timezone
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
+
+
 
 
 
@@ -118,3 +122,14 @@ class SiteSetting(models.Model):
 
     def __str__(self):
         return self.site_name
+
+class Rating(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    score = models.PositiveSmallIntegerField(default=0)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'content_type', 'object_id')

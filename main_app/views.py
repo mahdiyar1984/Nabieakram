@@ -2,11 +2,18 @@ from django.contrib import messages
 from django.db.models import QuerySet, Count
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import TemplateView, CreateView, FormView
-
 from blog_app.models import ArticleCategory
 from main_app.forms import ContactUsModelForm
 from main_app.models import SiteSetting, ContactUs, FooterLink, FooterLinkBox, Slider
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
+from .models import Rating
+from blog_app.models import Article
+from django.db.models import Avg
+
 
 
 def site_header_component(request):
@@ -63,3 +70,20 @@ class ContactUsPageView(FormView):
         return context
 class TimeTableView(TemplateView):
     template_name = 'main_app/time_table_heiat.html'
+
+class RateArticleView(View):
+    def post(self,request):
+        score = int(request.POST.get('score', 0))
+        article_id = int(request.POST.get('article_id'))
+        article = Article.objects.get(id=article_id)
+
+        content_type = ContentType.objects.get_for_model(article)
+        rating, created = Rating.objects.update_or_create(
+            user=request.user,
+            content_type=content_type,
+            object_id=article.id,
+            defaults={'score': score}
+        )
+
+        average = Rating.objects.filter(content_type=content_type, object_id=article.id).aggregate(avg_score=Avg('score'))['avg_score']
+        return JsonResponse({'average': average, 'score': score})

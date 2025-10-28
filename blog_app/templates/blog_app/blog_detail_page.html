@@ -48,26 +48,30 @@
                                                 href="{% url 'blog_app:blog_list' %}?tag={{ tag.title|urlencode }}">{{ tag.title }}</a>
                                         </li>
                                     {% endfor %}
-
-
                                 </ul>
-                                <div class="share-wrap">
-                                    <ul class="social-icons social-icons-styled">
-                                        <li class="mr-0">
-                                            <a href="#" class="facebook-bg"><i class="la la-facebook"></i></a>
-                                        </li>
-                                        <li class="mr-0">
-                                            <a href="#" class="twitter-bg"><i class="la la-twitter"></i></a>
-                                        </li>
-                                        <li class="mr-0">
-                                            <a href="#" class="instagram-bg"><i class="la la-instagram"></i></a>
-                                        </li>
-                                    </ul>
-                                    <div class="icon-element icon-element-sm shadow-sm cursor-pointer share-toggle"
-                                         title="تغییر وضعیت برای گسترش نمادهای اجتماعی"><i class="la la-share-alt"></i>
-                                    </div>
-                                </div>
                             </div>
+                            <div class="section-block"></div>
+                            <h3 class="fs-18 font-weight-semi-bold pt-5 pb-3">به این مطلب امتیاز بدهید</h3>
+                            {% if request.user.is_authenticated %}
+                                <div class="leave-rating-wrap pb-4">
+                                    <div class="leave-rating leave--rating" id="rating" data-article-id="{{ article.id }}" data-csrf="{{ csrf_token }}">
+                                        <input type="radio" name="rate" id="star5" value="5">
+                                        <label for="star5"></label>
+                                        <input type="radio" name="rate" id="star4" value="4">
+                                        <label for="star4"></label>
+                                        <input type="radio" name="rate" id="star3" value="3">
+                                        <label for="star3"></label>
+                                        <input type="radio" name="rate" id="star2" value="2">
+                                        <label for="star2"></label>
+                                        <input type="radio" name="rate" id="star1" value="1">
+                                        <label for="star1"></label>
+                                    </div>
+                                    <p id="rating-message" class="text-success" style="display:none;"></p>
+                                </div>
+                            {% else %}
+                                <a href="{% url 'account_app:login_page' %}">برای امتیاز لطفا لاگین کنید</a>
+                            {% endif %}
+
                         </div>
                         <!-- end card-body -->
                     </div>
@@ -112,6 +116,116 @@
                         </div>
                     </div>
 
+                    <!-- rating -->
+                    <div class="card card-item">
+                        <div class="card-body">
+                            <div class="course-overview-card pt-4">
+                                <h3 class="fs-24 font-weight-semi-bold pb-40px">بازخورد کاربران</h3>
+                                <div class="feedback-wrap">
+                                    <div class="media media-card align-items-center">
+
+                                        <!-- end review-rating-summary -->
+                                        <div class="review-rating-summary">
+                                            <span class="stats-average__count">4.6</span>
+                                            <div class="rating-wrap pt-1">
+                                                <div class="review-stars">
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star-half-alt"></span>
+                                                </div>
+                                                <span class="rating-total d-block">(2533) </span>
+                                                <span>رتبه بندی دوره</span>
+                                            </div>
+                                            <!-- end rating-wrap -->
+                                        </div>
+
+                                        <!-- review-bars -->
+                                        <div class="media-body">
+
+                                            <!-- end review-bars -->
+                                            <div class="review-bars d-flex align-items-center mb-2">
+                                                <div class="review-bars__text">5&nbsp;ستاره</div>
+                                                <div class="review-bars__fill">
+                                                    <div class="skillbar-box">
+                                                        <div class="skillbar" data-percent="77%">
+                                                            <div class="skillbar-bar bg-3" style="width: 77%;"></div>
+                                                        </div>
+                                                        <!-- End Skill Bar -->
+                                                    </div>
+                                                </div>
+                                                <!-- end review-bars__fill -->
+                                                <div class="review-bars__percent">77%</div>
+                                            </div>
+
+                                            <!-- end review-bars -->
+                                            <div class="review-bars d-flex align-items-center mb-2">
+                                                <div class="review-bars__text">4&nbsp;ستاره</div>
+                                                <div class="review-bars__fill">
+                                                    <div class="skillbar-box">
+                                                        <div class="skillbar" data-percent="54%">
+                                                            <div class="skillbar-bar bg-3" style="width: 54%;"></div>
+                                                        </div>
+                                                        <!-- End Skill Bar -->
+                                                    </div>
+                                                </div>
+                                                <!-- end review-bars__fill -->
+                                                <div class="review-bars__percent">54%</div>
+                                            </div>
+
+                                            <!-- end review-bars -->
+                                            <div class="review-bars d-flex align-items-center mb-2">
+                                                <div class="review-bars__text">3&nbsp;ستاره</div>
+                                                <div class="review-bars__fill">
+                                                    <div class="skillbar-box">
+                                                        <div class="skillbar" data-percent="14%">
+                                                            <div class="skillbar-bar bg-3" style="width: 14%;"></div>
+                                                        </div>
+                                                        <!-- End Skill Bar -->
+                                                    </div>
+                                                </div>
+                                                <!-- end review-bars__fill -->
+                                                <div class="review-bars__percent">14%</div>
+                                            </div>
+
+                                            <!-- end review-bars -->
+                                            <div class="review-bars d-flex align-items-center mb-2">
+                                                <div class="review-bars__text">2&nbsp;ستاره</div>
+                                                <div class="review-bars__fill">
+                                                    <div class="skillbar-box">
+                                                        <div class="skillbar" data-percent="5%">
+                                                            <div class="skillbar-bar bg-3" style="width: 5%;"></div>
+                                                        </div>
+                                                        <!-- End Skill Bar -->
+                                                    </div>
+                                                </div>
+                                                <!-- end review-bars__fill -->
+                                                <div class="review-bars__percent">5%</div>
+                                            </div>
+
+                                            <!-- end review-bars -->
+                                            <div class="review-bars d-flex align-items-center mb-2">
+                                                <div class="review-bars__text">1&nbsp;ستاره</div>
+                                                <div class="review-bars__fill">
+                                                    <div class="skillbar-box">
+                                                        <div class="skillbar" data-percent="2%">
+                                                            <div class="skillbar-bar bg-3" style="width: 2%;"></div>
+                                                        </div>
+                                                        <!-- End Skill Bar -->
+                                                    </div>
+                                                </div>
+                                                <!-- end review-bars__fill -->
+                                                <div class="review-bars__percent">2%</div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     {% if messages %}
                         <div class="mb-3">
                             {% for message in messages %}
@@ -126,35 +240,56 @@
                     {% if comments %}
                         <div class="card card-item">
                             <div class="card-body">
-                                <div class="section-block"></div>
+
                                 <div class="comments-wrap pt-5" id="comments">
                                     <div class="d-flex align-items-center justify-content-between pb-4">
-                                        <h3 class="fs-22 font-weight-semi-bold">نظرات</h3>
-                                        <span class="ribbon ribbon-lg">{{ article.articlecomment_set.all.count }}</span>
+                                        <h3 class="fs-22 font-weight-semi-bold">نظرات <span
+                                                class="ribbon ribbon-lg">{{ article.articlecomment_set.all.count }}</span></h3>
+
+                                        <div class="review-stars">
+                                            <span class="la la-star"></span>
+                                            <span class="la la-star"></span>
+                                            <span class="la la-star"></span>
+                                            <span class="la la-star"></span>
+                                            <span class="la la-star"></span>
+                                        </div>
+
                                     </div>
+                                    <div class="section-block mb-4"></div>
 
                                     <div class="comment-list">
                                         {% for comment in comments %}
                                             {# نمایش فقط اگر کامنت فعال است یا متعلق به خود کاربر است #}
                                             {% if comment.is_active or request.user == comment.user %}
+
+
+
                                                 <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 {% if not comment.is_active %}bg-light{% endif %}">
                                                     <div class="media-img mr-4 rounded-full">
                                                         {% if comment.user and comment.user.avatar %}
                                                             <img class="rounded-full lazy" src="{{ comment.user.avatar.url }}" alt="تصویر کاربر">
                                                         {% else %}
-                                                            <img class="rounded-full lazy" src="{% static 'images/default-avatar.png' %}" alt="کاربر مهمان">
+                                                            <img class="rounded-full lazy" src="{% static 'images/small-avatar-1.jpg' %}" alt="کاربر مهمان">
                                                         {% endif %}
                                                     </div>
 
                                                     <div class="media-body">
-                                                        <h5 class="pb-2">
-                                                            {% if comment.user %}
-                                                                {{ comment.user.get_full_name|default:comment.user.username }}
-                                                            {% else %}
-                                                                {{ comment.name }}
-                                                            {% endif %}
-                                                        </h5>
-
+                                                        <div class="d-flex flex-wrap align-items-center justify-content-between pb-1">
+                                                            <h5 class="pb-2">
+                                                                {% if comment.user %}
+                                                                    {{ comment.user.get_full_name|default:comment.user.username }}
+                                                                {% else %}
+                                                                    {{ comment.name }}
+                                                                {% endif %}
+                                                            </h5>
+                                                            <div class="review-stars">
+                                                                <span class="la la-star"></span>
+                                                                <span class="la la-star"></span>
+                                                                <span class="la la-star"></span>
+                                                                <span class="la la-star"></span>
+                                                                <span class="la la-star"></span>
+                                                            </div>
+                                                        </div>
                                                         <span class="d-block lh-18 pb-2">{{ comment.create_date|timeago }}</span>
                                                         <p class="pb-3">{{ comment.text }}</p>
 
@@ -172,7 +307,7 @@
                                                                 {% if reply.user and reply.user.avatar %}
                                                                     <img class="rounded-full lazy" src="{{ reply.user.avatar.url }}" alt="تصویر کاربر">
                                                                 {% else %}
-                                                                    <img class="rounded-full lazy" src="{% static 'images/default-avatar.png' %}"
+                                                                    <img class="rounded-full lazy" src="{% static 'images/d' %}"
                                                                          alt="کاربر مهمان">
                                                                 {% endif %}
                                                             </div>
@@ -211,7 +346,6 @@
                             <div id="comment-form"></div>
                             <div class="add-comment-wrap pt-5">
                                 <h3 class="fs-22 font-weight-semi-bold pb-4">یک نظر اضافه کنید</h3>
-
                                 <form method="post" class="row" action="">
                                     {% csrf_token %}
 

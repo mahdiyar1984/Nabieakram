@@ -122,3 +122,5 @@ class BlogDetailView(View):
 
 
 
+
+
