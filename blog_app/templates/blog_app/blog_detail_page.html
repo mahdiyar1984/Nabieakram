@@ -3,6 +3,7 @@
 {% load static %}
 {% load shamsi_tags %}
 {% load humanize %}
+{% load dict_filters %}
 
 
 {% block title %}{% endblock %}
@@ -71,9 +72,7 @@
                             {% else %}
                                 <a href="{% url 'account_app:login_page' %}">برای امتیاز لطفا لاگین کنید</a>
                             {% endif %}
-
                         </div>
-                        <!-- end card-body -->
                     </div>
 
                     <!-- about_author -->
@@ -126,16 +125,20 @@
 
                                         <!-- end review-rating-summary -->
                                         <div class="review-rating-summary">
-                                            <span class="stats-average__count">4.6</span>
+                                            <span class="stats-average__count">{{ avg_rating }}</span>
                                             <div class="rating-wrap pt-1">
                                                 <div class="review-stars">
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star-half-alt"></span>
+                                                    {% for star in stars_display %}
+                                                        {% if star == 'full' %}
+                                                            <span class="la la-star"></span>
+                                                        {% elif star == 'half' %}
+                                                            <span class="la la-star-half-alt"></span>
+                                                        {% else %}
+                                                            <span class="la la-star-o"></span>
+                                                        {% endif %}
+                                                    {% endfor %}
                                                 </div>
-                                                <span class="rating-total d-block">(2533) </span>
+                                                <span class="rating-total d-block">({{ total_votes }}) </span>
                                                 <span>رتبه بندی دوره</span>
                                             </div>
                                             <!-- end rating-wrap -->
@@ -143,83 +146,23 @@
 
                                         <!-- review-bars -->
                                         <div class="media-body">
-
-                                            <!-- end review-bars -->
-                                            <div class="review-bars d-flex align-items-center mb-2">
-                                                <div class="review-bars__text">5&nbsp;ستاره</div>
-                                                <div class="review-bars__fill">
-                                                    <div class="skillbar-box">
-                                                        <div class="skillbar" data-percent="77%">
-                                                            <div class="skillbar-bar bg-3" style="width: 77%;"></div>
+                                            {% for star in star_list %}
+                                                <div class="review-bars d-flex align-items-center mb-2">
+                                                    <div class="review-bars__text">{{ star }}&nbsp;ستاره</div>
+                                                    <div class="review-bars__fill">
+                                                        <div class="skillbar-box">
+                                                            {% with percent=star_percentages|dict_get:star|default:0 %}
+                                                                <div class="skillbar" data-percent="{{ percent }}%">
+                                                                    <div class="skillbar-bar bg-3" style="width: {{ percent }}%;"></div>
+                                                                </div>
+                                                            {% endwith %}
                                                         </div>
-                                                        <!-- End Skill Bar -->
                                                     </div>
+                                                    <div class="review-bars__percent">{{ percent }}%</div>
                                                 </div>
-                                                <!-- end review-bars__fill -->
-                                                <div class="review-bars__percent">77%</div>
-                                            </div>
-
-                                            <!-- end review-bars -->
-                                            <div class="review-bars d-flex align-items-center mb-2">
-                                                <div class="review-bars__text">4&nbsp;ستاره</div>
-                                                <div class="review-bars__fill">
-                                                    <div class="skillbar-box">
-                                                        <div class="skillbar" data-percent="54%">
-                                                            <div class="skillbar-bar bg-3" style="width: 54%;"></div>
-                                                        </div>
-                                                        <!-- End Skill Bar -->
-                                                    </div>
-                                                </div>
-                                                <!-- end review-bars__fill -->
-                                                <div class="review-bars__percent">54%</div>
-                                            </div>
-
-                                            <!-- end review-bars -->
-                                            <div class="review-bars d-flex align-items-center mb-2">
-                                                <div class="review-bars__text">3&nbsp;ستاره</div>
-                                                <div class="review-bars__fill">
-                                                    <div class="skillbar-box">
-                                                        <div class="skillbar" data-percent="14%">
-                                                            <div class="skillbar-bar bg-3" style="width: 14%;"></div>
-                                                        </div>
-                                                        <!-- End Skill Bar -->
-                                                    </div>
-                                                </div>
-                                                <!-- end review-bars__fill -->
-                                                <div class="review-bars__percent">14%</div>
-                                            </div>
-
-                                            <!-- end review-bars -->
-                                            <div class="review-bars d-flex align-items-center mb-2">
-                                                <div class="review-bars__text">2&nbsp;ستاره</div>
-                                                <div class="review-bars__fill">
-                                                    <div class="skillbar-box">
-                                                        <div class="skillbar" data-percent="5%">
-                                                            <div class="skillbar-bar bg-3" style="width: 5%;"></div>
-                                                        </div>
-                                                        <!-- End Skill Bar -->
-                                                    </div>
-                                                </div>
-                                                <!-- end review-bars__fill -->
-                                                <div class="review-bars__percent">5%</div>
-                                            </div>
-
-                                            <!-- end review-bars -->
-                                            <div class="review-bars d-flex align-items-center mb-2">
-                                                <div class="review-bars__text">1&nbsp;ستاره</div>
-                                                <div class="review-bars__fill">
-                                                    <div class="skillbar-box">
-                                                        <div class="skillbar" data-percent="2%">
-                                                            <div class="skillbar-bar bg-3" style="width: 2%;"></div>
-                                                        </div>
-                                                        <!-- End Skill Bar -->
-                                                    </div>
-                                                </div>
-                                                <!-- end review-bars__fill -->
-                                                <div class="review-bars__percent">2%</div>
-                                            </div>
-
+                                            {% endfor %}
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -245,15 +188,6 @@
                                     <div class="d-flex align-items-center justify-content-between pb-4">
                                         <h3 class="fs-22 font-weight-semi-bold">نظرات <span
                                                 class="ribbon ribbon-lg">{{ article.articlecomment_set.all.count }}</span></h3>
-
-                                        <div class="review-stars">
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                        </div>
-
                                     </div>
                                     <div class="section-block mb-4"></div>
 
@@ -261,9 +195,6 @@
                                         {% for comment in comments %}
                                             {# نمایش فقط اگر کامنت فعال است یا متعلق به خود کاربر است #}
                                             {% if comment.is_active or request.user == comment.user %}
-
-
-
                                                 <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 {% if not comment.is_active %}bg-light{% endif %}">
                                                     <div class="media-img mr-4 rounded-full">
                                                         {% if comment.user and comment.user.avatar %}
