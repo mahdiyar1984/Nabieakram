@@ -10,6 +10,7 @@ from main_app.models import SiteSetting, ContactUs, FooterLink, FooterLinkBox, S
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
+from media_app.models import Lecture
 from .models import Rating
 from blog_app.models import Article
 from django.db.models import Avg
@@ -86,4 +87,21 @@ class RateArticleView(View):
         )
 
         average = Rating.objects.filter(content_type=content_type, object_id=article.id).aggregate(avg_score=Avg('score'))['avg_score']
+        return JsonResponse({'average': average, 'score': score})
+
+class RateLectureView(View):
+    def post(self,request):
+        score = int(request.POST.get('score', 0))
+        lecture_id = int(request.POST.get('lecture_id'))
+        lecture = Lecture.objects.get(id=lecture_id)
+
+        content_type = ContentType.objects.get_for_model(lecture)
+        rating, created = Rating.objects.update_or_create(
+            user=request.user,
+            content_type=content_type,
+            object_id=lecture.id,
+            defaults={'score': score}
+        )
+
+        average = Rating.objects.filter(content_type=content_type, object_id=lecture.id).aggregate(avg_score=Avg('score'))['avg_score']
         return JsonResponse({'average': average, 'score': score})

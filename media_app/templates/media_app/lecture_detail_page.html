@@ -2,6 +2,8 @@
 {% load static %}
 {% load shamsi_tags %}
 {% load render_partial %}
+{% load dict_filters %}
+{% load humanize %}
 
 {% block title %}
     سخنرانی
@@ -275,6 +277,28 @@
                                     <p class="fs-15 pb-2 text-justify">{{ lecture.text }}</p>
                                 </div>
 
+                                <div class="section-block mt-3"></div>
+                                <h3 class="fs-18 font-weight-semi-bold pt-3 pb-3">به این مطلب امتیاز بدهید</h3>
+                                {% if request.user.is_authenticated %}
+                                    <div class="leave-rating-wrap pb-4">
+                                        <div class="leave-rating leave--rating" id="rating" data-lecture-id="{{ lecture.id }}" data-csrf="{{ csrf_token }}">
+                                            <input type="radio" name="rate" id="star5" value="5">
+                                            <label for="star5"></label>
+                                            <input type="radio" name="rate" id="star4" value="4">
+                                            <label for="star4"></label>
+                                            <input type="radio" name="rate" id="star3" value="3">
+                                            <label for="star3"></label>
+                                            <input type="radio" name="rate" id="star2" value="2">
+                                            <label for="star2"></label>
+                                            <input type="radio" name="rate" id="star1" value="1">
+                                            <label for="star1"></label>
+                                        </div>
+                                        <p id="rating-message" class="text-success" style="display:none;"></p>
+                                    </div>
+                                {% else %}
+                                    <a href="{% url 'account_app:login_page' %}">برای امتیاز لطفا لاگین کنید</a>
+                                {% endif %}
+
                             </div>
                         </div>
                     </div>
@@ -318,8 +342,11 @@
                                         <!-- avatar -->
                                         <div class="instructor-img">
                                             <a href="#" class="media-img d-block">
-                                                <img class="lazy" src="{{ lecture.author.avatar.url }}"
-                                                     alt="تصویر آواتار"/>
+                                                {% if lecture.author.avatar %}
+                                                    <img class="rounded-full lazy" src="{{ lecture.user.avatar.url }}" alt="تصویر کاربر">
+                                                {% else %}
+                                                    <img class="rounded-full lazy" src="{% static 'images/small-avatar-1.jpg' %}" alt="کاربر مهمان">
+                                                {% endif %}
                                             </a>
                                         </div>
                                         <!-- end instructor-img -->
@@ -334,74 +361,152 @@
                         </div>
                     </div>
 
+                    <!-- rating -->
+                    <div class="card card-item">
+                        <div class="card-body">
+                            <div class="course-overview-card pt-4">
+                                <h3 class="fs-24 font-weight-semi-bold pb-40px">بازخورد کاربران</h3>
+                                <div class="feedback-wrap">
+                                    <div class="media media-card align-items-center">
+
+                                        <!-- end review-rating-summary -->
+                                        <div class="review-rating-summary">
+                                            <span class="stats-average__count">{{ avg_rating }}</span>
+                                            <div class="rating-wrap pt-1">
+                                                <div class="review-stars">
+                                                    {% for star in stars_display %}
+                                                        {% if star == 'full' %}
+                                                            <span class="la la-star"></span>
+                                                        {% elif star == 'half' %}
+                                                            <span class="la la-star-half-alt"></span>
+                                                        {% else %}
+                                                            <span class="la la-star-o"></span>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                                <span class="rating-total d-block">({{ total_votes }}) </span>
+                                                <span>رتبه بندی سخنرانی</span>
+                                            </div>
+                                            <!-- end rating-wrap -->
+                                        </div>
+
+                                        <!-- review-bars -->
+                                        <div class="media-body">
+                                            {% for star in star_list %}
+                                                <div class="review-bars d-flex align-items-center mb-2">
+                                                    <div class="review-bars__text">{{ star }}&nbsp;ستاره</div>
+                                                    <div class="review-bars__fill">
+                                                        <div class="skillbar-box">
+                                                            {% with percent=star_percentages|dict_get:star|default:0 %}
+                                                                <div class="skillbar" data-percent="{{ percent }}%">
+                                                                    <div class="skillbar-bar bg-3" style="width: {{ percent }}%;"></div>
+                                                                </div>
+                                                            {% endwith %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="review-bars__percent">{{ percent }}%</div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- show comment -->
                     {% if comments %}
                         <div class="card card-item">
                             <div class="card-body">
                                 <div class="comments-wrap pt-5" id="comments">
                                     <div class="d-flex align-items-center justify-content-between pb-4">
-                                        <h3 class="fs-22 font-weight-semi-bold">نظرات</h3>
-                                        <span class="ribbon ribbon-lg">{{ comments.count }}</span>
+                                        <h3 class="fs-22 font-weight-semi-bold">نظرات <span
+                                                class="ribbon ribbon-lg">{{ lecture.lecturecomment_set.all.count }}</span></h3>
                                     </div>
-
+                                    <div class="section-block mb-4"></div>
                                     <div class="comment-list">
                                         {% for comment in comments %}
-                                            <div class="media media-card border-bottom pb-4 mb-4 {% if not comment.is_active %}bg-light{% endif %}">
-                                                <div class="media-img mr-4 rounded-full">
-                                                    {% if comment.user and comment.user.avatar %}
-                                                        <img class="rounded-full lazy" src="{{ comment.user.avatar.url }}" alt="تصویر کاربر">
-                                                    {% else %}
-                                                        <img class="rounded-full lazy" src="{% static 'images/default-avatar.png' %}" alt="کاربر مهمان">
-                                                    {% endif %}
-                                                </div>
-
-                                                <div class="media-body">
-                                                    <h5 class="pb-2">
-                                                        {% if comment.user %}
-                                                            {{ comment.user.get_full_name|default:comment.user.username }}
-                                                        {% else %}
-                                                            {{ comment.name }}
-                                                        {% endif %}
-                                                    </h5>
-
-                                                    <span class="d-block lh-18 pb-2">{{ comment.created_date|timeago }}</span>
-                                                    <p class="pb-3">{{ comment.text }}</p>
-
-                                                    {% if not comment.is_active and request.user == comment.user %}
-                                                        <small class="text-warning">(در انتظار تأیید مدیر)</small>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-
-                                            {# نمایش پاسخ‌ها #}
-                                            {% for reply in comment.replies %}
-                                                <div class="media media-card border-bottom pb-4 mb-4 review-reply {% if not reply.is_active %}bg-light{% endif %}">
+                                            {% if comment.is_active or request.user == comment.user %}
+                                                <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 {% if not comment.is_active %}bg-light{% endif %}">
                                                     <div class="media-img mr-4 rounded-full">
-                                                        {% if reply.user and reply.user.avatar %}
-                                                            <img class="rounded-full lazy" src="{{ reply.user.avatar.url }}" alt="تصویر کاربر">
+                                                        {% if comment.user and comment.user.avatar %}
+                                                            <img class="rounded-full lazy" src="{{ comment.user.avatar.url }}" alt="تصویر کاربر">
                                                         {% else %}
-                                                            <img class="rounded-full lazy" src="{% static 'images/default-avatar.png' %}" alt="کاربر مهمان">
+                                                            <img class="rounded-full lazy" src="{% static 'images/small-avatar-1.jpg' %}" alt="کاربر مهمان">
                                                         {% endif %}
                                                     </div>
 
                                                     <div class="media-body">
-                                                        <h5 class="pb-2">
-                                                            {% if reply.user %}
-                                                                {{ reply.user.get_full_name|default:reply.user.username }}
-                                                            {% else %}
-                                                                {{ reply.name }}
-                                                            {% endif %}
-                                                        </h5>
+                                                        <div class="d-flex flex-wrap align-items-center justify-content-between pb-1">
+                                                            <h5 class="pb-2">
+                                                                {% if comment.user %}
+                                                                    {{ comment.user.get_full_name|default:comment.user.username }}
+                                                                {% else %}
+                                                                    {{ comment.name }}
+                                                                {% endif %}
+                                                            </h5>
+                                                            <div class="review-stars">
+                                                                {% if comment.user and comment.user.id in user_ratings %}
+                                                                    {% with user_ratings|dict_get:comment.user.id as user_score %}
+                                                                        {% for i in "12345" %}
+                                                                            {% if forloop.counter <= user_score %}
+                                                                                <span class="la la-star" style="color: gold;"></span>
+                                                                            {% else %}
+                                                                                <span class="la la-star-o" style="color: lightgray;"></span>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    {% endwith %}
+                                                                {% else %}
+                                                                    {# کاربر امتیاز نداده #}
+                                                                    {% for i in "12345" %}
+                                                                        <span class="la la-star-o" style="color: lightgray;"></span>
+                                                                    {% endfor %}
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <span class="d-block lh-18 pb-2">{{ comment.create_date|timeago }}</span>
+                                                        <p class="pb-3">{{ comment.text }}</p>
 
-                                                        <span class="d-block lh-18 pb-2">{{ reply.created_date|timeago }}</span>
-                                                        <p class="pb-3">{{ reply.text }}</p>
-
-                                                        {% if not reply.is_active and request.user == reply.user %}
+                                                        {% if not comment.is_active and request.user == comment.user %}
                                                             <small class="text-warning">(در انتظار تأیید مدیر)</small>
                                                         {% endif %}
                                                     </div>
                                                 </div>
-                                            {% endfor %}
+
+                                                {# نمایش پاسخ‌ها #}
+                                                {% for reply in comment.lecturecomment_set.all %}
+                                                    {% if reply.is_active or request.user == reply.user %}
+                                                        <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 review-reply {% if not reply.is_active %}bg-light{% endif %}">
+                                                            <div class="media-img mr-4 rounded-full">
+                                                                {% if reply.user and reply.user.avatar %}
+                                                                    <img class="rounded-full lazy" src="{{ reply.user.avatar.url }}" alt="تصویر کاربر">
+                                                                {% else %}
+                                                                    <img class="rounded-full lazy" src="{% static 'images/small-avatar-1.jpg' %}"
+                                                                         alt="کاربر مهمان">
+                                                                {% endif %}
+                                                            </div>
+
+                                                            <div class="media-body">
+                                                                <h5 class="pb-2">
+                                                                    {% if reply.user %}
+                                                                        {{ reply.user.get_full_name|default:reply.user.username }}
+                                                                    {% else %}
+                                                                        {{ reply.name }}
+                                                                    {% endif %}
+                                                                </h5>
+
+                                                                <span class="d-block lh-18 pb-2">{{ reply.create_date|timeago }}</span>
+                                                                <p class="pb-3">{{ reply.text }}</p>
+
+                                                                {% if not reply.is_active and request.user == reply.user %}
+                                                                    <small class="text-warning">(در انتظار تأیید مدیر)</small>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -464,10 +569,11 @@
                                     <div class="input-box">
                                         <label class="label-text">عبارت امنیتی</label>
                                         <div class="form-group">
-                                            <img src="/captcha/image/74f443cbe4bcd75250beaf2ab50712d8b047be8d/" alt="captcha" class="captcha">
-                                            <input type="hidden" name="captcha_0" value="74f443cbe4bcd75250beaf2ab50712d8b047be8d" required="" id="id_captcha_0"
-                                                   autocomplete="off"><input type="text" name="captcha_1" required="" id="id_captcha_1" autocapitalize="off"
-                                                                             autocomplete="off" autocorrect="off" spellcheck="false">
+                                            <img src="{{ captcha_url }}" alt="captcha" class="captcha">
+                                            <input type="hidden" name="captcha_0" value="{{ captcha_key }}" required="" id="id_captcha_0"
+                                                   autocomplete="off">
+                                            <input type="text" name="captcha_1" required="" id="id_captcha_1" autocapitalize="off"
+                                                   autocomplete="off" autocorrect="off" spellcheck="false">
                                             <a href="#" id="refresh-captcha">↻ تغییر تصویر</a>
 
 

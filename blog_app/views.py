@@ -1,4 +1,6 @@
 import jdatetime
+from captcha.helpers import captcha_image_url
+from captcha.models import CaptchaStore
 from django.contrib import messages
 from django.db.models import QuerySet, Avg, Count
 from django.db.models import Q
@@ -108,7 +110,12 @@ class BlogDetailView(View):
         # لیست ستاره‌ها برای قالب
         star_list = [5, 4, 3, 2, 1]
 
-
+        # 🔹 اینجا مهمه: ساخت دیکشنری از امتیاز کاربران
+        user_ratings = {
+            r.user_id: r.score
+            for r in ratings
+            if r.user_id is not None
+        }
 
         # دریافت کامنت‌ها
         comments = ArticleComment.objects.filter(article=article, parent=None, is_active=True)
@@ -120,6 +127,10 @@ class BlogDetailView(View):
             temp_comment = ArticleComment.objects.filter(id__in=temp_comment_ids)
             comments = list(comments) + list(temp_comment)
 
+
+        new_captcha = CaptchaStore.generate_key()  # تولید captcha_0
+        captcha_url = captcha_image_url(new_captcha)  # مسیر تصویر
+
         context = {
             'article': article,
             'comments': comments,
@@ -128,6 +139,10 @@ class BlogDetailView(View):
             'total_votes': total_votes,
             'star_percentages': star_percentages,
             'star_list': star_list,  # اضافه شد
+            "captcha_key": new_captcha,
+            "captcha_url": captcha_url,
+            'user_ratings': user_ratings,  # 🔹 اضافه شد
+
         }
 
         return render(request, 'blog_app/blog_detail_page.html', context)

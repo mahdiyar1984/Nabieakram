@@ -4,5 +4,7 @@ register = template.Library()
 
 @register.filter
 def dict_get(d, key):
-    """مقدار دیکشنری را با کلید برمی‌گرداند"""
-    return d.get(key, 0)  # اگر کلید نبود 0 برگرداند
+    """Get dictionary value in template"""
+    if isinstance(d, dict):
+        return d.get(key)
+    return None

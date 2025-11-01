@@ -76,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// Rating in article
 document.addEventListener('DOMContentLoaded', function () {
     const ratingDiv = document.getElementById('rating');
     if (!ratingDiv) return; // اگه صفحه امتیاز نداره، هیچی اجرا نکن
@@ -96,6 +97,56 @@ document.addEventListener('DOMContentLoaded', function () {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: `score=${score}&article_id=${articleId}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.average) {
+                        // نمایش پیام در صفحه
+                        messageBox.textContent = `✅ امتیاز شما ثبت شد.`;
+                        messageBox.style.display = 'block';
+                        messageBox.style.color = 'green';
+
+                        // بعد از چند ثانیه پنهان شود
+                        setTimeout(() => {
+                            messageBox.style.display = 'none';
+                        }, 4000);
+                    } else if (data.error) {
+                        messageBox.textContent = '❌ خطا در ثبت امتیاز. لطفا دوباره تلاش کنید.';
+                        messageBox.style.color = 'red';
+                        messageBox.style.display = 'block';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    messageBox.textContent = '❌ ارتباط با سرور برقرار نشد.';
+                    messageBox.style.color = 'red';
+                    messageBox.style.display = 'block';
+                });
+        });
+    });
+});
+
+// Rating in lecture
+document.addEventListener('DOMContentLoaded', function () {
+    const ratingDiv = document.getElementById('rating');
+    if (!ratingDiv) return; // اگه صفحه امتیاز نداره، هیچی اجرا نکن
+
+    const lectureId = ratingDiv.dataset.lectureId;
+    const csrfToken = ratingDiv.dataset.csrf;
+    const messageBox = document.getElementById('rating-message');
+
+    document.querySelectorAll('input[name="rate"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            const score = this.value;
+
+            fetch("/lectures/rate-lecture/", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `score=${score}&lecture_id=${lectureId}`
             })
                 .then(response => response.json())
                 .then(data => {

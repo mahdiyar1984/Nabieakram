@@ -1,11 +1,15 @@
+from captcha.helpers import captcha_image_url
+from captcha.models import CaptchaStore
 from django.contrib import messages
-from django.db.models import QuerySet, Q
+from django.db.models import QuerySet, Q, Avg, Count
 from django.http import HttpRequest
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic import ListView
+from django.contrib.contenttypes.models import ContentType
 
-from media_app.models import GalleryImage, GalleryCategory, Lecture, LectureClip, LectureCategory, LectureComment
+from main_app.models import Rating
+from media_app.models import GalleryImage, GalleryCategory, Lecture, LectureCategory, LectureComment
 
 
 class GalleryListView(ListView):
@@ -84,6 +88,43 @@ class LectureDetailView(View):
     def get(self, request: HttpRequest, pk):
         lecture: Lecture = Lecture.objects.get(pk=pk, is_active=True)
 
+        # محاسبه امتیاز و تعداد رأی‌ها
+        lecture_type = ContentType.objects.get_for_model(lecture)
+        ratings = Rating.objects.filter(content_type=lecture_type, object_id=lecture.id)
+        avg_rating = float(ratings.aggregate(avg=Avg('score'))['avg'] or 0)
+        total_votes = ratings.aggregate(count=Count('id'))['count'] or 0
+
+        # آماده‌سازی نمایش ستاره‌ها (full, half, empty)
+        stars_display = []
+        for i in range(1, 6):
+            if avg_rating >= i:
+                stars_display.append('full')
+            elif avg_rating >= i - 0.5:
+                stars_display.append('half')
+            else:
+                stars_display.append('empty')
+
+        # محاسبه درصد هر ستاره
+        star_counts = {i: 0 for i in range(1, 6)}
+        for r in ratings:
+            score = int(round(r.score))
+            if 1 <= score <= 5:
+                star_counts[score] += 1
+
+        star_percentages = {}
+        for i in range(5, 0, -1):
+            star_percentages[i] = int(star_counts[i] / total_votes * 100) if total_votes else 0
+
+        # لیست ستاره‌ها برای قالب
+        star_list = [5, 4, 3, 2, 1]
+
+        # 🔹 اینجا مهمه: ساخت دیکشنری از امتیاز کاربران
+        user_ratings = {
+            r.user_id: r.score
+            for r in ratings
+            if r.user_id is not None
+        }
+
         comments = LectureComment.objects.filter(
             lecture=lecture,
             parent=None
@@ -101,9 +142,22 @@ class LectureDetailView(View):
                        .order_by('created_date'))
             comment.replies = replies
 
+        new_captcha = CaptchaStore.generate_key()  # تولید captcha_0
+        captcha_url = captcha_image_url(new_captcha)  # مسیر تصویر
+
+
+
         context = {
             'lecture': lecture,
             'comments': comments,
+            'avg_rating': avg_rating,
+            'stars_display': stars_display,
+            'total_votes': total_votes,
+            'star_percentages': star_percentages,
+            'star_list': star_list,  # اضافه شد
+            "captcha_key": new_captcha,
+            "captcha_url": captcha_url,
+            'user_ratings': user_ratings,  # 🔹 اضافه شد
         }
         return render(request, 'media_app/lecture_detail_page.html', context)
 
