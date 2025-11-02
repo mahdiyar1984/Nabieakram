@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Rating in lecture
 document.addEventListener('DOMContentLoaded', function () {
-    const ratingDiv = document.getElementById('rating');
+    const ratingDiv = document.getElementById('rating2');
     if (!ratingDiv) return; // اگه صفحه امتیاز نداره، هیچی اجرا نکن
 
     const lectureId = ratingDiv.dataset.lectureId;
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
         radio.addEventListener('change', function () {
             const score = this.value;
 
-            fetch("/lectures/rate-lecture/", {
+            fetch("/rate-lecture/", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',

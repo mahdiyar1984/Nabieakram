@@ -118,14 +118,21 @@ class BlogDetailView(View):
         }
 
         # دریافت کامنت‌ها
-        comments = ArticleComment.objects.filter(article=article, parent=None, is_active=True)
+        comments_qs = ArticleComment.objects.filter(article=article, parent=None)
+
+        # اگر کاربر لاگین کرده، کامنت‌های خودش را هم اضافه کن
         if request.user.is_authenticated:
-            user_comments = ArticleComment.objects.filter(article=article, user=request.user, parent=None)
-            comments = (comments | user_comments).distinct()
+            comments_qs = comments_qs.filter(Q(is_active=True) | Q(user=request.user))
+        else:
+            comments_qs = comments_qs.filter(is_active=True)
+
+        # حالا اگر کامنت موقتی در سشن داریم
         temp_comment_ids = request.session.get('temp_comments', [])
         if temp_comment_ids:
-            temp_comment = ArticleComment.objects.filter(id__in=temp_comment_ids)
-            comments = list(comments) + list(temp_comment)
+            comments_qs = comments_qs | ArticleComment.objects.filter(id__in=temp_comment_ids)
+
+        # در نهایت distinct
+        comments = comments_qs.distinct()
 
 
         new_captcha = CaptchaStore.generate_key()  # تولید captcha_0

@@ -281,7 +281,7 @@
                                 <h3 class="fs-18 font-weight-semi-bold pt-3 pb-3">به این مطلب امتیاز بدهید</h3>
                                 {% if request.user.is_authenticated %}
                                     <div class="leave-rating-wrap pb-4">
-                                        <div class="leave-rating leave--rating" id="rating" data-lecture-id="{{ lecture.id }}" data-csrf="{{ csrf_token }}">
+                                        <div class="leave-rating leave--rating" id="rating2" data-lecture-id="{{ lecture.id }}" data-csrf="{{ csrf_token }}">
                                             <input type="radio" name="rate" id="star5" value="5">
                                             <label for="star5"></label>
                                             <input type="radio" name="rate" id="star4" value="4">
@@ -415,6 +415,16 @@
                         </div>
                     </div>
 
+                    {% if messages %}
+                        <div class="mb-3">
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     <!-- show comment -->
                     {% if comments %}
                         <div class="card card-item">
@@ -425,6 +435,7 @@
                                                 class="ribbon ribbon-lg">{{ lecture.lecturecomment_set.all.count }}</span></h3>
                                     </div>
                                     <div class="section-block mb-4"></div>
+
                                     <div class="comment-list">
                                         {% for comment in comments %}
                                             {% if comment.is_active or request.user == comment.user %}
@@ -465,7 +476,7 @@
                                                                 {% endif %}
                                                             </div>
                                                         </div>
-                                                        <span class="d-block lh-18 pb-2">{{ comment.create_date|timeago }}</span>
+                                                        <span class="d-block lh-18 pb-2">{{ comment.created_date|timeago }}</span>
                                                         <p class="pb-3">{{ comment.text }}</p>
 
                                                         {% if not comment.is_active and request.user == comment.user %}
@@ -477,7 +488,7 @@
                                                 {# نمایش پاسخ‌ها #}
                                                 {% for reply in comment.lecturecomment_set.all %}
                                                     {% if reply.is_active or request.user == reply.user %}
-                                                        <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 review-reply {% if not reply.is_active %}bg-light{% endif %}">
+                                                        <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 review-reply">
                                                             <div class="media-img mr-4 rounded-full">
                                                                 {% if reply.user and reply.user.avatar %}
                                                                     <img class="rounded-full lazy" src="{{ reply.user.avatar.url }}" alt="تصویر کاربر">
@@ -496,12 +507,8 @@
                                                                     {% endif %}
                                                                 </h5>
 
-                                                                <span class="d-block lh-18 pb-2">{{ reply.create_date|timeago }}</span>
+                                                                <span class="d-block lh-18 pb-2">{{ reply.created_date|timeago }}</span>
                                                                 <p class="pb-3">{{ reply.text }}</p>
-
-                                                                {% if not reply.is_active and request.user == reply.user %}
-                                                                    <small class="text-warning">(در انتظار تأیید مدیر)</small>
-                                                                {% endif %}
                                                             </div>
                                                         </div>
                                                     {% endif %}

@@ -49,6 +49,7 @@ class AboutView(TemplateView):
 
     def get_context_data(self, **kwargs):
         pass
+
 class ContactUsPageView(FormView):
     template_name = 'main_app/contact_us_page.html'  # مسیر قالب شما
     form_class = ContactUsModelForm
@@ -69,6 +70,7 @@ class ContactUsPageView(FormView):
         site_setting: SiteSetting = SiteSetting.objects.all().first()
         context['site_setting'] = site_setting
         return context
+
 class TimeTableView(TemplateView):
     template_name = 'main_app/time_table_heiat.html'
 
@@ -88,7 +90,6 @@ class RateArticleView(View):
 
         average = Rating.objects.filter(content_type=content_type, object_id=article.id).aggregate(avg_score=Avg('score'))['avg_score']
         return JsonResponse({'average': average, 'score': score})
-
 class RateLectureView(View):
     def post(self,request):
         score = int(request.POST.get('score', 0))

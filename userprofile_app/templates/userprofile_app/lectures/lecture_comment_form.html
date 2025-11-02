@@ -60,7 +60,7 @@
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="label-text">عنوان سخنرانی</label>
-                                    <input type="text" name="article" value="{{ comment.lecture.title }}"
+                                    <input type="text" name="lecture" value="{{ comment.lecture.title }}"
                                            class="form-control form--control pl-3" maxlength="300"
                                            disabled
                                            id="id_title">
@@ -73,6 +73,24 @@
                                     <label class="label-text">نویسنده</label>
                                     <input class="form-control form--control pl-3" name="user" type="text"
                                            value="{{ comment.user }}" disabled>
+                                </div>
+                            </div>
+
+                            <!-- name -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">نویسنده</label>
+                                    <input class="form-control form--control pl-3" name="user" type="text"
+                                           value="{{ comment.name }}" {% if read_only %}disabled{% endif %}>
+                                </div>
+                            </div>
+
+                            <!-- email -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="label-text">نویسنده</label>
+                                    <input class="form-control form--control pl-3" name="user" type="text"
+                                           value="{{ comment.email }}" {% if read_only %}disabled{% endif %}>
                                 </div>
                             </div>
 
@@ -97,39 +115,16 @@
                             </div>
 
                             <!-- create_date -->
-                            <div class="col-lg-12">
+                            <div class="col-lg-3">
                                 <div class="form-group">
                                     <label class="label-text mr-5">تاریخ نظر</label>
                                     <input class="form-control form--control pl-3" name="create_date" type="text"
-                                           value="{{ comment.created_date|to_shamsi }}" disabled>
+                                           value="{{ comment.create_date|to_shamsi }}" disabled>
                                 </div>
                             </div>
 
-                            {% if comment.lecturecomment_set.all.first %}
-                                <!-- is_active -->
-                                <div class="col-lg-6" style="margin-top: 40px;">
-                                    <div class="form-group">
-                                        <label class="label-text mr-5">فعال / غیرفعال(والد)</label>
-                                        <input type="checkbox" name="is_active_parent"
-                                               class="form-check-input" id="id_is_active"
-                                               {% if comment.lecturecomment_set.all.first.is_active %}checked{% endif %}
-                                               {% if read_only %}disabled{% endif %}>
-                                    </div>
-                                </div>
-
-                                <!-- is_delete -->
-                                <div class="col-lg-6" style="margin-top: 40px;">
-                                    <div class="form-group">
-                                        <label class="label-text mr-5">حذف شده / نشده(والد)</label>
-                                        <input type="checkbox" name="is_delete_parent"
-                                               class="form-check-input" id="id_is_delete"
-                                               {% if comment.lecturecomment_set.all.first.is_delete %}checked{% endif %}
-                                               {% if read_only %}disabled{% endif %}>
-                                    </div>
-                                </div>
-                            {% endif %}
                             <!-- is_active -->
-                            <div class="col-lg-6" style="margin-top: 40px;">
+                            <div class="col-lg-3" style="margin-top: 40px;">
                                 <div class="form-group">
                                     <label class="label-text mr-5">فعال / غیرفعال</label>
                                     <input type="checkbox" name="is_active"
@@ -139,8 +134,9 @@
                                 </div>
                             </div>
 
+
                             <!-- is_delete -->
-                            <div class="col-lg-6" style="margin-top: 40px;">
+                            <div class="col-lg-3" style="margin-top: 40px;">
                                 <div class="form-group">
                                     <label class="label-text mr-5">حذف شده / نشده</label>
                                     <input type="checkbox" name="is_delete"
@@ -149,7 +145,6 @@
                                            {% if read_only %}disabled{% endif %}>
                                 </div>
                             </div>
-
 
                         </div>
                     </div>

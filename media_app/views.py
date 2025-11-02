@@ -125,22 +125,22 @@ class LectureDetailView(View):
             if r.user_id is not None
         }
 
-        comments = LectureComment.objects.filter(
-            lecture=lecture,
-            parent=None
-        ).filter(Q(is_active=True) | Q(user=request.user))
+        # دریافت کامنت‌ها
+        comments_qs = LectureComment.objects.filter(lecture=lecture, parent=None)
 
+        # اگر کاربر لاگین کرده، کامنت‌های خودش را هم اضافه کن
+        if request.user.is_authenticated:
+            comments_qs = comments_qs.filter(Q(is_active=True) | Q(user=request.user))
+        else:
+            comments_qs = comments_qs.filter(is_active=True)
+
+        # حالا اگر کامنت موقتی در سشن داریم
         temp_comment_ids = request.session.get('temp_comments', [])
         if temp_comment_ids:
-            comments = comments | LectureComment.objects.filter(id__in=temp_comment_ids)
+            comments_qs = comments_qs | LectureComment.objects.filter(id__in=temp_comment_ids)
 
-        comments = comments.distinct().order_by('-created_date')
-
-        for comment in comments:
-            replies = (comment.lecturecomment_set
-                       .filter(Q(is_active=True) | Q(user=request.user))
-                       .order_by('created_date'))
-            comment.replies = replies
+        # در نهایت distinct
+        comments = comments_qs.distinct()
 
         new_captcha = CaptchaStore.generate_key()  # تولید captcha_0
         captcha_url = captcha_image_url(new_captcha)  # مسیر تصویر

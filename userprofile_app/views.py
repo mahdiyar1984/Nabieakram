@@ -1003,13 +1003,8 @@ def admin_lecture_comment_update(request: AuthenticatedHttpRequest, pk):
         comment.text = request.POST.get('text', comment.text)
         comment.is_active = 'is_active' in request.POST
         comment.is_delete = 'is_delete' in request.POST
+
         comment.save()
-
-        if comment.parent:
-            comment.parent.is_active = 'is_active_parent' in request.POST
-            comment.parent.is_delete = 'is_delete_parent' in request.POST
-            comment.parent.save()
-
         reply_text = request.POST.get('reply_text')
         if reply_text:
             first_reply = comment.lecturecomment_set.first()

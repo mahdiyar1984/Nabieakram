@@ -51,7 +51,7 @@
                                     {% endfor %}
                                 </ul>
                             </div>
-                            <div class="section-block"></div>
+                            <div class="section-block mt-2"></div>
                             <h3 class="fs-18 font-weight-semi-bold pt-5 pb-3">به این مطلب امتیاز بدهید</h3>
                             {% if request.user.is_authenticated %}
                                 <div class="leave-rating-wrap pb-4">
@@ -183,7 +183,6 @@
                     {% if comments %}
                         <div class="card card-item">
                             <div class="card-body">
-
                                 <div class="comments-wrap pt-5" id="comments">
                                     <div class="d-flex align-items-center justify-content-between pb-4">
                                         <h3 class="fs-22 font-weight-semi-bold">نظرات <span
@@ -243,12 +242,12 @@
                                                 {# نمایش پاسخ‌ها #}
                                                 {% for reply in comment.articlecomment_set.all %}
                                                     {% if reply.is_active or request.user == reply.user %}
-                                                        <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 review-reply {% if not reply.is_active %}bg-light{% endif %}">
+                                                        <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4 review-reply">
                                                             <div class="media-img mr-4 rounded-full">
                                                                 {% if reply.user and reply.user.avatar %}
                                                                     <img class="rounded-full lazy" src="{{ reply.user.avatar.url }}" alt="تصویر کاربر">
                                                                 {% else %}
-                                                                    <img class="rounded-full lazy" src="{% static 'images/d' %}"
+                                                                    <img class="rounded-full lazy" src="{% static 'images/small-avatar-1.jpg' %}"
                                                                          alt="کاربر مهمان">
                                                                 {% endif %}
                                                             </div>
@@ -264,10 +263,6 @@
 
                                                                 <span class="d-block lh-18 pb-2">{{ reply.create_date|timeago }}</span>
                                                                 <p class="pb-3">{{ reply.text }}</p>
-
-                                                                {% if not reply.is_active and request.user == reply.user %}
-                                                                    <small class="text-warning">(در انتظار تأیید مدیر)</small>
-                                                                {% endif %}
                                                             </div>
                                                         </div>
                                                     {% endif %}
