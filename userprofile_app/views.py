@@ -1,7 +1,7 @@
 from typing import Union
 from django.contrib.auth import update_session_auth_hash
 from django.core.paginator import Paginator
-from django.db.models import QuerySet, Q, Case, When, BooleanField
+from django.db.models import QuerySet, Q, Case, When, BooleanField, Count
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.generic import DetailView, TemplateView
@@ -35,7 +35,26 @@ class AuthenticatedHttpRequest(HttpRequest):
 # region dashboard
 class UserPanelDashboardPage(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, template_name='userprofile_app/dashboard/user_panel_dashboard_page.html')
+        status_counts_article = Article.objects.values('status').annotate(count=Count('id'))
+        status_counts_lecture = Lecture.objects.values('status').annotate(count=Count('id'))
+
+
+        # تبدیل به دیکشنری برای راحتی
+        counts_dict_article = {item['status']: item['count'] for item in status_counts_article}
+        counts_dict_lecture = {item['status']: item['count'] for item in status_counts_lecture}
+
+        context = {
+            'articles_all_count': sum(counts_dict_article.values()),
+            'articles_published_count': counts_dict_article.get('published', 0),
+            'articles_drafted_count': counts_dict_article.get('draft', 0),
+
+            'lectures_all_count': sum(counts_dict_lecture.values()),
+            'lectures_published_count': counts_dict_lecture.get('published', 0),
+            'lectures_drafted_count': counts_dict_lecture.get('draft', 0),
+        }
+
+
+        return render(request, template_name='userprofile_app/dashboard/user_panel_dashboard_page.html',context=context)
 
 
 # endregion

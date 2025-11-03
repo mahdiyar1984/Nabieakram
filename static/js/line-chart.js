@@ -3,7 +3,7 @@ var ctx = document.getElementById("line-chart");
 var chart = new Chart(ctx, {
     type: "line",
     data: {
-        labels: ["جمعه", "پنجشنبه", "چهارشنبه", "سه شنبه", "دوشنبه", "یکشنبه", "شنبه"],
+        labels: ["شنبه", "یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنجشنبه",  "جمعه",   ],
         datasets: [
             { label: "بازدید", data: [20, 40, 38, 55, 30, 40, 60], backgroundColor: "rgba(56, 127, 12, 0.05)", borderColor: "#38BB0C", pointBorderColor: "#ffffff", pointBackgroundColor: "#38BB0C", pointBorderWidth: 2, pointRadius: 4 },
         ],
