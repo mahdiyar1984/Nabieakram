@@ -291,51 +291,17 @@
                                 <h3 class="fs-18 font-weight-semi-bold">نظرات مرتبط با مقالات</h3>
                             </div>
                             <div class="notification-body scrolled-box custom-scrollbar-styled">
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-1 mr-3 text-white">
-                                        <i class="la la-bolt"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">فرآیند شما به روز شد!</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">1 ساعت پیش</span>
-                                    </div>
-                                </a>
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-2 mr-3 text-white">
-                                        <i class="la la-lock"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">رمز عبور را عوض کردی</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">12 خرداد 1400</span>
-                                    </div>
-                                </a>
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-3 mr-3 text-white">
-                                        <i class="la la-user"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">حساب شما با موفقیت ایجاد شد</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">12 خرداد 1400</span>
-                                    </div>
-                                </a>
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-4 mr-3 text-white">
-                                        <i class="la la-lock"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">رمز عبور را عوض کردی</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">12 خرداد 1400</span>
-                                    </div>
-                                </a>
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-5 mr-3 text-white">
-                                        <i class="la la-user"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">حساب شما با موفقیت ایجاد شد</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">12 خرداد 1400</span>
-                                    </div>
-                                </a>
+                                {% for comment in five_comments_article %}
+                                    <a href="{% url 'userprofile_app:article_comments_list' %}" class="media media-card align-items-center">
+                                        <div class="icon-element icon-element-sm flex-shrink-0 bg-1 mr-3 text-white">
+                                            <i class="la la-bolt"></i>
+                                        </div>
+                                        <div class="media-body">
+                                            <h5 class="fs-15">{{ comment.text|truncatechars:40 }}</h5>
+                                            <span class="d-block lh-18 pt-1 text-gray fs-13">{{ comment.create_date|to_shamsi }}</span>
+                                        </div>
+                                    </a>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
@@ -350,51 +316,19 @@
                                 <h3 class="fs-18 font-weight-semi-bold">نظرات مرتبط با سخنرانی ها</h3>
                             </div>
                             <div class="notification-body scrolled-box custom-scrollbar-styled">
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-1 mr-3 text-white">
-                                        <i class="la la-bolt"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">فرآیند شما به روز شد!</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">1 ساعت پیش</span>
-                                    </div>
-                                </a>
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-2 mr-3 text-white">
-                                        <i class="la la-lock"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">رمز عبور را عوض کردی</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">12 خرداد 1400</span>
-                                    </div>
-                                </a>
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-3 mr-3 text-white">
-                                        <i class="la la-user"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">حساب شما با موفقیت ایجاد شد</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">12 خرداد 1400</span>
-                                    </div>
-                                </a>
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-4 mr-3 text-white">
-                                        <i class="la la-lock"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">رمز عبور را عوض کردی</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">12 خرداد 1400</span>
-                                    </div>
-                                </a>
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-5 mr-3 text-white">
-                                        <i class="la la-user"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">حساب شما با موفقیت ایجاد شد</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">12 خرداد 1400</span>
-                                    </div>
-                                </a>
+                                {% for comment in five_comments_lecture %}
+                                    <a href="{% url 'userprofile_app:lecture_comments_list' %}" class="media media-card align-items-center">
+                                        <div class="icon-element icon-element-sm flex-shrink-0 bg-1 mr-3 text-white">
+                                            <i class="la la-bolt"></i>
+                                        </div>
+                                        <div class="media-body">
+                                            <h5 class="fs-15">{{ comment.text|truncatewords:40 }}</h5>
+                                            <span class="d-block lh-18 pt-1 text-gray fs-13">{{ comment.created_date|to_shamsi }}</span>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+
+
                             </div>
                         </div>
                     </div>
@@ -409,52 +343,82 @@
                                 <h3 class="fs-18 font-weight-semi-bold">تماس با ما</h3>
                             </div>
                             <div class="notification-body scrolled-box custom-scrollbar-styled">
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-1 mr-3 text-white">
-                                        <i class="la la-bolt"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">فرآیند شما به روز شد!</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">1 ساعت پیش</span>
-                                    </div>
-                                </a>
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-2 mr-3 text-white">
-                                        <i class="la la-lock"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">رمز عبور را عوض کردی</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">12 خرداد 1400</span>
-                                    </div>
-                                </a>
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-3 mr-3 text-white">
-                                        <i class="la la-user"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">حساب شما با موفقیت ایجاد شد</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">12 خرداد 1400</span>
-                                    </div>
-                                </a>
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-4 mr-3 text-white">
-                                        <i class="la la-lock"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">رمز عبور را عوض کردی</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">12 خرداد 1400</span>
-                                    </div>
-                                </a>
-                                <a href="dashboard.html" class="media media-card align-items-center">
-                                    <div class="icon-element icon-element-sm flex-shrink-0 bg-5 mr-3 text-white">
-                                        <i class="la la-user"></i>
-                                    </div>
-                                    <div class="media-body">
-                                        <h5 class="fs-15">حساب شما با موفقیت ایجاد شد</h5>
-                                        <span class="d-block lh-18 pt-1 text-gray fs-13">12 خرداد 1400</span>
-                                    </div>
-                                </a>
+                                {% for contact in five_contact_us %}
+                                    <a href="{% url 'userprofile_app:contact_us_list' %}" class="media media-card align-items-center">
+                                        <div class="icon-element icon-element-sm flex-shrink-0 bg-1 mr-3 text-white">
+                                            <i class="la la-bolt"></i>
+                                        </div>
+                                        <div class="media-body">
+                                            <h5 class="fs-15">{{ contact.message|truncatechars:40 }}</h5>
+                                            <span class="d-block lh-18 pt-1 text-gray fs-13">{{ contact.created_at|to_shamsi }}</span>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+
+
                             </div>
+                        </div>
+                    </div>
+                    <!-- end card -->
+                </div>
+
+                <!-- مقالات محبوب -->
+                <div class="col-lg-6">
+                    <div class="card card-item">
+                        <div class="card-body">
+                            <h3 class="fs-18 font-weight-semi-bold pb-4">مقالات محبوب</h3>
+                            <div class="my-course-progress-bar-wrap">
+
+                                {% for article in five_top_articles_rating %}
+                                    <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
+                                        <p class="skillbar-title"><a href="{% url 'blog_app:blog_detail' pk=article.id %}"
+                                                                     target="_blank">{{ article.title|truncatechars:40 }}:</a></p>
+                                        <div class="skillbar-box">
+                                            <div class="skillbar skillbar-skillbar-2" data-percent="{{ article.avg_rating_percent|floatformat:0 }}%">
+                                                <div class="skillbar-bar skillbar--bar-2 bg-{{ forloop.counter }}"
+                                                     style="width: {{ article.avg_rating_percent|floatformat:0 }}%;"></div>
+                                            </div>
+                                            <!-- End Skill Bar -->
+                                        </div>
+                                        <div class="skill-bar-percent">{{ article.avg_rating_percent|floatformat:1 }}%</div>
+                                    </div>
+                                {% empty %}
+                                    <p>هیچ مقاله‌ای امتیاز ندارد.</p>
+                                {% endfor %}
+
+                            </div>
+                            <!-- end my-course-progress-bar-wrap -->
+                        </div>
+                    </div>
+                    <!-- end card -->
+                </div>
+
+                <!-- سخنرانی های محبوب -->
+                <div class="col-lg-6">
+                    <div class="card card-item">
+                        <div class="card-body">
+                            <h3 class="fs-18 font-weight-semi-bold pb-4">سخنرانی های محبوب</h3>
+                            <div class="my-course-progress-bar-wrap">
+
+                                {% for lecture in five_top_lectures_rating %}
+                                    <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
+                                        <p class="skillbar-title"><a href="{% url 'blog_app:blog_detail' pk=lecture.id %}"
+                                                                     target="_blank">{{ lecture.title|truncatechars:40 }}:</a></p>
+                                        <div class="skillbar-box">
+                                            <div class="skillbar skillbar-skillbar-2" data-percent="{{ lecture.avg_rating_percent|floatformat:0 }}%">
+                                                <div class="skillbar-bar skillbar--bar-2 bg-{{ forloop.counter }}"
+                                                     style="width: {{ lecture.avg_rating_percent|floatformat:0 }}%;"></div>
+                                            </div>
+                                            <!-- End Skill Bar -->
+                                        </div>
+                                        <div class="skill-bar-percent">{{ lecture.avg_rating_percent|floatformat:1 }}%</div>
+                                    </div>
+                                {% empty %}
+                                    <p>هیچ سخنرانی امتیاز ندارد.</p>
+                                {% endfor %}
+
+                            </div>
+                            <!-- end my-course-progress-bar-wrap -->
                         </div>
                     </div>
                     <!-- end card -->
@@ -520,171 +484,7 @@
                     </div>
                 </div>
 
-                <!-- مقالات محبوب -->
-                <div class="col-lg-6">
-                            <div class="card card-item">
-                                <div class="card-body">
-                                    <h3 class="fs-18 font-weight-semi-bold pb-4">میزان آموزش استانی</h3>
-                                    <div class="my-course-progress-bar-wrap">
-                                        <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
-                                            <p class="skillbar-title">سیستان و بلوچستان:</p>
-                                            <div class="skillbar-box">
-                                                <div class="skillbar skillbar-skillbar-2" data-percent="80%">
-                                                    <div class="skillbar-bar skillbar--bar-2 bg-1" style="width: 80%;"></div>
-                                                </div>
-                                                <!-- End Skill Bar -->
-                                            </div>
-                                            <div class="skill-bar-percent">80%</div>
-                                        </div>
-                                        <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
-                                            <p class="skillbar-title">کرمان:</p>
-                                            <div class="skillbar-box">
-                                                <div class="skillbar skillbar-skillbar-2" data-percent="70%">
-                                                    <div class="skillbar-bar skillbar--bar-2 bg-2" style="width: 70%;"></div>
-                                                </div>
-                                                <!-- End Skill Bar -->
-                                            </div>
-                                            <div class="skill-bar-percent">70%</div>
-                                        </div>
-                                        <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
-                                            <p class="skillbar-title">خراسان جنوبی:</p>
-                                            <div class="skillbar-box">
-                                                <div class="skillbar skillbar-skillbar-2" data-percent="60%">
-                                                    <div class="skillbar-bar skillbar--bar-2 bg-3" style="width: 60%;"></div>
-                                                </div>
-                                                <!-- End Skill Bar -->
-                                            </div>
-                                            <div class="skill-bar-percent">60%</div>
-                                        </div>
-                                        <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
-                                            <p class="skillbar-title">هرمزگان:</p>
-                                            <div class="skillbar-box">
-                                                <div class="skillbar skillbar-skillbar-2" data-percent="50%">
-                                                    <div class="skillbar-bar skillbar--bar-2 bg-4" style="width: 50%;"></div>
-                                                </div>
-                                                <!-- End Skill Bar -->
-                                            </div>
-                                            <div class="skill-bar-percent">50%</div>
-                                        </div>
-                                        <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
-                                            <p class="skillbar-title">بوشهر:</p>
-                                            <div class="skillbar-box">
-                                                <div class="skillbar skillbar-skillbar-2" data-percent="40%">
-                                                    <div class="skillbar-bar skillbar--bar-2 bg-5" style="width: 40%;"></div>
-                                                </div>
-                                                <!-- End Skill Bar -->
-                                            </div>
-                                            <div class="skill-bar-percent">40%</div>
-                                        </div>
-                                        <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
-                                            <p class="skillbar-title">خوزستان:</p>
-                                            <div class="skillbar-box">
-                                                <div class="skillbar skillbar-skillbar-2" data-percent="30%">
-                                                    <div class="skillbar-bar skillbar--bar-2 bg-6" style="width: 30%;"></div>
-                                                </div>
-                                                <!-- End Skill Bar -->
-                                            </div>
-                                            <div class="skill-bar-percent">30%</div>
-                                        </div>
-                                        <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
-                                            <p class="skillbar-title">کهکیلویه:</p>
-                                            <div class="skillbar-box">
-                                                <div class="skillbar skillbar-skillbar-2" data-percent="20%">
-                                                    <div class="skillbar-bar skillbar--bar-2 bg-7" style="width: 20%;"></div>
-                                                </div>
-                                                <!-- End Skill Bar -->
-                                            </div>
-                                            <div class="skill-bar-percent">20%</div>
-                                        </div>
-                                    </div>
-                                    <!-- end my-course-progress-bar-wrap -->
-                                </div>
-                            </div>
-                            <!-- end card -->
-                        </div>
 
-                <!-- سخنرانی های محبوب -->
-                <div class="col-lg-6">
-                            <div class="card card-item">
-                                <div class="card-body">
-                                    <h3 class="fs-18 font-weight-semi-bold pb-4">میزان آموزش استانی</h3>
-                                    <div class="my-course-progress-bar-wrap">
-                                        <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
-                                            <p class="skillbar-title">سیستان و بلوچستان:</p>
-                                            <div class="skillbar-box">
-                                                <div class="skillbar skillbar-skillbar-2" data-percent="80%">
-                                                    <div class="skillbar-bar skillbar--bar-2 bg-1" style="width: 80%;"></div>
-                                                </div>
-                                                <!-- End Skill Bar -->
-                                            </div>
-                                            <div class="skill-bar-percent">80%</div>
-                                        </div>
-                                        <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
-                                            <p class="skillbar-title">کرمان:</p>
-                                            <div class="skillbar-box">
-                                                <div class="skillbar skillbar-skillbar-2" data-percent="70%">
-                                                    <div class="skillbar-bar skillbar--bar-2 bg-2" style="width: 70%;"></div>
-                                                </div>
-                                                <!-- End Skill Bar -->
-                                            </div>
-                                            <div class="skill-bar-percent">70%</div>
-                                        </div>
-                                        <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
-                                            <p class="skillbar-title">خراسان جنوبی:</p>
-                                            <div class="skillbar-box">
-                                                <div class="skillbar skillbar-skillbar-2" data-percent="60%">
-                                                    <div class="skillbar-bar skillbar--bar-2 bg-3" style="width: 60%;"></div>
-                                                </div>
-                                                <!-- End Skill Bar -->
-                                            </div>
-                                            <div class="skill-bar-percent">60%</div>
-                                        </div>
-                                        <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
-                                            <p class="skillbar-title">هرمزگان:</p>
-                                            <div class="skillbar-box">
-                                                <div class="skillbar skillbar-skillbar-2" data-percent="50%">
-                                                    <div class="skillbar-bar skillbar--bar-2 bg-4" style="width: 50%;"></div>
-                                                </div>
-                                                <!-- End Skill Bar -->
-                                            </div>
-                                            <div class="skill-bar-percent">50%</div>
-                                        </div>
-                                        <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
-                                            <p class="skillbar-title">بوشهر:</p>
-                                            <div class="skillbar-box">
-                                                <div class="skillbar skillbar-skillbar-2" data-percent="40%">
-                                                    <div class="skillbar-bar skillbar--bar-2 bg-5" style="width: 40%;"></div>
-                                                </div>
-                                                <!-- End Skill Bar -->
-                                            </div>
-                                            <div class="skill-bar-percent">40%</div>
-                                        </div>
-                                        <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
-                                            <p class="skillbar-title">خوزستان:</p>
-                                            <div class="skillbar-box">
-                                                <div class="skillbar skillbar-skillbar-2" data-percent="30%">
-                                                    <div class="skillbar-bar skillbar--bar-2 bg-6" style="width: 30%;"></div>
-                                                </div>
-                                                <!-- End Skill Bar -->
-                                            </div>
-                                            <div class="skill-bar-percent">30%</div>
-                                        </div>
-                                        <div class="d-flex flex-wrap align-items-center mb-2 position-relative">
-                                            <p class="skillbar-title">کهکیلویه:</p>
-                                            <div class="skillbar-box">
-                                                <div class="skillbar skillbar-skillbar-2" data-percent="20%">
-                                                    <div class="skillbar-bar skillbar--bar-2 bg-7" style="width: 20%;"></div>
-                                                </div>
-                                                <!-- End Skill Bar -->
-                                            </div>
-                                            <div class="skill-bar-percent">20%</div>
-                                        </div>
-                                    </div>
-                                    <!-- end my-course-progress-bar-wrap -->
-                                </div>
-                            </div>
-                            <!-- end card -->
-                        </div>
             </div>
         </div>
 

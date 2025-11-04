@@ -1,5 +1,7 @@
 from django.db import models
 from account_app.models import User
+from django.contrib.contenttypes.fields import GenericRelation
+
 
 
 class ArticleCategory(models.Model):
@@ -53,6 +55,8 @@ class Article(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', verbose_name='وضعیت انتشار')
     is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')
     is_delete = models.BooleanField(default=False, verbose_name='حذف شده / نشده')
+    ratings = GenericRelation('main_app.Rating', related_query_name='article')
+
 
     def __str__(self):
         return self.title

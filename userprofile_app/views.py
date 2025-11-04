@@ -24,9 +24,9 @@ from .forms import UserCreateForm, UserUpdateForm
 from django.contrib.auth.models import Group, Permission
 from django.apps import apps
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.db.models import Avg
+
 
 class AuthenticatedHttpRequest(HttpRequest):
     user: Union[User, None]
@@ -35,13 +35,43 @@ class AuthenticatedHttpRequest(HttpRequest):
 # region dashboard
 class UserPanelDashboardPage(LoginRequiredMixin, View):
     def get(self, request):
+        # article count
         status_counts_article = Article.objects.values('status').annotate(count=Count('id'))
-        status_counts_lecture = Lecture.objects.values('status').annotate(count=Count('id'))
-
-
-        # تبدیل به دیکشنری برای راحتی
         counts_dict_article = {item['status']: item['count'] for item in status_counts_article}
+
+        # five comments article
+        five_comments_article = ArticleComment.objects.filter(parent__isnull=True).order_by('-create_date')[:5]
+
+        # five top articles rating
+        five_top_articles_rating = (
+            Article.objects
+            .annotate(avg_rating=Avg('ratings__score'))  # میانگین امتیاز
+            .filter(avg_rating__isnull=False)  # فقط مقاله‌هایی که حداقل یک rating دارن
+            .order_by('-avg_rating')[:5]
+        )
+        for article in five_top_articles_rating:
+            article.avg_rating_percent = (article.avg_rating / 5) * 100
+
+        # lecture count
+        status_counts_lecture = Lecture.objects.values('status').annotate(count=Count('id'))
         counts_dict_lecture = {item['status']: item['count'] for item in status_counts_lecture}
+
+        # five comments lecture
+        five_comments_lecture = LectureComment.objects.filter(parent__isnull=True).order_by('-created_date')[:5]
+
+        # five contact us
+        five_contact_us = ContactUs.objects.filter().order_by('-created_at')[:5]
+
+        # five top lectures rating
+        five_top_lectures_rating = (
+            Lecture.objects
+            .annotate(avg_rating=Avg('ratings__score'))  # میانگین امتیاز
+            .filter(avg_rating__isnull=False)  # فقط مقاله‌هایی که حداقل یک rating دارن
+            .order_by('-avg_rating')[:5]
+        )
+        for lecture in five_top_lectures_rating:
+            lecture.avg_rating_percent = (lecture.avg_rating / 5) * 100
+
 
         context = {
             'articles_all_count': sum(counts_dict_article.values()),
@@ -51,10 +81,17 @@ class UserPanelDashboardPage(LoginRequiredMixin, View):
             'lectures_all_count': sum(counts_dict_lecture.values()),
             'lectures_published_count': counts_dict_lecture.get('published', 0),
             'lectures_drafted_count': counts_dict_lecture.get('draft', 0),
+
+            'five_comments_article': five_comments_article,
+            'five_comments_lecture': five_comments_lecture,
+
+            'five_contact_us': five_contact_us,
+            'five_top_articles_rating': five_top_articles_rating,
+            'five_top_lectures_rating': five_top_lectures_rating,
+
         }
 
-
-        return render(request, template_name='userprofile_app/dashboard/user_panel_dashboard_page.html',context=context)
+        return render(request, template_name='userprofile_app/dashboard/user_panel_dashboard_page.html', context=context)
 
 
 # endregion
@@ -231,7 +268,7 @@ class AdminArticleListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     # کوئری را کنترل می کند
     def get_queryset(self):
         user = self.request.user
-        if user.is_superuser or user.groups.filter(name__in=['editor','manager']).exists():
+        if user.is_superuser or user.groups.filter(name__in=['editor', 'manager']).exists():
             queryset = Article.objects.all().order_by('-create_date')
         else:
             queryset = Article.objects.filter(
@@ -256,6 +293,8 @@ class AdminArticleListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         )
 
         return context
+
+
 class AdminArticleReadView(LoginRequiredMixin, DetailView):
     model = Article
     form_class = ArticleForm
@@ -268,6 +307,8 @@ class AdminArticleReadView(LoginRequiredMixin, DetailView):
         context['tags'] = ArticleTag.objects.all()
         context['categories'] = ArticleCategory.objects.all()
         return context
+
+
 class AdminArticleCreateView(LoginRequiredMixin, CreateView):
     model = Article
     form_class = ArticleForm
@@ -298,6 +339,8 @@ class AdminArticleCreateView(LoginRequiredMixin, CreateView):
             self.object.selected_tags.set(form.cleaned_data['selected_tags'])
 
         return super().form_valid(form)
+
+
 class AdminArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Article
     form_class = ArticleForm
@@ -350,6 +393,8 @@ class AdminArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView
         self.object.selected_tags.set(form.cleaned_data['selected_tags'])
 
         return super().form_valid(form)
+
+
 class AdminArticleDeleteView(LoginRequiredMixin, View):
     success_url = reverse_lazy('userprofile_app:articles_list')
 
@@ -366,6 +411,8 @@ class AdminArticleDeleteView(LoginRequiredMixin, View):
             messages.error(request, "شما اجازه حذف مقاله را ندارید.")
 
         return redirect(self.success_url)
+
+
 class AdminArticleChangeStatusView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         article = get_object_or_404(Article, pk=pk)
@@ -729,6 +776,8 @@ class AdminLectureListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         )
 
         return context
+
+
 class AdminLectureReadView(LoginRequiredMixin, DetailView):
     model = Lecture
     form_class = LectureForm
@@ -741,6 +790,8 @@ class AdminLectureReadView(LoginRequiredMixin, DetailView):
         context['categories'] = LectureCategory.objects.all()
         context['tags'] = LectureTag.objects.all()
         return context
+
+
 class AdminLectureCreateView(LoginRequiredMixin, CreateView):
     model = Lecture
     form_class = LectureForm
@@ -772,6 +823,8 @@ class AdminLectureCreateView(LoginRequiredMixin, CreateView):
         self.object.save()
         form.save_m2m()
         return redirect(self.get_success_url())
+
+
 class AdminLectureUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Lecture
     form_class = LectureForm
@@ -828,6 +881,8 @@ class AdminLectureUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView
         self.object.selected_tags.set(form.cleaned_data['selected_tags'])
 
         return super().form_valid(form)
+
+
 class AdminLectureDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('userprofile_app:lectures_list')
 
@@ -842,6 +897,8 @@ class AdminLectureDeleteView(LoginRequiredMixin, DeleteView):
             messages.success(request, "مقاله با موفقیت حذف شد.")
         else:
             messages.error(request, "شما اجازه حذف مقاله را ندارید.")
+
+
 class AdminLectureChangeStatusView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         lecture = get_object_or_404(Lecture, pk=pk)
@@ -876,6 +933,7 @@ class AdminLectureChangeStatusView(LoginRequiredMixin, View):
 
         messages.error(request, "شما اجازه این کار را ندارید.")
         return redirect("userprofile_app:lectures_list")
+
 
 # endregion
 # region Lecture Category
@@ -1454,6 +1512,8 @@ class AdminSiteSettingUpdateView(LoginRequiredMixin, UpdateView):
         # پیام موفقیت
         messages.success(self.request, "تنظیمات سایت با موفقیت ذخیره شد!")
         return response
+
+
 # endregion
 
 # region Groups

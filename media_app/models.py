@@ -1,5 +1,7 @@
 from django.db import models
 from account_app.models import User
+from django.contrib.contenttypes.fields import GenericRelation
+
 
 
 class BaseModel(models.Model):
@@ -89,6 +91,8 @@ class Lecture(BaseModel):
     short_description = models.CharField(max_length=300, null=True, blank=True, verbose_name='توضیحات کوتاه')
     text = models.TextField(verbose_name='متن سخنرانی')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', verbose_name='وضعیت انتشار')
+    ratings = GenericRelation('main_app.Rating', related_query_name='lecture')
+
 
     def __str__(self):
         return self.title
