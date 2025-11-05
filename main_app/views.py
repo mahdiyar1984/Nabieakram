@@ -1,14 +1,13 @@
 from django.contrib import messages
 from django.db.models import QuerySet, Count
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, CreateView, FormView
+from django.views.generic import TemplateView, FormView
 from blog_app.models import ArticleCategory
 from main_app.forms import ContactUsModelForm
-from main_app.models import SiteSetting, ContactUs, FooterLink, FooterLinkBox, Slider
+from main_app.models import SiteSetting, FooterLinkBox, Slider
 from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from media_app.models import Lecture
 from .models import Rating

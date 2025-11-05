@@ -6,9 +6,10 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.generic import DetailView, TemplateView
 from blog_app.models import Article, ArticleCategory, ArticleTag, ArticleComment
-from main_app.models import FooterLink, ContactUs, SiteSetting, Slider, FooterLinkBox
+from main_app.models import FooterLink, ContactUs, SiteSetting, Slider, FooterLinkBox, DailyVisit
 from media_app.models import Lecture, LectureCategory, LectureTag, \
     LectureComment, GalleryImage, GalleryCategory, LectureClip
+from templatetags_app.templatetags.shamsi_tags import to_shamsi
 from utils.email_service import send_activation_email
 from .forms import ArticleForm, GroupForm, ArticleCategoryForm, ArticleTagForm, LectureForm, LectureTagForm, \
     LectureCategoryForm, GalleryImageForm, \
@@ -26,6 +27,9 @@ from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Avg
+from django.utils.timezone import timedelta
+from django.db.models.functions import TruncDate
+import json
 
 
 class AuthenticatedHttpRequest(HttpRequest):
@@ -72,6 +76,31 @@ class UserPanelDashboardPage(LoginRequiredMixin, View):
         for lecture in five_top_lectures_rating:
             lecture.avg_rating_percent = (lecture.avg_rating / 5) * 100
 
+        # view site
+        filter_type = request.GET.get('filter', 'this-week')  # this-week, this-month, last-months, this-year
+        now = timezone.now()
+
+        if filter_type == 'this-week':
+            start_date = now - timedelta(days=7)
+        elif filter_type == 'this-month':
+            start_date = now - timedelta(days=30)
+        elif filter_type == 'last-months':
+            start_date = now - timedelta(days=182)  # تقریبا 6 ماه
+        elif filter_type == 'this-year':
+            start_date = now - timedelta(days=365)
+        else:
+            start_date = now - timedelta(days=30)
+
+        visits = DailyVisit.objects.filter(created_at__gte=start_date)
+
+        # گروه‌بندی بر اساس روز
+        visits_per_day = visits.annotate(day=TruncDate('created_at')) \
+            .values('day') \
+            .annotate(count=Count('id')) \
+            .order_by('day')
+
+        labels = [to_shamsi(v['day']) for v in visits_per_day]  # استفاده از templatetag در پایتون
+        data = [v['count'] for v in visits_per_day]
 
         context = {
             'articles_all_count': sum(counts_dict_article.values()),
@@ -88,6 +117,10 @@ class UserPanelDashboardPage(LoginRequiredMixin, View):
             'five_contact_us': five_contact_us,
             'five_top_articles_rating': five_top_articles_rating,
             'five_top_lectures_rating': five_top_lectures_rating,
+
+            'labels': json.dumps(labels),
+            'data': json.dumps(data),
+            'filter_type': filter_type,
 
         }
 

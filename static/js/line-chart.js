@@ -1,16 +1,30 @@
-var ctx = document.getElementById("line-chart");
-(Chart.defaults.global.defaultFontFamily = "iransans"), (Chart.defaults.global.defaultFontSize = 14), (Chart.defaults.global.defaultFontStyle = "500"), (Chart.defaults.global.defaultFontColor = "#233d63");
-var chart = new Chart(ctx, {
+var canvas = document.getElementById("line-chart");
+var labels = JSON.parse(canvas.dataset.labels);
+var data = JSON.parse(canvas.dataset.values);
+
+var chart = new Chart(canvas, {
     type: "line",
     data: {
-        labels: ["شنبه", "یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنجشنبه",  "جمعه",   ],
-        datasets: [
-            { label: "بازدید", data: [20, 40, 38, 55, 30, 40, 60], backgroundColor: "rgba(56, 127, 12, 0.05)", borderColor: "#38BB0C", pointBorderColor: "#ffffff", pointBackgroundColor: "#38BB0C", pointBorderWidth: 2, pointRadius: 4 },
-        ],
+        labels: labels,
+        datasets: [{
+            label: "بازدید",
+            data: data,
+            backgroundColor: "rgba(56, 127, 12, 0.05)",
+            borderColor: "#38BB0C",
+            pointBorderColor: "#ffffff",
+            pointBackgroundColor: "#38BB0C",
+            pointBorderWidth: 2,
+            pointRadius: 4
+        }]
     },
     options: {
-        tooltips: { xPadding: 12, yPadding: 12, backgroundColor: "#232c3b",rtl:true },
-        legend: { display: !1, tooltips: { displayColors: !1 } },
-        scales: { xAxes: [{ display: !0, gridLines: { color: "#eee" } }], yAxes: [{ display: !0, gridLines: { color: "#eee" }, ticks: { fontSize: 14 } }] },
-    },
+        plugins: {
+            legend: { display: false },
+            tooltip: { rtl: true, padding: 12 }
+        },
+        scales: {
+            x: { grid: { color: "#eee" } },
+            y: { grid: { color: "#eee" }, ticks: { font: { size: 14 } } }
+        }
+    }
 });

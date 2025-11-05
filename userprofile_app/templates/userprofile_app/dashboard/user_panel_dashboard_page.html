@@ -440,22 +440,12 @@
                                 <h3 class="fs-18 font-weight-semi-bold pb-4">نمودار بازدید از سایت</h3>
                                 <div class="select-container w-auto">
                                     <div class="dropdown bootstrap-select select-container-select">
-                                        <select class="select-container-select" tabindex="-98">
-                                            <option value="this-week">این هفته</option>
-                                            <option value="this-month">این ماه</option>
-                                            <option value="last-months">6 ماه گذشته</option>
-                                            <option value="this-year">امسال</option>
+                                        <select id="filter-select" class="select-container-select">
+                                            <option value="this-week" {% if filter_type == 'this-week' %}selected{% endif %}>این هفته</option>
+                                            <option value="this-month" {% if filter_type == 'this-month' %}selected{% endif %}>این ماه</option>
+                                            <option value="last-months" {% if filter_type == 'last-months' %}selected{% endif %}>6 ماه گذشته</option>
+                                            <option value="this-year" {% if filter_type == 'this-year' %}selected{% endif %}>امسال</option>
                                         </select>
-                                        <button type="button" class="btn dropdown-toggle btn-light"
-                                                data-toggle="dropdown" role="combobox"
-                                                aria-owns="bs-select-1" aria-haspopup="listbox" aria-expanded="false"
-                                                title="این هفته">
-                                            <div class="filter-option">
-                                                <div class="filter-option-inner">
-                                                    <div class="filter-option-inner-inner">این هفته</div>
-                                                </div>
-                                            </div>
-                                        </button>
                                         <div class="dropdown-menu ">
                                             <div class="bs-searchbox">
                                                 <input type="search"
@@ -475,10 +465,12 @@
                                     width="614" height="150"
                                     style="display: block;
                                     width: 614px; height: 307px;"
-                                    class="chartjs-render-monitor">
+                                    class="chartjs-render-monitor"
+                                    data-labels='{{ labels|safe }}'
+                                    data-values='{{ data|safe }}>
                             </canvas>
                             <ul class="chart-legend mt-40px text-center">
-                                <li>بازدید در این ماه</li>
+                                <li>بازدید</li>
                             </ul>
                         </div>
                     </div>

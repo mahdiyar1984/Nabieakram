@@ -6,9 +6,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
 
-
-
-
 class FooterLinkBox(models.Model):
     objects = models.Manager()
     title = models.CharField(max_length=200, verbose_name='عنوان')
@@ -17,6 +14,8 @@ class FooterLinkBox(models.Model):
 
     def __str__(self):
         return self.title
+
+
 class FooterLink(models.Model):
     objects = models.Manager()
     footer_link_box = models.ForeignKey(to=FooterLinkBox, on_delete=models.CASCADE, verbose_name='دسته بندی',
@@ -32,6 +31,7 @@ class FooterLink(models.Model):
 
     def __str__(self):
         return self.title
+
 
 class Slider(models.Model):
     objects = models.Manager()
@@ -50,6 +50,7 @@ class Slider(models.Model):
 
     def __str__(self):
         return self.title if self.title else f"اسلاید {self.id}"
+
 
 class ContactUs(models.Model):
     user = models.ForeignKey(
@@ -94,6 +95,7 @@ class ContactUs(models.Model):
         self.is_replied = True
         self.save(update_fields=['response', 'response_date', 'is_replied'])
 
+
 class SiteSetting(models.Model):
     address = models.TextField(verbose_name="آدرس")
     fax = models.CharField(max_length=20, null=True, blank=True, verbose_name="فکس")
@@ -123,6 +125,7 @@ class SiteSetting(models.Model):
     def __str__(self):
         return self.site_name
 
+
 class Rating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.PositiveSmallIntegerField(default=0)
@@ -133,3 +136,19 @@ class Rating(models.Model):
 
     class Meta:
         unique_together = ('user', 'content_type', 'object_id')
+
+
+
+class DailyVisit(models.Model):
+    date = models.DateField(default=timezone.localdate)
+    ip_address = models.GenericIPAddressField()
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,null=True, blank=True, on_delete=models.CASCADE)
+    path = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('date', 'ip_address', 'path')
+        ordering = ['-date']
+
+    def __str__(self):
+        return f"{self.ip_address} - {self.date}"

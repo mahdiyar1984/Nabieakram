@@ -60,6 +60,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'main_app.middleware.DailyVisitMiddleware',
+
 ]
 
 ROOT_URLCONF = 'config_app.urls'
@@ -91,6 +93,7 @@ TEMPLATES = [
                 # (messages.add_message, messages.success, ...) ساختی، در تمپلیت قابل استفاده باشن.
                 'django.contrib.messages.context_processors.messages',
                 'main_app.context_processors.site_settings',
+
             ],
         },
     },
