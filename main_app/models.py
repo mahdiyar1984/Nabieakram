@@ -53,6 +53,7 @@ class Slider(models.Model):
 
 
 class ContactUs(models.Model):
+    objects = models.Manager()
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -127,6 +128,7 @@ class SiteSetting(models.Model):
 
 
 class Rating(models.Model):
+    objects = models.Manager()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.PositiveSmallIntegerField(default=0)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
@@ -138,8 +140,8 @@ class Rating(models.Model):
         unique_together = ('user', 'content_type', 'object_id')
 
 
-
 class DailyVisit(models.Model):
+    objects = models.Manager()
     date = models.DateField(default=timezone.localdate)
     ip_address = models.GenericIPAddressField()
     user = models.ForeignKey(settings.AUTH_USER_MODEL,null=True, blank=True, on_delete=models.CASCADE)

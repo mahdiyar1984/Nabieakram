@@ -1,0 +1,166 @@
+{% extends 'shared/_layout.html' %}
+{% load static %}
+{% load shamsi_tags %}
+{% load render_partial %}
+
+{% block title %}سخنرانی ها{% endblock %}
+
+{% block content %}
+
+    <!-- breadcrumb -->
+    <section class="breadcrumb-area section-padding img-bg-3">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="breadcrumb-content d-flex flex-wrap align-items-center justify-content-between">
+                <ul class="generic-list-item generic-list-item-white generic-list-item-arrow d-flex flex-wrap align-items-center">
+                    <li><a href="{% url 'main_app:index' %}">صفحه اصلی</a></li>
+                    <li>سخنرانی ها</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- search content -->
+    <section class="course-area section--padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    {% for obj in page_obj %}
+                        <div class="card card-item card-preview card-item-list-layout">
+                            <div class="card-image">
+                                {% if obj.type == 'article' %}
+                                    <a href="{% url 'blog_app:blog_detail' pk=obj.id %}" class="d-block">
+                                {% else %}
+                                    <a href="{% url 'media_app:lecture_detail_page' pk=obj.id %}" class="d-block">
+                                {% endif %}
+                                <img class="card-img-top lazy" src="{{ obj.image.url }}" alt="درپوش تصویر کارت">
+                                <div class="course-badge-labels">
+                                    <div class="course-badge">
+                                        {% if obj.type == 'article' %}
+                                            {{ obj.create_date|to_shamsi }}
+                                        {% else %}
+                                            {{ obj.created_date|to_shamsi }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+
+                            <div class="card-body">
+                                <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">
+                                    {% if obj.type == 'article' %}مقاله{% else %}سخنرانی{% endif %}
+                                </h6>
+
+                                <h5 class="card-title">
+                                    {% if obj.type == 'article' %}
+                                        <a href="{% url 'blog_app:blog_detail' pk=obj.id %}">{{ obj.title }}</a>
+                                    {% else %}
+                                        <a href="{% url 'media_app:lecture_detail_page' pk=obj.id %}">{{ obj.title }}</a>
+                                    {% endif %}
+                                </h5>
+
+                                <ul class="generic-list-item generic-list-item-bullet generic-list-item--bullet d-flex align-items-center flex-wrap fs-14 pt-2">
+                                    <li class="d-flex align-items-center">
+                                        توسط: {{ obj.author.get_full_name }}
+                                    </li>
+                                    <li class="d-flex align-items-center"><a href="#">0 نظر</a></li>
+                                </ul>
+                                <div class="rating-wrap d-flex align-items-center py-2">
+                                    <div class="review-stars d-flex align-items-center">
+                                        {% for i in "12345" %}
+                                            {% if i|add:"0"|floatformat:0 <= obj.full_stars %}
+                                                <i class="la la-star text-warning"></i>
+                                            {% elif obj.half_star and i|add:"0"|floatformat:0 == obj.full_stars|add:"1"|floatformat:0 %}
+                                                <i class="la la-star-half-alt text-warning"></i>
+                                            {% else %}
+                                                <i class="la la-star-o text-warning"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <span class="rating-number ml-2">{{ obj.rating_avg|floatformat:1 }}</span>
+                                        <span class="rating-total pl-1 text-muted">({{ obj.rating_count }})</span>
+                                    </div>
+                                </div>
+
+
+                                <div class="d-flex justify-content-end align-items-center pt-3">
+                                    {% if obj.type == 'article' %}
+                                        <a href="{% url 'blog_app:blog_detail' pk=obj.id %}"
+                                           class="btn theme-btn theme-btn-sm theme-btn-white">
+                                    {% else %}
+                                        <a href="{% url 'media_app:lecture_detail_page' pk=obj.id %}"
+                                           class="btn theme-btn theme-btn-sm theme-btn-white">
+                                    {% endif %}
+                                    ادامه مطلب
+                                    <i class="la la-arrow-left icon ml-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+
+
+                    {% if not page_obj %}
+                        <p class="text-center mt-5">نتیجه‌ای برای "{{ query }}" پیدا نشد.</p>
+                    {% endif %}
+
+                    <!-- pagination -->
+                    {% if is_paginated %}
+                        <div class="text-center pt-3">
+                            <nav aria-label="مثال ناوبری صفحه" class="pagination-box">
+                                <ul class="pagination justify-content-center">
+                                    {% if page_obj.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}"
+                                               aria-label="قبلی">
+                                                <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
+                                                <span class="sr-only">قبلی</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" aria-label="قبلی">
+                                                <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
+                                                <span class="sr-only">قبلی</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
+                                    {% for num in paginator.page_range %}
+                                        {% if page_obj.number == num %}
+                                            <li class="page-item active"><a class="page-link" href="#">{{ num }}</a>
+                                            </li>
+                                        {% elif num > page_obj.number|add:-3 and num < page_obj.number|add:3 %}
+                                            <li class="page-item"><a class="page-link"
+                                                                     href="?page={{ num }}">{{ num }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if page_obj.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.next_page_number }}"
+                                               aria-label="بعد">
+                                                <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
+                                                <span class="sr-only">بعد</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link disabled" href="#" aria-label="بعد">
+                                                <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
+                                                <span class="sr-only">بعد</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
+                                </ul>
+                            </nav>
+                            <p class="fs-14 pt-2">نمایش 1-10 از 56 نتیجه</p>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

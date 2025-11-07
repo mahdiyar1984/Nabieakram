@@ -211,6 +211,7 @@
                                                                     {{ comment.name }}
                                                                 {% endif %}
                                                             </h5>
+
                                                             <div class="review-stars">
                                                                 {% if comment.user and comment.user.id in user_ratings %}
                                                                     {% with user_ratings|dict_get:comment.user.id as user_score %}

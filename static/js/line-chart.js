@@ -1,7 +1,31 @@
 var canvas = document.getElementById("line-chart");
-var labels = JSON.parse(canvas.dataset.labels);
-var data = JSON.parse(canvas.dataset.values);
 
+// Decode unicode before parsing JSON
+function decodeUnicode(str) {
+    return str.replace(/\\u[\dA-F]{4}/gi, function (match) {
+        return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+    });
+}
+
+var labelsRaw = canvas.dataset.labels || "[]";
+var dataRaw = canvas.dataset.values || "[]";
+
+try {
+    // decode Unicode escape sequences
+    labelsRaw = decodeUnicode(labelsRaw);
+    dataRaw = decodeUnicode(dataRaw);
+
+    var labels = JSON.parse(labelsRaw);
+    var data = JSON.parse(dataRaw);
+} catch (e) {
+    console.error("Error parsing chart data:", e);
+    var labels = [];
+    var data = [];
+}
+
+console.log(labels, data); // ببین آیا در console درست چاپ میشه
+
+// رسم نمودار
 var chart = new Chart(canvas, {
     type: "line",
     data: {

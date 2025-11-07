@@ -39,6 +39,7 @@ class AuthenticatedHttpRequest(HttpRequest):
 # region dashboard
 class UserPanelDashboardPage(LoginRequiredMixin, View):
     def get(self, request):
+
         # article count
         status_counts_article = Article.objects.values('status').annotate(count=Count('id'))
         counts_dict_article = {item['status']: item['count'] for item in status_counts_article}
@@ -77,7 +78,7 @@ class UserPanelDashboardPage(LoginRequiredMixin, View):
             lecture.avg_rating_percent = (lecture.avg_rating / 5) * 100
 
         # view site
-        filter_type = request.GET.get('filter', 'this-week')  # this-week, this-month, last-months, this-year
+        filter_type = request.GET.get('filter', 'this-week')
         now = timezone.now()
 
         if filter_type == 'this-week':
@@ -93,7 +94,7 @@ class UserPanelDashboardPage(LoginRequiredMixin, View):
 
         visits = DailyVisit.objects.filter(created_at__gte=start_date)
 
-        # گروه‌بندی بر اساس روز
+
         visits_per_day = visits.annotate(day=TruncDate('created_at')) \
             .values('day') \
             .annotate(count=Count('id')) \
@@ -103,13 +104,17 @@ class UserPanelDashboardPage(LoginRequiredMixin, View):
         data = [v['count'] for v in visits_per_day]
 
         context = {
-            'articles_all_count': sum(counts_dict_article.values()),
+            'articles_all_count': sum(counts_dict_article.values()) - counts_dict_article.get('rejected', 0),
             'articles_published_count': counts_dict_article.get('published', 0),
-            'articles_drafted_count': counts_dict_article.get('draft', 0),
+            'articles_drafted_count': (
+                    counts_dict_article.get('draft', 0)
+                    + counts_dict_article.get('pending', 0)),
 
-            'lectures_all_count': sum(counts_dict_lecture.values()),
+            'lectures_all_count': sum(counts_dict_lecture.values()) - counts_dict_lecture.get('rejected', 0),
             'lectures_published_count': counts_dict_lecture.get('published', 0),
-            'lectures_drafted_count': counts_dict_lecture.get('draft', 0),
+            'lectures_drafted_count': (
+                    counts_dict_lecture.get('draft', 0)
+                    + counts_dict_lecture.get('pending', 0)),
 
             'five_comments_article': five_comments_article,
             'five_comments_lecture': five_comments_lecture,
@@ -124,7 +129,8 @@ class UserPanelDashboardPage(LoginRequiredMixin, View):
 
         }
 
-        return render(request, template_name='userprofile_app/dashboard/user_panel_dashboard_page.html', context=context)
+        return render(request, template_name='userprofile_app/dashboard/user_panel_dashboard_page.html',
+                      context=context)
 
 
 # endregion
@@ -306,7 +312,8 @@ class AdminArticleListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         else:
             queryset = Article.objects.filter(
                 Q(status='published') | Q(author=user)
-            ).annotate(  # وقتی لیست مقالات رو نشون می‌دی: مقاله‌هایی که خود کاربر نوشته بیاد بالاتر، بعدش مقاله‌های بقیه که منتشر شدن.
+            ).annotate(
+                # وقتی لیست مقالات رو نشون می‌دی: مقاله‌هایی که خود کاربر نوشته بیاد بالاتر، بعدش مقاله‌های بقیه که منتشر شدن.
                 is_owner=Case(
                     When(author=user, then=True),
                     default=False,
@@ -408,7 +415,8 @@ class AdminArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView
         self.object = form.save(commit=False)
 
         # اگر نویسنده مقاله را تغییر دهد، نویسنده فعلی همان کاربر باقی می‌ماند
-        if not self.request.user.is_superuser and not self.request.user.groups.filter(name__in=['manager', 'editor']).exists():
+        if not self.request.user.is_superuser and not self.request.user.groups.filter(
+                name__in=['manager', 'editor']).exists():
             self.object.author = self.request.user
 
         # اگر تصویر جدید آپلود شده باشد
@@ -789,7 +797,8 @@ class AdminLectureListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         else:
             queryset = Lecture.objects.filter(
                 Q(status='published') | Q(author=user)
-            ).annotate(  # وقتی لیست مقالات رو نشون می‌دی: مقاله‌هایی که خود کاربر نوشته بیاد بالاتر، بعدش مقاله‌های بقیه که منتشر شدن.
+            ).annotate(
+                # وقتی لیست مقالات رو نشون می‌دی: مقاله‌هایی که خود کاربر نوشته بیاد بالاتر، بعدش مقاله‌های بقیه که منتشر شدن.
                 is_owner=Case(
                     When(author=user, then=True),
                     default=False,
@@ -890,7 +899,8 @@ class AdminLectureUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView
     def form_valid(self, form):
         self.object = form.save(commit=False)
 
-        if not self.request.user.is_superuser and not self.request.user.groups.filter(name__in=['manager', 'editor']).exists():
+        if not self.request.user.is_superuser and not self.request.user.groups.filter(
+                name__in=['manager', 'editor']).exists():
             self.object.author = self.request.user
 
         if self.request.FILES.get('image'):

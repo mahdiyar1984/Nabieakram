@@ -5,7 +5,7 @@ app_name = "userprofile_app"
 urlpatterns = [
 
     # region Dashboard
-    path('', views.UserPanelDashboardPage.as_view(), name='user_panel_dashboard_page'),
+    path('dashboard/', views.UserPanelDashboardPage.as_view(), name='dashboard_page'),
     # endregion
 
     # region UserProfile

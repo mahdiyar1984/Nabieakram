@@ -1,5 +1,6 @@
 from django.contrib import messages
-from django.db.models import QuerySet, Count
+from django.core.paginator import Paginator
+from django.db.models import QuerySet, Count, Q
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
@@ -22,12 +23,14 @@ def site_header_component(request):
         'site_settings': site_setting,
     }
     return render(request, 'shared/site_header_component.html', context)
+
 def site_footer_component(request):
     footer_link_boxes: QuerySet[FooterLinkBox] = FooterLinkBox.objects.all()
     context = {
         'footer_link_boxes': footer_link_boxes,
     }
     return render(request, 'shared/site_footer_component.html', context)
+
 def index(request):
     sliders: QuerySet[Slider] = Slider.objects.filter(is_active=True).order_by("order")
     site_setting: SiteSetting = SiteSetting.objects.all().first()
@@ -105,3 +108,58 @@ class RateLectureView(View):
 
         average = Rating.objects.filter(content_type=content_type, object_id=lecture.id).aggregate(avg_score=Avg('score'))['avg_score']
         return JsonResponse({'average': average, 'score': score})
+
+class SearchView(View):
+    def get(self, request):
+        query = request.GET.get('search', '').strip()
+
+        articles = []
+        lectures = []
+
+        if query:
+            articles = Article.objects.filter(
+                Q(title__icontains=query) | Q(text__icontains=query)
+            )
+            lectures = Lecture.objects.filter(
+                Q(title__icontains=query) | Q(text__icontains=query)
+            )
+
+            for a in articles:
+                a.type = 'article'
+            for l in lectures:
+                l.type = 'lecture'
+
+        # ترکیب نتایج
+        results = sorted(
+            list(articles) + list(lectures),
+            key=lambda x: getattr(x, 'create_date', getattr(x, 'created_date', None)),
+            reverse=True
+        )
+
+        # کش کردن contenttypes برای سرعت و دقت
+        article_ct = ContentType.objects.get_for_model(Article)
+        lecture_ct = ContentType.objects.get_for_model(Lecture)
+
+        # اضافه کردن امتیاز به هر مورد
+        for obj in results:
+            if isinstance(obj, Article):
+                ct = article_ct
+            else:
+                ct = lecture_ct
+
+            ratings = Rating.objects.filter(content_type=ct, object_id=obj.id)
+            obj.rating_count = ratings.count()
+            obj.rating_avg = ratings.aggregate(Avg('score'))['score__avg'] or 0
+            obj.full_stars = int(obj.rating_avg)
+            obj.half_star = 1 if (obj.rating_avg - obj.full_stars) >= 0.5 else 0
+
+        paginator = Paginator(results, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context = {
+            'query': query,
+            'page_obj': page_obj,
+        }
+        return render(request, 'main_app/search_page.html', context)
+
