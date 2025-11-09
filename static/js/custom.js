@@ -1,4 +1,3 @@
-
 // Optional: Close dropdown if clicked outside
 document.addEventListener('click', function (event) {
     var toggle = document.getElementById('dropdownToggle');
@@ -139,4 +138,86 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
         });
     });
+});
+
+// ckeditor.js
+document.addEventListener("DOMContentLoaded", function () {
+    ClassicEditor
+        .create(document.querySelector('#editor'), {
+            toolbar: {
+                items: [
+                    'heading', '|',
+                    'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', '|',
+                    'fontFamily', 'fontSize', 'fontColor', 'fontBackgroundColor', '|',
+                    'alignment', 'indent', 'outdent', '|',
+                    'link', 'blockQuote', 'code', 'codeBlock', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'insertTable', 'tableColumn', 'tableRow', 'mergeTableCells', '|',
+                    'horizontalLine', 'pageBreak', 'specialCharacters', '|',
+                    'undo', 'redo', '|',
+                    'imageUpload', 'mediaEmbed', 'htmlEmbed'
+                ]
+            },
+            table: {
+                contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+            },
+            image: {
+                toolbar: [
+                    'imageTextAlternative',
+                    'imageStyle:inline',
+                    'imageStyle:block',
+                    'imageStyle:side'
+                ]
+            },
+            htmlEmbed: {
+                showPreviews: true
+            },
+            fontFamily: {
+                options: [
+                    'default',
+                    'Arial, Helvetica, sans-serif',
+                    'Times New Roman, Times, serif',
+                    'Courier New, Courier, monospace',
+                    'Tahoma, Geneva, sans-serif',
+                    'Georgia, serif'
+                ]
+            },
+            fontSize: {
+                options: [10, 12, 14, 16, 18, 20, 24, 28],
+                supportAllValues: true
+            },
+            link: {
+                decorators: {
+                    addTargetToExternalLinks: true,
+                    defaultProtocol: 'https://'
+                }
+            },
+            mediaEmbed: {
+                previewsInData: true
+            },
+            heading: {
+                options: [
+                    { model: 'paragraph', title: 'پاراگراف', class: 'ck-heading_paragraph' },
+                    { model: 'heading1', view: 'h1', title: 'عنوان ۱', class: 'ck-heading_heading1' },
+                    { model: 'heading2', view: 'h2', title: 'عنوان ۲', class: 'ck-heading_heading2' },
+                    { model: 'heading3', view: 'h3', title: 'عنوان ۳', class: 'ck-heading_heading3' },
+                    { model: 'heading4', view: 'h4', title: 'عنوان ۴', class: 'ck-heading_heading4' }
+                ]
+            },
+            wordCount: {
+                onUpdate: stats => {
+                    const counter = document.getElementById('word-count');
+                    if (counter) {
+                        counter.textContent = `کلمات: ${stats.words} | کاراکترها: ${stats.characters}`;
+                    }
+                }
+            },
+            language: 'fa'
+        })
+        .then(editor => {
+            console.log("✅ CKEditor 5 Ready (Full Version)");
+        })
+        .catch(error => {
+            console.error("CKEditor error:", error);
+        });
 });

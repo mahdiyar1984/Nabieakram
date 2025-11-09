@@ -35,32 +35,27 @@ class ArticleForm(forms.ModelForm):
         fields = ['title', 'slug', 'image', 'short_description', 'text', 'selected_categories', 'selected_tags',
                   'status', 'is_active', 'is_delete']
         widgets = {
-            # text input ها
             'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
             'slug': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
 
-            # textarea ها
             'short_description': forms.Textarea(attrs={
                 'class': 'form-control form--control user-text-editor pl-3',
                 'rows': 4
             }),
             'text': forms.Textarea(attrs={
                 'class': 'form-control form--control user-text-editor pl-3',
-                'rows': 15
-            }),
+                'id':'editor',
+                'rows': 15}),
 
-            # status با select مثل template
             'status': forms.Select(choices=[('draft', 'پیش‌نویس'), ('published', 'منتشر شده')],
                                    attrs={'class': 'form-control form--control pl-3'}),
 
-            # boolean ها با checkbox (اگر لازم شد می‌تونید widget = CheckboxInput)
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'image': forms.ClearableFileInput(attrs={
                 'class': 'file-upload-input',
                 'id': 'customFileInput'
             }),
-
         }
 
 

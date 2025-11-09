@@ -196,11 +196,11 @@
             e(S).length && e(S).isotope({ itemSelector: ".generic-portfolio-item", percentPosition: !0, masonry: { columnWidth: ".generic-portfolio-item", horizontalOrder: !0 } }),
             e(x).length && e(x).fancybox(),
             e(y).length && e(y).tooltipster({ contentCloning: !0, interactive: !0, side: "right", delay: 100, animation: "swing" }),
-            e(b).length &&
-                e(b).summernote({
-                    height: 300,
-                    lang: 'fa-IR'
-                }),
+            // e(b).length &&
+            //     e(b).summernote({
+            //         height: 300,
+            //         lang: 'fa-IR'
+            //     }),
             e(q).length && e(q).emojioneArea({ pickerPosition: "top" }),
             e(H).length && e(H).counterUp({ delay: 10, time: 1e3 }),
             e(L).length && e(L).tagsinput({ tagClass: "badge badge-info", maxTags: 3 }),
