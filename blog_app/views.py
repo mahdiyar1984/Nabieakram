@@ -18,6 +18,18 @@ class BlogListView(View):
     def get(self, request: HttpRequest):
         articles: QuerySet[Article] = Article.objects.filter(is_active=True)
 
+        article_ct = ContentType.objects.get_for_model(Article)
+
+        # اضافه کردن امتیاز به هر مورد
+        for obj in articles:
+            ratings = Rating.objects.filter(content_type=article_ct, object_id=obj.id)
+            obj.comment_count = ArticleComment.objects.filter(
+                article=obj, is_active=True, is_delete=False, parent__isnull=False).count()
+            obj.rating_count = ratings.count()
+            obj.rating_avg = ratings.aggregate(Avg('score'))['score__avg'] or 0
+            obj.full_stars = int(obj.rating_avg)
+            obj.half_star = 1 if (obj.rating_avg - obj.full_stars) >= 0.5 else 0
+
         if request.GET.get('search'):
             articles: QuerySet[Article] = articles.filter(
                 Q(title__contains=request.GET.get('search')) | Q(text__contains=request.GET.get('search')))
@@ -70,6 +82,19 @@ class ArchiveArticlesView(View):
 class RecentArticlesView(View):
     def get(self, request: HttpRequest):
         articles: QuerySet[Article] = Article.objects.filter(is_active=True).order_by('-create_date')[:3]
+
+        article_ct = ContentType.objects.get_for_model(Article)
+
+        # اضافه کردن امتیاز به هر مورد
+        for obj in articles:
+            ratings = Rating.objects.filter(content_type=article_ct, object_id=obj.id)
+            obj.comment_count = ArticleComment.objects.filter(
+                article=obj, is_active=True, is_delete=False, parent__isnull=False).count()
+            obj.rating_count = ratings.count()
+            obj.rating_avg = ratings.aggregate(Avg('score'))['score__avg'] or 0
+            obj.full_stars = int(obj.rating_avg)
+            obj.half_star = 1 if (obj.rating_avg - obj.full_stars) >= 0.5 else 0
+
         context = {
             'articles': articles,
         }
@@ -134,12 +159,14 @@ class BlogDetailView(View):
         # در نهایت distinct
         comments = comments_qs.distinct()
 
+        article_comments_count = ArticleComment.objects.filter(article=article,parent__isnull=True).count()
 
         new_captcha = CaptchaStore.generate_key()  # تولید captcha_0
         captcha_url = captcha_image_url(new_captcha)  # مسیر تصویر
 
         context = {
             'article': article,
+            'article_comments_count':article_comments_count,
             'comments': comments,
             'avg_rating': avg_rating,
             'stars_display': stars_display,

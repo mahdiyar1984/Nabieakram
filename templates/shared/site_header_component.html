@@ -119,6 +119,7 @@
                                 </ul>
                             </nav>
 
+
                             <!-- سرچ -->
                             <form method="get" action="{% url 'main_app:search_page' %}">
                                 <div class="input-group">
@@ -128,11 +129,15 @@
                                            placeholder="جستجو"
                                            value="{{ request.GET.search }}">
                                     <div class="input-group-append">
-                                        <button type="submit" class="btn theme-btn bg-info"><i class="la la-search"></i>
-                                        </button>
+                                        <button type="submit" class="btn theme-btn bg-info"><i class="la la-search"></i></button>
                                     </div>
                                 </div>
                             </form>
+
+                        
+                        
+                        
+
                         </div>
                     </div>
                 </div>

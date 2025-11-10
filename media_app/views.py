@@ -4,10 +4,12 @@ from django.contrib import messages
 from django.db.models import QuerySet, Q, Avg, Count
 from django.http import HttpRequest
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template.defaulttags import comment
 from django.views import View
 from django.views.generic import ListView
 from django.contrib.contenttypes.models import ContentType
 
+from blog_app.models import ArticleComment
 from main_app.models import Rating
 from media_app.models import GalleryImage, GalleryCategory, Lecture, LectureCategory, LectureComment
 
@@ -38,6 +40,7 @@ class LectureListView(ListView):
         category_id = self.request.GET.get('category')
         tag_id = self.request.GET.get('tag')
 
+
         if search_query:
             queryset = queryset.filter(
                 Q(title__icontains=search_query) | Q(text__icontains=search_query)
@@ -47,6 +50,18 @@ class LectureListView(ListView):
 
         if tag_id:
             queryset = queryset.filter(selected_tags=tag_id)
+
+        lecture_ct = ContentType.objects.get_for_model(Lecture)
+
+        # اضافه کردن امتیاز به هر مورد
+        for obj in queryset:
+            ratings = Rating.objects.filter(content_type=lecture_ct, object_id=obj.id)
+            obj.rating_count = ratings.count()
+            obj.rating_avg = ratings.aggregate(Avg('score'))['score__avg'] or 0
+            obj.full_stars = int(obj.rating_avg)
+            obj.half_star = 1 if (obj.rating_avg - obj.full_stars) >= 0.5 else 0
+            obj.comment_count = LectureComment.objects.filter(
+                lecture=obj, parent__isnull=True, is_active=True, is_delete=False).count()
 
         return queryset
 
@@ -78,6 +93,18 @@ class ArchiveLecturesView(View):
 class RecentLecturesView(View):
     def get(self, request: HttpRequest):
         lectures: QuerySet[Lecture] = Lecture.objects.filter(is_active=True).order_by('-created_date')[:3]
+
+        lecture_ct = ContentType.objects.get_for_model(Lecture)
+
+        # اضافه کردن امتیاز به هر مورد
+        for obj in lectures:
+            ratings = Rating.objects.filter(content_type=lecture_ct, object_id=obj.id)
+            obj.rating_count = ratings.count()
+            obj.rating_avg = ratings.aggregate(Avg('score'))['score__avg'] or 0
+            obj.full_stars = int(obj.rating_avg)
+            obj.half_star = 1 if (obj.rating_avg - obj.full_stars) >= 0.5 else 0
+            obj.comment_count = LectureComment.objects.filter(
+                lecture=obj, parent__isnull=True, is_active=True, is_delete=False).count()
         context = {
             'lectures': lectures,
         }
@@ -142,6 +169,8 @@ class LectureDetailView(View):
         # در نهایت distinct
         comments = comments_qs.distinct()
 
+        lecture_comments_count = LectureComment.objects.filter(lecture=lecture, parent__isnull=True).count()
+
         new_captcha = CaptchaStore.generate_key()  # تولید captcha_0
         captcha_url = captcha_image_url(new_captcha)  # مسیر تصویر
 
@@ -150,6 +179,7 @@ class LectureDetailView(View):
         context = {
             'lecture': lecture,
             'comments': comments,
+            'lecture_comments_count':lecture_comments_count,
             'avg_rating': avg_rating,
             'stars_display': stars_display,
             'total_votes': total_votes,

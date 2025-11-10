@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Rating in article
+// Rating in article detail
 document.addEventListener('DOMContentLoaded', function () {
     const ratingDiv = document.getElementById('rating');
     if (!ratingDiv) return; // اگه صفحه امتیاز نداره، هیچی اجرا نکن
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Rating in lecture
+// Rating in lecture detail
 document.addEventListener('DOMContentLoaded', function () {
     const ratingDiv = document.getElementById('rating2');
     if (!ratingDiv) return; // اگه صفحه امتیاز نداره، هیچی اجرا نکن
@@ -139,6 +139,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+
+
+
+
+
+
+
+
+
 
 // ckeditor.js
 document.addEventListener("DOMContentLoaded", function () {

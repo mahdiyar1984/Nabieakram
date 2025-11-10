@@ -4,16 +4,30 @@
         <h3 class="card-title fs-18 pb-2">پستهای اخیر</h3>
         <div class="divider"><span></span></div>
         {% for article in articles %}
-        	<div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
-            <a href="{% url 'blog_app:blog_detail' pk=article.id %}" class="media-img">
-                <img class="mr-3" src="{{ article.image.url }}" alt="تصویر دوره مرتبط">
-            </a>
-            <div class="media-body">
-                <h5 class="fs-15"><a href="{% url 'blog_app:blog_detail' pk=article.id %}">{{ article.title }}</a></h5>
-                <span class="d-block lh-18 py-1 fs-14">{{ article.author.get_full_name }}</span>
-                </p>
+            <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
+                <a href="{% url 'blog_app:blog_detail' pk=article.id %}" class="media-img">
+                    <img class="mr-3" src="{{ article.image.url }}" alt="تصویر دوره مرتبط">
+                </a>
+                <div class="media-body">
+                    <h5 class="fs-15"><a href="{% url 'blog_app:blog_detail' pk=article.id %}">{{ article.title }}</a></h5>
+                    <span class="d-block lh-18 py-1 fs-14">{{ article.author.get_full_name }}</span>
+                    <div class="rating-wrap d-flex align-items-center py-2">
+                        <div class="review-stars d-flex align-items-center">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= article.full_stars %}
+                                    <i class="la la-star text-warning"></i>
+                                {% elif article.half_star and forloop.counter == article.full_stars|add:"1" %}
+                                    <i class="la la-star-half-alt text-warning"></i>
+                                {% else %}
+                                    <i class="la la-star-o text-warning"></i>
+                                {% endif %}
+                            {% endfor %}
+                            <span class="rating-number ml-2">{{ article.rating_avg|floatformat:1 }}</span>
+                            <span class="rating-total pl-1 text-muted">({{ article.rating_count }} نفر)</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
         {% endfor %}
 
 

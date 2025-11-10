@@ -349,6 +349,8 @@ class AdminArticleReadView(LoginRequiredMixin, DetailView):
         return context
 
 
+
+
 class AdminArticleCreateView(LoginRequiredMixin, CreateView):
     model = Article
     form_class = ArticleForm
@@ -360,24 +362,18 @@ class AdminArticleCreateView(LoginRequiredMixin, CreateView):
         context['categories'] = ArticleCategory.objects.all()
         context['tags'] = ArticleTag.objects.all()
         return context
-
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.author = self.request.user
         self.object.status = 'draft'
-
-        # استفاده از فرم برای فایل
         if form.cleaned_data.get('image'):
             self.object.image = form.cleaned_data['image']
-
         self.object.save()
-
         # ذخیره ManyToMany از فرم (اعتبارسنجی شده)
         if 'selected_categories' in form.cleaned_data:
             self.object.selected_categories.set(form.cleaned_data['selected_categories'])
         if 'selected_tags' in form.cleaned_data:
             self.object.selected_tags.set(form.cleaned_data['selected_tags'])
-
         return super().form_valid(form)
 
 

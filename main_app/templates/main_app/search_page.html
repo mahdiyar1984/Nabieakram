@@ -63,21 +63,25 @@
                                     <li class="d-flex align-items-center">
                                         توسط: {{ obj.author.get_full_name }}
                                     </li>
-                                    <li class="d-flex align-items-center"><a href="#">0 نظر</a></li>
+                                    <li class="d-flex align-items-center"><a href="#">{{ obj.comment_count }} نظر</a></li>
                                 </ul>
+
+
                                 <div class="rating-wrap d-flex align-items-center py-2">
                                     <div class="review-stars d-flex align-items-center">
+
                                         {% for i in "12345" %}
-                                            {% if i|add:"0"|floatformat:0 <= obj.full_stars %}
+                                            {% if forloop.counter <= obj.full_stars %}
                                                 <i class="la la-star text-warning"></i>
-                                            {% elif obj.half_star and i|add:"0"|floatformat:0 == obj.full_stars|add:"1"|floatformat:0 %}
+                                            {% elif obj.half_star and forloop.counter == obj.full_stars|add:"1" %}
                                                 <i class="la la-star-half-alt text-warning"></i>
                                             {% else %}
                                                 <i class="la la-star-o text-warning"></i>
                                             {% endif %}
                                         {% endfor %}
+
                                         <span class="rating-number ml-2">{{ obj.rating_avg|floatformat:1 }}</span>
-                                        <span class="rating-total pl-1 text-muted">({{ obj.rating_count }})</span>
+                                        <span class="rating-total pl-1 text-muted">({{ obj.rating_count }} نفر)</span>
                                     </div>
                                 </div>
 

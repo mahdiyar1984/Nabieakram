@@ -18,7 +18,6 @@ class ArticleForm(forms.ModelForm):
         if read_only:
             for field in self.fields.values():
                 field.disabled = True
-
     selected_tags = forms.ModelMultipleChoiceField(
         queryset=ArticleTag.objects.all(),
         required=False,
@@ -29,7 +28,6 @@ class ArticleForm(forms.ModelForm):
         required=False,
         widget=forms.CheckboxSelectMultiple
     )
-
     class Meta:
         model = Article
         fields = ['title', 'slug', 'image', 'short_description', 'text', 'selected_categories', 'selected_tags',
@@ -37,7 +35,6 @@ class ArticleForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
             'slug': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
-
             'short_description': forms.Textarea(attrs={
                 'class': 'form-control form--control user-text-editor pl-3',
                 'rows': 4
@@ -46,10 +43,8 @@ class ArticleForm(forms.ModelForm):
                 'class': 'form-control form--control user-text-editor pl-3',
                 'id':'editor',
                 'rows': 15}),
-
             'status': forms.Select(choices=[('draft', 'پیش‌نویس'), ('published', 'منتشر شده')],
                                    attrs={'class': 'form-control form--control pl-3'}),
-
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'image': forms.ClearableFileInput(attrs={
@@ -57,6 +52,11 @@ class ArticleForm(forms.ModelForm):
                 'id': 'customFileInput'
             }),
         }
+
+
+
+
+
 
 
 class ArticleCategoryForm(forms.Form):

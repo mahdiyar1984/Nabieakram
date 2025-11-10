@@ -30,7 +30,6 @@
                         {% render_partial 'media_app.views.RecentLecturesView' %}
 
 
-
                     </div>
                 </div>
 
@@ -55,8 +54,25 @@
                                 <ul class="generic-list-item generic-list-item-bullet generic-list-item--bullet d-flex align-items-center flex-wrap fs-14 pt-2">
                                     <li class="d-flex align-items-center">توسط: {{ lecture.author.get_full_name }}<a
                                             href="#">&nbsp;</a></li>
-                                    <li class="d-flex align-items-center"><a href="#">0 نظر</a></li>
+                                    <li class="d-flex align-items-center"><a href="#">{{ lecture.comment_count }} نظر</a></li>
                                 </ul>
+                                <div class="rating-wrap d-flex align-items-center py-2">
+                                    <div class="review-stars d-flex align-items-center">
+
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= lecture.full_stars %}
+                                                <i class="la la-star text-warning"></i>
+                                            {% elif lecture.half_star and forloop.counter == lecture.full_stars|add:"1" %}
+                                                <i class="la la-star-half-alt text-warning"></i>
+                                            {% else %}
+                                                <i class="la la-star-o text-warning"></i>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        <span class="rating-number ml-2">{{ lecture.rating_avg|floatformat:1 }}</span>
+                                        <span class="rating-total pl-1 text-muted">({{ lecture.rating_count }} نفر)</span>
+                                    </div>
+                                </div>
                                 <div class="d-flex justify-content-end align-items-center pt-3">
                                     <a href="{% url 'media_app:lecture_detail_page' pk=lecture.id %}" class="btn theme-btn theme-btn-sm theme-btn-white">
                                         ادامه مطلب
@@ -95,7 +111,7 @@
                                             </li>
                                         {% elif num > page_obj.number|add:-3 and num < page_obj.number|add:3 %}
                                             <li class="page-item"><a class="page-link"
-                                                                            href="?page={{ num }}">{{ num }}</a></li>
+                                                                     href="?page={{ num }}">{{ num }}</a></li>
                                         {% endif %}
                                     {% endfor %}
 

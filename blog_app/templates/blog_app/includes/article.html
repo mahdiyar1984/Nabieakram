@@ -16,15 +16,30 @@
             <h5 class="card-title"><a href="{% url 'blog_app:blog_detail' pk=article.id %}">{{ article.title }}</a></h5>
             <ul class="generic-list-item generic-list-item-bullet generic-list-item--bullet d-flex align-items-center flex-wrap fs-14 pt-2">
                 <li class="d-flex align-items-center">توسط: <a href="#">&nbsp;{{ article.author.get_full_name }}</a></li>
-                <li class="d-flex align-items-center"><a href="#">{{ article.articlecomment_set.all.count }} نظر</a></li>
+                <li class="d-flex align-items-center"><a href="#">{{ article.comment_count }} نظر</a></li>
             </ul>
+            <div class="rating-wrap d-flex align-items-center py-2">
+                <div class="review-stars d-flex align-items-center">
+
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= article.full_stars %}
+                            <i class="la la-star text-warning"></i>
+                        {% elif article.half_star and forloop.counter == article.full_stars|add:"1" %}
+                            <i class="la la-star-half-alt text-warning"></i>
+                        {% else %}
+                            <i class="la la-star-o text-warning"></i>
+                        {% endif %}
+                    {% endfor %}
+
+                    <span class="rating-number ml-2">{{ article.rating_avg|floatformat:1 }}</span>
+                    <span class="rating-total pl-1 text-muted">({{ article.rating_count }} نفر)</span>
+                </div>
+            </div>
             <div class="d-flex justify-content-between align-items-center pt-3">
                 <a href="{% url 'blog_app:blog_detail' pk=article.id %}"
                    class="btn theme-btn theme-btn-sm theme-btn-white">ادامه مطلب <i
                         class="la la-arrow-left icon ml-1"></i></a>
             </div>
         </div>
-        <!-- end card-body -->
     </div>
-    <!-- end card -->
 </div>

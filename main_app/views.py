@@ -5,12 +5,12 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import TemplateView, FormView
-from blog_app.models import ArticleCategory
+from blog_app.models import ArticleCategory, ArticleComment
 from main_app.forms import ContactUsModelForm
 from main_app.models import SiteSetting, FooterLinkBox, Slider
 from django.http import JsonResponse
 from django.contrib.contenttypes.models import ContentType
-from media_app.models import Lecture
+from media_app.models import Lecture, LectureComment
 from .models import Rating
 from blog_app.models import Article
 from django.db.models import Avg
@@ -113,9 +113,11 @@ class SearchView(View):
     def get(self, request):
         query = request.GET.get('search', '').strip()
 
+        # اگر چیزی پیدا نشد خطا ندهد
         articles = []
         lectures = []
 
+        # در عنوان و متن مقالات و سخنرانی ها جستجو می کند
         if query:
             articles = Article.objects.filter(
                 Q(title__icontains=query) | Q(text__icontains=query)
@@ -129,9 +131,10 @@ class SearchView(View):
             for l in lectures:
                 l.type = 'lecture'
 
-        # ترکیب نتایج
+        # ترکیب نتایج جستجو بر روی مقالات و سخنرانی ها و بر اساس تاریخ ایجاد به ترتیب نزولی می کند
         results = sorted(
             list(articles) + list(lectures),
+            # استفاده از getattr برای اطمینان از این است که اگر یکی از مدل‌ها فیلد متفاوتی دارد، باز هم درست کار کند.
             key=lambda x: getattr(x, 'create_date', getattr(x, 'created_date', None)),
             reverse=True
         )
@@ -144,14 +147,19 @@ class SearchView(View):
         for obj in results:
             if isinstance(obj, Article):
                 ct = article_ct
+                obj.comment_count = ArticleComment.objects.filter(
+                    article=obj, is_active=True, is_delete=False,parent__isnull=False).count()
             else:
                 ct = lecture_ct
+                obj.comment_count = LectureComment.objects.filter(
+                    lecture=obj, is_active=True, is_delete=False, parent__isnull=False).count()
 
             ratings = Rating.objects.filter(content_type=ct, object_id=obj.id)
             obj.rating_count = ratings.count()
             obj.rating_avg = ratings.aggregate(Avg('score'))['score__avg'] or 0
             obj.full_stars = int(obj.rating_avg)
             obj.half_star = 1 if (obj.rating_avg - obj.full_stars) >= 0.5 else 0
+
 
         paginator = Paginator(results, 10)
         page_number = request.GET.get('page')
