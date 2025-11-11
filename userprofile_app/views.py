@@ -1,9 +1,13 @@
+import os
 from typing import Union
 from django.contrib.auth import update_session_auth_hash
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
 from django.db.models import QuerySet, Q, Case, When, BooleanField, Count
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, TemplateView
 from blog_app.models import Article, ArticleCategory, ArticleTag, ArticleComment
 from main_app.models import FooterLink, ContactUs, SiteSetting, Slider, FooterLinkBox, DailyVisit
@@ -15,7 +19,7 @@ from .forms import ArticleForm, GroupForm, ArticleCategoryForm, ArticleTagForm, 
     LectureCategoryForm, GalleryImageForm, \
     GalleryCategoryForm, FooterLinkForm, ContactUsForm, SliderForm, SiteSettingForm, LectureClipForm, FooterLinkBoxForm
 from django.contrib import messages
-from django.http import HttpRequest, HttpResponseForbidden
+from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.urls import reverse_lazy, reverse
@@ -362,6 +366,7 @@ class AdminArticleCreateView(LoginRequiredMixin, CreateView):
         context['categories'] = ArticleCategory.objects.all()
         context['tags'] = ArticleTag.objects.all()
         return context
+
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.author = self.request.user
@@ -369,13 +374,20 @@ class AdminArticleCreateView(LoginRequiredMixin, CreateView):
         if form.cleaned_data.get('image'):
             self.object.image = form.cleaned_data['image']
         self.object.save()
-        # ذخیره ManyToMany از فرم (اعتبارسنجی شده)
         if 'selected_categories' in form.cleaned_data:
             self.object.selected_categories.set(form.cleaned_data['selected_categories'])
         if 'selected_tags' in form.cleaned_data:
             self.object.selected_tags.set(form.cleaned_data['selected_tags'])
         return super().form_valid(form)
 
+@csrf_exempt
+def upload_image(request):
+    if request.method == 'POST' and request.FILES.get('upload'):
+        image = request.FILES['upload']
+        filename = default_storage.save(os.path.join('uploads', image.name), ContentFile(image.read()))
+        url = default_storage.url(filename)
+        return JsonResponse({'url': url})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 class AdminArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Article

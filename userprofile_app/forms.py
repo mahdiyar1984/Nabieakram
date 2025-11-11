@@ -10,6 +10,9 @@ from media_app.models import Lecture, LectureTag, LectureCategory, LectureClip, 
 
 
 # region Article Management
+
+
+
 class ArticleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         read_only = kwargs.pop('read_only', False)
@@ -35,22 +38,12 @@ class ArticleForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
             'slug': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
-            'short_description': forms.Textarea(attrs={
-                'class': 'form-control form--control user-text-editor pl-3',
-                'rows': 4
-            }),
-            'text': forms.Textarea(attrs={
-                'class': 'form-control form--control user-text-editor pl-3',
-                'id':'editor',
-                'rows': 15}),
-            'status': forms.Select(choices=[('draft', 'پیش‌نویس'), ('published', 'منتشر شده')],
-                                   attrs={'class': 'form-control form--control pl-3'}),
+            'short_description': forms.Textarea(attrs={'class': 'form-control form--control user-text-editor pl-3', 'rows': 4}),
+            'text': forms.Textarea(attrs={'class': 'form-control form--control user-text-editor pl-3', 'id':'editor', 'rows': 15}),
+            'status': forms.Select(choices=[('draft', 'پیش‌نویس'), ('published', 'منتشر شده')], attrs={'class': 'form-control form--control pl-3'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'image': forms.ClearableFileInput(attrs={
-                'class': 'file-upload-input',
-                'id': 'customFileInput'
-            }),
+            'image': forms.ClearableFileInput(attrs={'class': 'file-upload-input', 'id': 'customFileInput'}),
         }
 
 

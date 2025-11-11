@@ -34,6 +34,8 @@ class ArticleTag(models.Model):
         return self.title
 
 
+
+
 class Article(models.Model):
     STATUS_CHOICES = [
         ('draft', 'پیش‌نویس'),
@@ -41,7 +43,6 @@ class Article(models.Model):
         ('published', 'منتشر شده'),
         ('rejected', 'رد شده'),
     ]
-
     objects = models.Manager()
     selected_categories = models.ManyToManyField(ArticleCategory, verbose_name='دسته بندی ها')
     selected_tags = models.ManyToManyField(ArticleTag, verbose_name='تگ ها')
@@ -57,7 +58,6 @@ class Article(models.Model):
     is_delete = models.BooleanField(default=False, verbose_name='حذف شده / نشده')
     ratings = GenericRelation('main_app.Rating', related_query_name='article')
 
-
     def __str__(self):
         return self.title
 
@@ -66,6 +66,9 @@ class Article(models.Model):
             ("publish_article", "Can publish article"),
             ("reject_article", "Can reject article"),
         ]
+
+
+
 
 
 class ArticleComment(models.Model):
