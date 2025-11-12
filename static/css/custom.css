@@ -130,3 +130,32 @@
         margin-top: 0 !important;
     }
 }
+
+/* فقط wrapper اصلی را 100٪ کن */
+.django-ckeditor-widget {
+    display: block !important;
+    width: 100% !important;
+}
+
+/* محدوده ادیتور اصلی */
+.cke {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* بخش داخلی محتوا */
+.cke_inner,
+.cke_contents,
+.cke_wysiwyg_frame {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* جلوگیری از کشیده شدن منوها (رنگ، استایل، فونت و...) */
+.cke_panel {
+    width: auto !important;
+    min-width: 150px !important;
+    max-width: 400px !important;
+}
+
+

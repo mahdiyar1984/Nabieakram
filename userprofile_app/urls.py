@@ -20,7 +20,6 @@ urlpatterns = [
     # region Article management
     path('articles/', views.AdminArticleListView.as_view(), name='articles_list'),
     path('articles/create/', views.AdminArticleCreateView.as_view(), name='article_create'),
-    path('upload_image/', views.upload_image, name='upload_image'),
     path('articles/<int:pk>/read/', views.AdminArticleReadView.as_view(), name='article_detail'),
     path('articles/<int:pk>/edit/', views.AdminArticleUpdateView.as_view(), name='article_edit'),
     path('articles/<int:pk>/delete/', views.AdminArticleDeleteView.as_view(), name='article_delete'),

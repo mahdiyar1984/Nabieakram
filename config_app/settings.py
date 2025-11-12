@@ -48,55 +48,57 @@ INSTALLED_APPS = [
     # external app
     'django_render_partial',
     'captcha',
+    'ckeditor',
+    'ckeditor_uploader',
 ]
+
 
 AUTH_USER_MODEL = 'account_app.User'
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'main_app.middleware.DailyVisitMiddleware',
-
+'django.middleware.security.SecurityMiddleware',
+'django.contrib.sessions.middleware.SessionMiddleware',
+'django.middleware.common.CommonMiddleware',
+'django.middleware.csrf.CsrfViewMiddleware',
+'django.contrib.auth.middleware.AuthenticationMiddleware',
+'django.contrib.messages.middleware.MessageMiddleware',
+'django.middleware.clickjacking.XFrameOptionsMiddleware',
+'main_app.middleware.DailyVisitMiddleware',
 ]
 
 ROOT_URLCONF = 'config_app.urls'
 
 TEMPLATES = [
-    {
-        # این مشخص می‌کنه که جنگو از چه "موتور تمپلیتی" برای رندر کردن HTML استفاده کنه.
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+{
+    # این مشخص می‌کنه که جنگو از چه "موتور تمپلیتی" برای رندر کردن HTML استفاده کنه.
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
 
-        # اینجا مسیرهایی تعریف میشه که جنگو برای پیدا کردن template به اونها سر می‌زنه.
-        # اولویت با پوشه تمپلیت ریشه است اول اینجا بررسی میشه بعد میره سراغ پوشه تمپلیت اپ ها
-        'DIRS': [BASE_DIR / 'templates'],
+    # اینجا مسیرهایی تعریف میشه که جنگو برای پیدا کردن template به اونها سر می‌زنه.
+    # اولویت با پوشه تمپلیت ریشه است اول اینجا بررسی میشه بعد میره سراغ پوشه تمپلیت اپ ها
+    'DIRS': [BASE_DIR / 'templates'],
 
-        # وقتی True باشه، جنگو به صورت خودکار داخل هر اپلیکیشن
-        # (هر فولدر اپی که در INSTALLED_APPS تعریف شده) دنبال پوشه‌ی templates می‌گرده.
-        'APP_DIRS': True,
+    # وقتی True باشه، جنگو به صورت خودکار داخل هر اپلیکیشن
+    # (هر فولدر اپی که در INSTALLED_APPS تعریف شده) دنبال پوشه‌ی templates می‌گرده.
+    'APP_DIRS': True,
 
-        # اینجا می‌تونی تنظیمات اضافی موتور template رو بدی. یکی از مهم‌ترین‌هاش context_processors هست.
-        'OPTIONS': {
-            # اینها فانکشن‌هایی هستند که وقتی تمپلیت رندر میشه، مقادیر جدیدی به context اضافه می‌کنن
-            # (یعنی متغیرهایی که داخل HTML قابل دسترسی میشن).
-            'context_processors': [
-                'django.template.context_processors.request',
+    # اینجا می‌تونی تنظیمات اضافی موتور template رو بدی. یکی از مهم‌ترین‌هاش context_processors هست.
+    'OPTIONS': {
+        # اینها فانکشن‌هایی هستند که وقتی تمپلیت رندر میشه، مقادیر جدیدی به context اضافه می‌کنن
+        # (یعنی متغیرهایی که داخل HTML قابل دسترسی میشن).
+        'context_processors': [
+            'django.template.context_processors.request',
 
-                # باعث میشه user (کاربر لاگین‌شده) و perms (مجوزهای کاربر) در template در دسترس باشن.
-                'django.contrib.auth.context_processors.auth',
+            # باعث میشه user (کاربر لاگین‌شده) و perms (مجوزهای کاربر) در template در دسترس باشن.
+            'django.contrib.auth.context_processors.auth',
 
-                # باعث میشه پیام‌هایی که با framework پیام جنگو
-                # (messages.add_message, messages.success, ...) ساختی، در تمپلیت قابل استفاده باشن.
-                'django.contrib.messages.context_processors.messages',
-                'main_app.context_processors.site_settings',
+            # باعث میشه پیام‌هایی که با framework پیام جنگو
+            # (messages.add_message, messages.success, ...) ساختی، در تمپلیت قابل استفاده باشن.
+            'django.contrib.messages.context_processors.messages',
+            'main_app.context_processors.site_settings',
 
-            ],
-        },
+        ],
     },
+},
 ]
 
 WSGI_APPLICATION = 'config_app.wsgi.application'
@@ -105,28 +107,28 @@ WSGI_APPLICATION = 'config_app.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+'default': {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': BASE_DIR / 'db.sqlite3',
+}
 }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+{
+    'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+},
+{
+    'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+},
+{
+    'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+},
+{
+    'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+},
 ]
 LOGIN_URL = 'account_app:login_page'
 
@@ -144,13 +146,39 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
-    BASE_DIR / "static",  # اگه یه پوشه استاتیک کلی داری
+    BASE_DIR / "static",  # پوشه استاتیک پروژه
 ]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"  # محل جمع‌آوری فایل‌های استاتیک
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Full',
+        'width': '100%',
+        'height': 400,
+        'extraPlugins': ','.join([
+            'uploadimage',   # آپلود عکس
+            'filebrowser',   # مرور فایل‌ها
+            'mediaembed',    # ویدیو و صوت
+            'autoembed',
+            'embedsemantic',
+            'widget',
+            'lineutils',
+            'clipboard',
+            'dialog',
+            'dialogui'
+        ]),
+        'filebrowserUploadUrl': '/ckeditor/upload/',
+        'filebrowserBrowseUrl': '/ckeditor/browse/',
+    }
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
