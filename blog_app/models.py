@@ -1,7 +1,7 @@
-from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 from account_app.models import User
 from django.contrib.contenttypes.fields import GenericRelation
+from django_ckeditor_5.fields import CKEditor5Field
 
 
 
@@ -52,7 +52,7 @@ class Article(models.Model):
     slug = models.SlugField(max_length=400, db_index=True, allow_unicode=True, verbose_name='عنوان در url')
     image = models.ImageField(upload_to='blog_app/images', verbose_name='تصویر مقاله')
     short_description = models.TextField(verbose_name='توضیحات کوتاه')
-    text = RichTextUploadingField(verbose_name='متن')
+    text = CKEditor5Field(verbose_name='متن')
     create_date = models.DateTimeField(auto_now_add=True, editable=False, verbose_name='تاریخ ثبت')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', verbose_name='وضعیت انتشار')
     is_active = models.BooleanField(default=True, verbose_name='فعال / غیرفعال')

@@ -48,8 +48,6 @@ INSTALLED_APPS = [
     # external app
     'django_render_partial',
     'captcha',
-    'ckeditor',
-    'ckeditor_uploader',
 ]
 
 
@@ -157,27 +155,19 @@ STATIC_ROOT = BASE_DIR / "staticfiles"  # محل جمع‌آوری فایل‌ه
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-CKEDITOR_UPLOAD_PATH = 'uploads/'
-CKEDITOR_CONFIGS = {
+CKEDITOR_5_UPLOAD_PATH = "uploads/"
+CKEDITOR_5_CONFIGS = {
     'default': {
-        'toolbar': 'Full',
+        'toolbar': [
+            'heading', '|',
+            'bold', 'italic', 'underline', '|',
+            'link', 'blockQuote', '|',
+            'bulletedList', 'numberedList', '|',
+            'insertTable', '|',
+            'mediaEmbed', 'imageUpload',
+        ],
         'width': '100%',
-        'height': 400,
-        'extraPlugins': ','.join([
-            'uploadimage',   # آپلود عکس
-            'filebrowser',   # مرور فایل‌ها
-            'mediaembed',    # ویدیو و صوت
-            'autoembed',
-            'embedsemantic',
-            'widget',
-            'lineutils',
-            'clipboard',
-            'dialog',
-            'dialogui'
-        ]),
-        'filebrowserUploadUrl': '/ckeditor/upload/',
-        'filebrowserBrowseUrl': '/ckeditor/browse/',
-    }
+    },
 }
 
 # Default primary key field type

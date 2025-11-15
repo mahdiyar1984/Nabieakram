@@ -4,13 +4,12 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from account_app.models import User
 from django.contrib.auth.models import Group, Permission
-
 from main_app.models import FooterLinkBox, FooterLink, Slider, ContactUs, SiteSetting
 from media_app.models import Lecture, LectureTag, LectureCategory, LectureClip, GalleryCategory, GalleryImage
+from django_ckeditor_5.widgets import CKEditor5Widget
 
 
 # region Article Management
-
 
 
 class ArticleForm(forms.ModelForm):
@@ -21,6 +20,7 @@ class ArticleForm(forms.ModelForm):
         if read_only:
             for field in self.fields.values():
                 field.disabled = True
+
     selected_tags = forms.ModelMultipleChoiceField(
         queryset=ArticleTag.objects.all(),
         required=False,
@@ -31,6 +31,7 @@ class ArticleForm(forms.ModelForm):
         required=False,
         widget=forms.CheckboxSelectMultiple
     )
+
     class Meta:
         model = Article
         fields = ['title', 'slug', 'image', 'short_description', 'text', 'selected_categories', 'selected_tags',
@@ -39,17 +40,12 @@ class ArticleForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
             'slug': forms.TextInput(attrs={'class': 'form-control form--control pl-3'}),
             'short_description': forms.Textarea(attrs={'class': 'form-control form--control user-text-editor pl-3', 'rows': 4}),
-            'text': forms.Textarea(attrs={'class': 'form-control form--control user-text-editor pl-3', 'id':'editor', 'rows': 15}),
+            "text": CKEditor5Widget(attrs={'id': 'article_text'}),
             'status': forms.Select(choices=[('draft', 'پیش‌نویس'), ('published', 'منتشر شده')], attrs={'class': 'form-control form--control pl-3'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_delete': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'image': forms.ClearableFileInput(attrs={'class': 'file-upload-input', 'id': 'customFileInput'}),
         }
-
-
-
-
-
 
 
 class ArticleCategoryForm(forms.Form):
@@ -438,6 +434,7 @@ class SiteSettingForm(forms.ModelForm):
         if read_only:
             for field in self.fields.values():
                 field.disabled = True
+
 
 # endregion
 

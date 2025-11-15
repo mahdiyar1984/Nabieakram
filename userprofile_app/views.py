@@ -380,15 +380,6 @@ class AdminArticleCreateView(LoginRequiredMixin, CreateView):
             self.object.selected_tags.set(form.cleaned_data['selected_tags'])
         return super().form_valid(form)
 
-@csrf_exempt
-def upload_image(request):
-    if request.method == 'POST' and request.FILES.get('upload'):
-        image = request.FILES['upload']
-        filename = default_storage.save(os.path.join('uploads', image.name), ContentFile(image.read()))
-        url = default_storage.url(filename)
-        return JsonResponse({'url': url})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
 class AdminArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Article
     form_class = ArticleForm
